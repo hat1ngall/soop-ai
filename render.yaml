@@ -1,0 +1,21 @@
+services:
+  - type: web
+    name: soop-ai
+    runtime: node
+    plan: free
+    buildCommand: npm install && npx prisma generate && npx prisma db push && npm run build
+    startCommand: npm start
+    envVars:
+      - key: DATABASE_URL
+        value: "file:./prod.db"
+      - key: NEXTAUTH_SECRET
+        generateValue: true
+      - key: NEXTAUTH_URL
+        fromService:
+          type: web
+          name: soop-ai
+          property: url
+      - key: MY_CUSTOM_API_URL
+        sync: false
+      - key: MY_CUSTOM_API_KEY
+        sync: false

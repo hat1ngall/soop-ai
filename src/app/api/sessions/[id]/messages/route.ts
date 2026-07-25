@@ -1,0 +1,29 @@
+import { NextResponse } from "next/server";
+import { getServerSession } from "next-auth";
+import { authOptions } from "@/lib/auth";
+import { prisma } from "@/lib/prisma";
+
+export async function GET(
+  _req: Request,
+  { params }: { params: { id: string } }
+) {
+  const session = await getServerSession(authOptions);
+  if (!session?.user) {
+    return NextResponse.json({ error: "Не авторизован" }, { status: 401 });
+  }
+
+  const userId = (session.user as any).id;
+
+  const chat = await prisma.chatSession.findUnique({ where: { id: params.id } });
+  if (!chat || chat.userId !== userId) {
+    return NextResponse.json({ error: "Не найдено" }, { status: 404 });
+  }
+
+  const messages = await prisma.message.findMany({
+    where: { sessionId: params.id },
+    orderBy: { createdAt: "asc" },
+    select: { id: true, role: true, content: true, createdAt: true },
+  });
+
+  return NextResponse.json(messages);
+}
