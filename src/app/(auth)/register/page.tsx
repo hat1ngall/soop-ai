@@ -89,49 +89,49 @@ export default function RegisterPage() {
   };
 
   return (
-    <div className="flex min-h-screen items-center justify-center bg-[#212121] px-4">
+    <div className="flex min-h-screen items-center justify-center bg-[#0d0d0d] px-4">
       <div className="w-full max-w-sm animate-fade-in">
         <div className="mb-6 text-center sm:mb-8">
           <Link href="/" className="inline-block">
-            <img src="/logo.svg" alt="Soop AI" className="mx-auto mb-4 h-12 w-12 rounded-full sm:h-14 sm:w-14" />
+            <img src="/logo.svg" alt="Soop AI" className="mx-auto mb-4 h-12 w-12 rounded-full" />
           </Link>
-          <h1 className="text-xl font-semibold text-white sm:text-2xl">Создать аккаунт</h1>
-          <p className="mt-1 text-sm text-gray-400">Присоединяйтесь к Soop AI</p>
+          <h1 className="text-xl font-medium text-white">Регистрация</h1>
+          <p className="mt-1 text-xs text-gray-500">Создайте аккаунт в Soop AI</p>
         </div>
 
-        <form onSubmit={handleSubmit} className="space-y-3 sm:space-y-4">
+        <form onSubmit={handleSubmit} className="space-y-3">
           {error && (
-            <div className="animate-shake rounded-xl bg-red-500/10 px-3 py-2 text-sm text-red-400">
+            <div className="animate-shake rounded-lg bg-red-500/10 px-3 py-2 text-sm text-red-400">
               {error}
             </div>
           )}
 
           <div>
-            <label className="mb-1.5 block text-sm text-gray-400">Имя</label>
+            <label className="mb-1.5 block text-xs text-gray-500">Имя</label>
             <input
               type="text"
               value={name}
               onChange={(e) => setName(e.target.value)}
-              className="w-full rounded-xl border border-white/10 bg-white/5 px-4 py-3 text-sm text-white outline-none transition-all focus:border-white/30"
+              className="w-full rounded-lg border border-white/10 bg-[#1a1a1a] px-3 py-2.5 text-sm text-white outline-none transition-colors focus:border-white/20"
               placeholder="Ваше имя"
               autoComplete="name"
             />
           </div>
 
           <div>
-            <label className="mb-1.5 block text-sm text-gray-400">Email</label>
+            <label className="mb-1.5 block text-xs text-gray-500">Email</label>
             <input
               type="email"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
-              className="w-full rounded-xl border border-white/10 bg-white/5 px-4 py-3 text-sm text-white outline-none transition-all focus:border-white/30"
+              className="w-full rounded-lg border border-white/10 bg-[#1a1a1a] px-3 py-2.5 text-sm text-white outline-none transition-colors focus:border-white/20"
               placeholder="you@example.com"
               autoComplete="email"
             />
           </div>
 
           <div>
-            <label className="mb-1.5 block text-sm text-gray-400">Пароль</label>
+            <label className="mb-1.5 block text-xs text-gray-500">Пароль</label>
             <input
               type="password"
               value={password}

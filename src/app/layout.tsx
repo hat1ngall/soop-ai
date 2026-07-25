@@ -24,7 +24,7 @@ export const viewport: Viewport = {
   initialScale: 1,
   maximumScale: 1,
   userScalable: false,
-  themeColor: "#212121",
+  themeColor: "#0d0d0d",
 };
 
 export default function RootLayout({
@@ -37,7 +37,7 @@ export default function RootLayout({
       <head>
         <link rel="icon" href="/logo.svg" type="image/svg+xml" />
       </head>
-      <body className={`${inter.className} bg-[#212121] text-gray-100 antialiased`}>
+      <body className={`${inter.className} bg-[#0d0d0d] text-gray-100 antialiased`}>
         <Providers>{children}</Providers>
       </body>
     </html>
