@@ -1,12 +1,28 @@
 export type PlanTier = "free" | "pro" | "boost" | "enterprise";
 
-export const FREE_MODELS = ["gemini-flash-3.5", "minimax-2.5", "llama-4-scout"];
+// Free — слабые модели (rank 20+)
+export const FREE_MODELS = [
+  "gemini-flash-3.5", "minimax-2.5", "llama-4-scout",
+  "kimi-k2.6", "kimi-k2.7-code", "deepseek-v4-pro", "glm-5.2",
+];
 
-export const PRO_MODELS = ["claude-sonnet-4.6", "gpt-5.2", "gpt-5.4", "gpt-5.6-sol"];
+// Pro — средние модели (rank 11-20)
+export const PRO_MODELS = [
+  "claude-sonnet-4.6", "gpt-5.2", "gpt-5.4", "gpt-5.5",
+  "grok-4.3", "grok-4.5",
+];
 
-export const BOOST_MODELS = ["claude-sonnet-5", "claude-opus-4.7", "claude-opus-4.8", "claude-opus-5", "claude-fable-5", "gemini-3.1-pro", "gpt-5.6-terra", "gpt-5.5"];
+// Boost — топовые модели (rank 1-10)
+export const BOOST_MODELS = [
+  "claude-sonnet-5", "claude-opus-4.7", "claude-opus-4.8",
+  "claude-opus-5", "claude-fable-5", "gemini-3.1-pro",
+  "gpt-5.6-sol", "gpt-5.6-terra",
+];
 
-export const ENTERPRISE_MODELS = ["grok-4.3", "grok-4.5", "grok-build-0.1", "kimi-k2.6", "kimi-k2.7-code", "deepseek-v4-pro", "glm-5.2"];
+// Enterprise — всё + эксклюзив
+export const ENTERPRISE_MODELS = [
+  "grok-build-0.1",
+];
 
 export const DAILY_LIMITS: Record<PlanTier, number> = {
   free: 20,
@@ -17,16 +33,11 @@ export const DAILY_LIMITS: Record<PlanTier, number> = {
 
 export function getAvailableModels(plan: PlanTier): string[] {
   switch (plan) {
-    case "free":
-      return FREE_MODELS;
-    case "pro":
-      return [...FREE_MODELS, ...PRO_MODELS];
-    case "boost":
-      return [...FREE_MODELS, ...PRO_MODELS, ...BOOST_MODELS];
-    case "enterprise":
-      return [...FREE_MODELS, ...PRO_MODELS, ...BOOST_MODELS, ...ENTERPRISE_MODELS];
-    default:
-      return FREE_MODELS;
+    case "free": return FREE_MODELS;
+    case "pro": return [...FREE_MODELS, ...PRO_MODELS];
+    case "boost": return [...FREE_MODELS, ...PRO_MODELS, ...BOOST_MODELS];
+    case "enterprise": return [...FREE_MODELS, ...PRO_MODELS, ...BOOST_MODELS, ...ENTERPRISE_MODELS];
+    default: return FREE_MODELS;
   }
 }
 
@@ -39,13 +50,7 @@ export function isPremiumPlan(plan: PlanTier): boolean {
 }
 
 export function getPlanLabel(plan: PlanTier): string {
-  const labels: Record<PlanTier, string> = {
-    free: "Free",
-    pro: "Pro",
-    boost: "Boost",
-    enterprise: "Enterprise",
-  };
-  return labels[plan];
+  return { free: "Free", pro: "Pro", boost: "Boost", enterprise: "Enterprise" }[plan];
 }
 
 export function getDailyLimit(plan: PlanTier): number {
