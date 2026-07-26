@@ -118,14 +118,38 @@ export function ChatWindow() {
               </button>
 
               {modelMenuOpen && (
-                <div className="absolute bottom-full right-0 mb-2 w-56 overflow-hidden rounded-xl border border-white/10 bg-[#2f2f2f] shadow-2xl">
+                <div className="absolute bottom-full right-0 mb-2 w-64 overflow-hidden rounded-xl border border-white/10 bg-[#2f2f2f] shadow-2xl">
                   <div className="max-h-[50vh] overflow-y-auto p-1.5" style={{ scrollbarColor: "#555 #2f2f2f" }}>
-                    {MODEL_LIST.map((m) => (
-                      <button
-                        key={m.id}
-                        onClick={() => { setModel(m.id); setModelMenuOpen(false); }}
-                        className={`flex w-full items-center gap-2 rounded-lg px-3 py-2 text-left text-sm transition-colors ${model === m.id ? "bg-white text-black font-medium" : "text-gray-300 hover:bg-white/10"}`}
-                      >
+                    {/* Free */}
+                    <div className="px-2 py-1 text-[10px] font-medium text-gray-500">Free</div>
+                    {MODEL_LIST.filter(m => ["gemini-flash-3.5", "minimax-2.5", "llama-4-scout"].includes(m.id)).map((m) => (
+                      <button key={m.id} onClick={() => { setModel(m.id); setModelMenuOpen(false); }} className={`flex w-full items-center gap-2 rounded-lg px-3 py-2 text-left text-sm transition-colors ${model === m.id ? "bg-white text-black font-medium" : "text-gray-300 hover:bg-white/10"}`}>
+                        <span className={m.color}>{m.icon}</span>
+                        <span>{m.name}</span>
+                        {model === m.id && <svg className="ml-auto h-3.5 w-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" /></svg>}
+                      </button>
+                    ))}
+
+                    {/* Pro */}
+                    <div className="mt-2 flex items-center gap-2 px-2 py-1">
+                      <span className="text-[10px] font-medium text-gray-500">Pro</span>
+                      <span className="rounded bg-white/10 px-1.5 py-0.5 text-[8px] font-bold text-gray-400">Pro</span>
+                    </div>
+                    {MODEL_LIST.filter(m => ["claude-sonnet-4.6", "gpt-5.6-sol"].includes(m.id)).map((m) => (
+                      <button key={m.id} onClick={() => { setModel(m.id); setModelMenuOpen(false); }} className={`flex w-full items-center gap-2 rounded-lg px-3 py-2 text-left text-sm transition-colors ${model === m.id ? "bg-white text-black font-medium" : "text-gray-300 hover:bg-white/10"}`}>
+                        <span className={m.color}>{m.icon}</span>
+                        <span>{m.name}</span>
+                        {model === m.id && <svg className="ml-auto h-3.5 w-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" /></svg>}
+                      </button>
+                    ))}
+
+                    {/* Boost */}
+                    <div className="mt-2 flex items-center gap-2 px-2 py-1">
+                      <span className="text-[10px] font-medium text-gray-500">Boost</span>
+                      <span className="rounded bg-white/10 px-1.5 py-0.5 text-[8px] font-bold text-gray-400">Boost</span>
+                    </div>
+                    {MODEL_LIST.filter(m => ["claude-opus-5", "claude-fable-5", "gemini-3.1-pro"].includes(m.id)).map((m) => (
+                      <button key={m.id} onClick={() => { setModel(m.id); setModelMenuOpen(false); }} className={`flex w-full items-center gap-2 rounded-lg px-3 py-2 text-left text-sm transition-colors ${model === m.id ? "bg-white text-black font-medium" : "text-gray-300 hover:bg-white/10"}`}>
                         <span className={m.color}>{m.icon}</span>
                         <span>{m.name}</span>
                         {model === m.id && <svg className="ml-auto h-3.5 w-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" /></svg>}
