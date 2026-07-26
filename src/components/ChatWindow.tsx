@@ -119,7 +119,7 @@ export function ChatWindow() {
 
               {modelMenuOpen && (
                 <div className="absolute bottom-full right-0 mb-2 w-56 overflow-hidden rounded-xl border border-white/10 bg-[#2f2f2f] shadow-2xl">
-                  <div className="max-h-[40vh] overflow-y-auto p-1.5">
+                  <div className="max-h-[50vh] overflow-y-auto p-1.5" style={{ scrollbarColor: "#555 #2f2f2f" }}>
                     {MODEL_LIST.map((m) => (
                       <button
                         key={m.id}
