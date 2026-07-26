@@ -4,7 +4,7 @@ import { authOptions } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 import { getAvailableModels, getDailyLimit } from "@/lib/plans";
 import { checkAndResetExpiredSubscription } from "@/lib/subscription";
-import { SYSTEM_PROMPT } from "@/lib/system-prompt";
+import { getSystemPrompt } from "@/lib/system-prompt";
 
 const GROQ_MODEL_MAP: Record<string, string> = {
   "gemini-flash-3.5": "llama-3.3-70b-versatile",
@@ -235,7 +235,7 @@ export async function POST(req: Request) {
             body: JSON.stringify({
               model: mapModelName(model),
               messages: [
-                { role: "system", content: SYSTEM_PROMPT },
+                { role: "system", content: getSystemPrompt(model) },
                 ...history.map((m) => ({ role: m.role, content: m.content })),
               ],
             }),
