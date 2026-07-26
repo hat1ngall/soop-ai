@@ -17,18 +17,18 @@ const MODEL_LIST = [
   { id: "kimi-k2.7-code", name: "Kimi K2.7 Code", tier: "free", icon: "≋", color: "text-gray-400" },
   { id: "deepseek-v4-pro", name: "DeepSeek V4 Pro", tier: "free", icon: "≋", color: "text-blue-400" },
   // Pro
-  { id: "claude-sonnet-4.6", name: "Sonnet 4.6", tier: "pro", icon: "✳", color: "text-orange-500" },
+  { id: "claude-sonnet-4.6", name: "Sonnet 4.6", tier: "pro", icon: "/models/claude.png", color: "text-orange-500" },
   { id: "gpt-5.2", name: "GPT 5.2", tier: "pro", icon: "◎", color: "text-gray-400" },
   { id: "gpt-5.4", name: "GPT 5.4", tier: "pro", icon: "◎", color: "text-gray-400" },
   { id: "gpt-5.5", name: "GPT 5.5", tier: "pro", icon: "◎", color: "text-gray-400" },
   { id: "grok-4.3", name: "Grok 4.3", tier: "pro", icon: "⊗", color: "text-gray-400" },
   { id: "grok-4.5", name: "Grok 4.5", tier: "pro", icon: "⊗", color: "text-gray-400" },
   // Boost
-  { id: "claude-sonnet-5", name: "Sonnet 5", tier: "boost", icon: "✳", color: "text-orange-500" },
-  { id: "claude-opus-4.7", name: "Opus 4.7", tier: "boost", icon: "✳", color: "text-orange-500" },
-  { id: "claude-opus-4.8", name: "Opus 4.8", tier: "boost", icon: "✳", color: "text-orange-500" },
-  { id: "claude-opus-5", name: "Opus 5", tier: "boost", icon: "✳", color: "text-orange-500" },
-  { id: "claude-fable-5", name: "Fable 5", tier: "boost", icon: "✳", color: "text-orange-400" },
+  { id: "claude-sonnet-5", name: "Sonnet 5", tier: "boost", icon: "/models/claude.png", color: "text-orange-500" },
+  { id: "claude-opus-4.7", name: "Opus 4.7", tier: "boost", icon: "/models/claude.png", color: "text-orange-500" },
+  { id: "claude-opus-4.8", name: "Opus 4.8", tier: "boost", icon: "/models/claude.png", color: "text-orange-500" },
+  { id: "claude-opus-5", name: "Opus 5", tier: "boost", icon: "/models/claude.png", color: "text-orange-500" },
+  { id: "claude-fable-5", name: "Fable 5", tier: "boost", icon: "/models/claude.png", color: "text-orange-400" },
   { id: "gemini-3.1-pro", name: "Gemini 3.1 Pro", tier: "boost", icon: "✦", color: "text-blue-500" },
   { id: "gpt-5.6-sol", name: "GPT 5.6 Sol", tier: "boost", icon: "◎", color: "text-gray-400" },
   { id: "gpt-5.6-terra", name: "GPT 5.6 Terra", tier: "boost", icon: "◎", color: "text-gray-400" },
@@ -36,6 +36,14 @@ const MODEL_LIST = [
   // Enterprise
   { id: "grok-build-0.1", name: "Grok Build 0.1", tier: "enterprise", icon: "⊗", color: "text-gray-400" },
 ];
+
+function ModelIcon({ icon, color }: { icon: string; color: string }) {
+  if (icon.startsWith("/")) {
+    return <img src={icon} alt="" className="h-4 w-4 shrink-0 rounded-full object-cover" />;
+  }
+
+  return <span className={color}>{icon}</span>;
+}
 
 export function ChatWindow() {
   const params = useParams();
@@ -144,7 +152,7 @@ export function ChatWindow() {
                 onClick={() => setModelMenuOpen(!modelMenuOpen)}
                 className="flex items-center gap-1.5 rounded-full border border-slate-200/80 bg-slate-50 px-3 py-1.5 text-xs text-slate-600 transition-all duration-200 hover:-translate-y-0.5 hover:bg-white"
               >
-                <span className={selectedModel.color}>{selectedModel.icon}</span>
+                <ModelIcon icon={selectedModel.icon} color={selectedModel.color} />
                 <span>{selectedModel.name}</span>
                 <svg className="h-3 w-3 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
@@ -157,28 +165,28 @@ export function ChatWindow() {
                     <div className="px-2 py-1 text-[10px] font-semibold uppercase tracking-[0.18em] text-slate-400">Free</div>
                     {MODEL_LIST.filter(m => m.tier === "free").map((m) => (
                         <button key={m.id} onClick={() => { setModel(m.id); setModelMenuOpen(false); }} className={`flex w-full items-center gap-2 rounded-xl px-3 py-2 text-left text-sm transition-all duration-200 ${model === m.id ? "bg-slate-950 text-white font-semibold shadow-sm" : "text-slate-600 hover:bg-slate-50"}`}>
-                        <span className={m.color}>{m.icon}</span><span>{m.name}</span>
+                        <ModelIcon icon={m.icon} color={m.color} /><span>{m.name}</span>
                         {model === m.id && <svg className="ml-auto h-3.5 w-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" /></svg>}
                       </button>
                     ))}
                     <div className="mt-2 flex items-center gap-2 px-2 py-1"><span className="text-[10px] font-semibold uppercase tracking-[0.18em] text-slate-400">Pro</span><span className="rounded-full bg-amber-100 px-1.5 py-0.5 text-[8px] font-bold text-amber-700">Pro</span></div>
                     {MODEL_LIST.filter(m => m.tier === "pro").map((m) => (
                         <button key={m.id} onClick={() => { setModel(m.id); setModelMenuOpen(false); }} className={`flex w-full items-center gap-2 rounded-xl px-3 py-2 text-left text-sm transition-all duration-200 ${model === m.id ? "bg-slate-950 text-white font-semibold shadow-sm" : "text-slate-600 hover:bg-slate-50"}`}>
-                        <span className={m.color}>{m.icon}</span><span>{m.name}</span>
+                        <ModelIcon icon={m.icon} color={m.color} /><span>{m.name}</span>
                         {model === m.id && <svg className="ml-auto h-3.5 w-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" /></svg>}
                       </button>
                     ))}
                     <div className="mt-2 flex items-center gap-2 px-2 py-1"><span className="text-[10px] font-semibold uppercase tracking-[0.18em] text-slate-400">Boost</span><span className="rounded-full bg-violet-100 px-1.5 py-0.5 text-[8px] font-bold text-violet-700">Boost</span></div>
                     {MODEL_LIST.filter(m => m.tier === "boost").map((m) => (
                         <button key={m.id} onClick={() => { setModel(m.id); setModelMenuOpen(false); }} className={`flex w-full items-center gap-2 rounded-xl px-3 py-2 text-left text-sm transition-all duration-200 ${model === m.id ? "bg-slate-950 text-white font-semibold shadow-sm" : "text-slate-600 hover:bg-slate-50"}`}>
-                        <span className={m.color}>{m.icon}</span><span>{m.name}</span>
+                        <ModelIcon icon={m.icon} color={m.color} /><span>{m.name}</span>
                         {model === m.id && <svg className="ml-auto h-3.5 w-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" /></svg>}
                       </button>
                     ))}
                     <div className="mt-2 flex items-center gap-2 px-2 py-1"><span className="text-[10px] font-semibold uppercase tracking-[0.18em] text-slate-400">Enterprise</span><span className="rounded-full bg-emerald-100 px-1.5 py-0.5 text-[8px] font-bold text-emerald-700">All</span></div>
                     {MODEL_LIST.filter(m => m.tier === "enterprise").map((m) => (
                         <button key={m.id} onClick={() => { setModel(m.id); setModelMenuOpen(false); }} className={`flex w-full items-center gap-2 rounded-xl px-3 py-2 text-left text-sm transition-all duration-200 ${model === m.id ? "bg-slate-950 text-white font-semibold shadow-sm" : "text-slate-600 hover:bg-slate-50"}`}>
-                        <span className={m.color}>{m.icon}</span><span>{m.name}</span>
+                        <ModelIcon icon={m.icon} color={m.color} /><span>{m.name}</span>
                         {model === m.id && <svg className="ml-auto h-3.5 w-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" /></svg>}
                       </button>
                     ))}

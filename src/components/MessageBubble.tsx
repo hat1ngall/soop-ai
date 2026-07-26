@@ -2,8 +2,6 @@
 
 import { useState, useEffect } from "react";
 import Markdown from "react-markdown";
-import { Prism as SyntaxHighlighter } from "react-syntax-highlighter";
-import { oneDark } from "react-syntax-highlighter/dist/esm/styles/prism";
 
 interface MessageBubbleProps {
   message: {
@@ -89,29 +87,30 @@ function MarkdownContent({ content }: { content: string }) {
             );
           }
 
+          const language = match ? match[1] : "code";
+          const code = String(children).replace(/\n$/, "");
+
           return (
-            <div className="my-3 overflow-hidden rounded-2xl border border-slate-200 bg-slate-950 shadow-[0_14px_36px_rgba(15,23,42,0.16)]">
-              <div className="flex items-center justify-between bg-slate-900 px-3 py-1.5 text-[11px] text-slate-400">
-                <span>{match ? match[1] : "code"}</span>
-                <CopyButton text={String(children).replace(/\n$/, "")} />
+            <div className="my-4 max-w-full overflow-hidden rounded-[24px] border border-slate-200/80 bg-white/95 shadow-[0_18px_45px_rgba(80,93,120,0.14)]">
+              <div className="flex items-center justify-between border-b border-slate-200/80 bg-gradient-to-r from-slate-50 to-amber-50/70 px-3 py-2.5 sm:px-4">
+                <div className="flex min-w-0 items-center gap-2">
+                  <span className="flex h-6 w-6 shrink-0 items-center justify-center rounded-xl bg-amber-200 text-[10px] font-black text-amber-900">
+                    {language.slice(0, 1).toUpperCase()}
+                  </span>
+                  <div className="min-w-0">
+                    <div className="truncate text-[11px] font-bold uppercase tracking-[0.18em] text-slate-500">
+                      {language}
+                    </div>
+                    <div className="hidden text-[10px] text-slate-400 sm:block">
+                      Нажмите, чтобы скопировать весь блок
+                    </div>
+                  </div>
+                </div>
+                <CopyButton text={code} />
               </div>
-              <SyntaxHighlighter
-                style={oneDark}
-                language={match ? match[1] : "text"}
-                PreTag="div"
-                customStyle={{
-                  margin: 0,
-                  borderRadius: 0,
-                  background: "#020617",
-                  fontSize: "12px",
-                  lineHeight: "1.5",
-                }}
-                codeTagProps={{
-                  style: { fontFamily: "monospace" },
-                }}
-              >
-                {String(children).replace(/\n$/, "")}
-              </SyntaxHighlighter>
+              <pre className="max-w-full overflow-x-auto bg-gradient-to-br from-white to-slate-50 px-4 py-4 text-[13px] leading-7 text-slate-800 sm:px-5">
+                <code className="font-mono">{code}</code>
+              </pre>
             </div>
           );
         },
