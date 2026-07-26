@@ -108,8 +108,8 @@ export default function DashboardLayout({
       )}
 
       {/* Sidebar - top on mobile, left on desktop */}
-      <div className={`fixed inset-2 z-40 transform transition-transform duration-300 ease-out sm:static sm:mr-3 sm:h-full sm:w-[278px] sm:translate-x-0 ${
-        sidebarOpen ? "translate-x-0" : "-translate-x-[110%] sm:-translate-x-full"
+      <div className={`fixed inset-0 z-40 transform transition-transform duration-300 ease-out md:static md:mr-3 md:h-full md:w-[278px] md:translate-x-0 ${
+        sidebarOpen ? "translate-x-0" : "-translate-x-[110%] md:-translate-x-full"
       }`}>
         <Sidebar
           isOpen={sidebarOpen}
