@@ -10,44 +10,52 @@ const VALID_PROMOCODES = ["soopcool"];
 const VALID_PLANS: PlanTier[] = ["pro", "boost", "enterprise"];
 
 export async function POST(req: Request) {
-  const session = await getServerSession(authOptions);
-  if (!session?.user) {
-    return NextResponse.json({ error: "Не авторизован" }, { status: 401 });
-  }
+  try {
+    const session = await getServerSession(authOptions);
+    if (!session?.user) {
+      return NextResponse.json({ error: "Не авторизован" }, { status: 401 });
+    }
 
-  const userId = (session.user as any).id;
-  const { code, selectedPlan } = await req.json();
+    const userId = (session.user as any).id;
+    const { code, selectedPlan } = await req.json();
 
-  if (!code || !selectedPlan) {
-    return NextResponse.json({ error: "Введите код и выберите план" }, { status: 400 });
-  }
+    if (!code || !selectedPlan) {
+      return NextResponse.json({ error: "Введите код и выберите план" }, { status: 400 });
+    }
 
-  // Валидация промокода
-  const isValid = VALID_PROMOCODES.includes(code.toLowerCase().trim());
-  if (!isValid) {
-    return NextResponse.json({ error: "Неверный код активации" }, { status: 400 });
-  }
+    // Валидация промокода
+    const isValid = VALID_PROMOCODES.includes(code.toLowerCase().trim());
+    if (!isValid) {
+      return NextResponse.json({ error: "Неверный код активации" }, { status: 400 });
+    }
 
-  // Валидация плана
-  if (!VALID_PLANS.includes(selectedPlan as PlanTier)) {
-    return NextResponse.json({ error: "Неизвестный план" }, { status: 400 });
-  }
+    // Валидация плана
+    if (!VALID_PLANS.includes(selectedPlan as PlanTier)) {
+      return NextResponse.json({ error: "Неизвестный план" }, { status: 400 });
+    }
 
-  // Активируем выбранный план
-  const expiresAt = new Date();
-  expiresAt.setDate(expiresAt.getDate() + 30);
+    // Активируем выбранный план
+    const expiresAt = new Date();
+    expiresAt.setDate(expiresAt.getDate() + 30);
 
-  await prisma.user.update({
-    where: { id: userId },
-    data: {
+    await prisma.user.update({
+      where: { id: userId },
+      data: {
+        plan: selectedPlan,
+        subscriptionExpiresAt: expiresAt,
+      },
+    });
+
+    return NextResponse.json({
+      ok: true,
       plan: selectedPlan,
-      subscriptionExpiresAt: expiresAt,
-    },
-  });
-
-  return NextResponse.json({
-    ok: true,
-    plan: selectedPlan,
-    expiresAt: expiresAt.toISOString(),
-  });
+      expiresAt: expiresAt.toISOString(),
+    });
+  } catch (error) {
+    console.error("Activation failed", error);
+    return NextResponse.json(
+      { error: "Не удалось активировать подписку. Проверьте базу данных на Render." },
+      { status: 500 }
+    );
+  }
 }

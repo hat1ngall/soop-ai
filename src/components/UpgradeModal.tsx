@@ -87,16 +87,17 @@ export function UpgradeModal({ isOpen, onClose }: UpgradeModalProps) {
         body: JSON.stringify({ code: code.trim(), selectedPlan }),
       });
 
-      const data = await res.json();
+      const contentType = res.headers.get("content-type") || "";
+      const data = contentType.includes("application/json")
+        ? await res.json()
+        : { error: await res.text() };
 
       if (!res.ok) {
         setError(data.error || "Ошибка активации");
-        setLoading(false);
         return;
       }
 
       setSuccess(true);
-      setLoading(false);
       setTimeout(() => {
         onClose();
         setStep("select");
@@ -106,6 +107,7 @@ export function UpgradeModal({ isOpen, onClose }: UpgradeModalProps) {
       }, 2000);
     } catch {
       setError("Ошибка сети");
+    } finally {
       setLoading(false);
     }
   };

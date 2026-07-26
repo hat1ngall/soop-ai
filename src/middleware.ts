@@ -5,5 +5,5 @@ export default withAuth({
 });
 
 export const config = {
-  matcher: ["/chat/:path*", "/((?!login|register|api/auth|api/activate).*)"],
+  matcher: ["/((?!api|login|register|_next/static|_next/image|favicon.ico|logo.svg).*)"],
 };
