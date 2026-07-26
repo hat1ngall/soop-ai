@@ -85,11 +85,11 @@ export default function DashboardLayout({
 
   if (status === "loading") {
     return (
-      <div className="flex min-h-screen items-center justify-center bg-[#0d0d0d]">
+      <div className="flex min-h-screen items-center justify-center">
         <div className="flex gap-1">
-          <span className="h-1.5 w-1.5 animate-bounce rounded-full bg-white/60" style={{ animationDelay: "0ms" }} />
-          <span className="h-1.5 w-1.5 animate-bounce rounded-full bg-white/60" style={{ animationDelay: "150ms" }} />
-          <span className="h-1.5 w-1.5 animate-bounce rounded-full bg-white/60" style={{ animationDelay: "300ms" }} />
+          <span className="h-2 w-2 animate-bounce rounded-full bg-slate-700" style={{ animationDelay: "0ms" }} />
+          <span className="h-2 w-2 animate-bounce rounded-full bg-slate-700" style={{ animationDelay: "150ms" }} />
+          <span className="h-2 w-2 animate-bounce rounded-full bg-slate-700" style={{ animationDelay: "300ms" }} />
         </div>
       </div>
     );
@@ -98,17 +98,17 @@ export default function DashboardLayout({
   if (!session) return null;
 
   return (
-    <div className="flex h-screen flex-col overflow-hidden bg-[#0d0d0d] sm:flex-row">
+    <div className="flex h-screen flex-col overflow-hidden p-2 sm:flex-row sm:p-3">
       {/* Mobile overlay */}
       {sidebarOpen && (
         <div
-          className="fixed inset-0 z-30 bg-black/60 sm:hidden"
+          className="fixed inset-0 z-30 bg-slate-950/25 backdrop-blur-sm sm:hidden animate-fade-in"
           onClick={() => setSidebarOpen(false)}
         />
       )}
 
       {/* Sidebar - top on mobile, left on desktop */}
-      <div className={`fixed inset-x-0 top-0 z-40 h-[260px] transform transition-transform duration-200 ease-in-out sm:inset-y-0 sm:inset-x-auto sm:h-full sm:w-[260px] sm:translate-x-0 ${
+      <div className={`fixed inset-x-2 top-2 z-40 h-[280px] transform transition-transform duration-300 ease-out sm:static sm:mr-3 sm:h-full sm:w-[278px] sm:translate-x-0 ${
         sidebarOpen ? "translate-y-0" : "-translate-y-full sm:-translate-x-full"
       }`}>
         <Sidebar
@@ -122,21 +122,24 @@ export default function DashboardLayout({
       </div>
 
       {/* Main content */}
-      <div className="flex flex-1 flex-col overflow-hidden">
+      <div className="flex min-w-0 flex-1 flex-col overflow-hidden rounded-[28px] border border-white/70 bg-white/55 shadow-[0_24px_80px_rgba(80,93,120,0.18)] backdrop-blur-2xl">
         {/* Top bar */}
-        <header className="flex h-12 shrink-0 items-center border-b border-white/5 bg-[#0d0d0d] px-4">
+        <header className="flex h-14 shrink-0 items-center justify-between border-b border-slate-200/70 bg-white/45 px-3 backdrop-blur-xl sm:px-4">
           <button
             onClick={() => setSidebarOpen(!sidebarOpen)}
-            className="rounded-lg p-1.5 text-gray-500 transition-colors hover:bg-white/5 hover:text-gray-300"
+            className="rounded-2xl border border-slate-200/80 bg-white/70 p-2 text-slate-500 shadow-sm transition-all duration-200 hover:-translate-y-0.5 hover:text-slate-900 active:translate-y-0"
           >
             <svg className="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
             </svg>
           </button>
+          <div className="rounded-full border border-slate-200/80 bg-white/70 px-3 py-1 text-[11px] font-semibold uppercase tracking-[0.24em] text-slate-500 shadow-sm">
+            Soop AI
+          </div>
         </header>
 
         {/* Main content */}
-        <main className="flex-1 overflow-hidden bg-[#0d0d0d]">
+        <main className="flex-1 overflow-hidden">
           {children}
         </main>
       </div>

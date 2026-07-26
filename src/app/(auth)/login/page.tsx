@@ -52,42 +52,42 @@ export default function LoginPage() {
   };
 
   return (
-    <div className="flex min-h-screen items-center justify-center bg-[#0d0d0d] px-4">
-      <div className="w-full max-w-sm animate-fade-in">
+    <div className="flex min-h-screen items-center justify-center px-4 py-8">
+      <div className="w-full max-w-md animate-fade-in">
         <div className="mb-6 text-center sm:mb-8">
           <Link href="/" className="inline-block">
-            <img src="/logo.svg" alt="Soop AI" className="mx-auto mb-4 h-12 w-12 rounded-full" />
+            <img src="/logo.svg" alt="Soop AI" className="mx-auto mb-4 h-14 w-14 rounded-2xl shadow-[0_16px_40px_rgba(80,93,120,0.18)]" />
           </Link>
-          <h1 className="text-xl font-medium text-white">Вход в Soop AI</h1>
-          <p className="mt-1 text-sm text-gray-400">Войдите в свой аккаунт Soop AI</p>
+          <h1 className="text-2xl font-semibold tracking-tight text-slate-950">Вход в Soop AI</h1>
+          <p className="mt-2 text-sm text-slate-500">Войдите в свой аккаунт Soop AI</p>
         </div>
 
-        <form onSubmit={handleSubmit} className="space-y-3 sm:space-y-4">
+        <form onSubmit={handleSubmit} className="space-y-3 rounded-[28px] border border-white/80 bg-white/75 p-5 shadow-[0_24px_70px_rgba(80,93,120,0.14)] backdrop-blur-xl sm:p-6 sm:space-y-4">
           {error && (
-            <div className="animate-shake rounded-xl bg-red-500/10 px-3 py-2 text-sm text-red-400">
+            <div className="animate-shake rounded-2xl border border-red-200 bg-red-50 px-3 py-2 text-sm text-red-600">
               {error}
             </div>
           )}
 
           <div>
-            <label className="mb-1.5 block text-xs text-gray-500">Email</label>
+            <label className="mb-1.5 block text-xs font-semibold uppercase tracking-[0.16em] text-slate-400">Email</label>
             <input
               type="email"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
-              className="w-full rounded-lg border border-white/10 bg-[#1a1a1a] px-3 py-2.5 text-sm text-white outline-none transition-colors focus:border-white/20"
+              className="w-full rounded-2xl border border-slate-200 bg-white px-4 py-3 text-sm text-slate-900 outline-none transition-all duration-200 focus:border-slate-300 focus:shadow-[0_0_0_4px_rgba(251,191,36,0.12)]"
               placeholder="you@example.com"
               autoComplete="email"
             />
           </div>
 
           <div>
-            <label className="mb-1.5 block text-xs text-gray-500">Пароль</label>
+            <label className="mb-1.5 block text-xs font-semibold uppercase tracking-[0.16em] text-slate-400">Пароль</label>
             <input
               type="password"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
-              className="w-full rounded-lg border border-white/10 bg-[#1a1a1a] px-3 py-2.5 text-sm text-white outline-none transition-colors focus:border-white/20"
+              className="w-full rounded-2xl border border-slate-200 bg-white px-4 py-3 text-sm text-slate-900 outline-none transition-all duration-200 focus:border-slate-300 focus:shadow-[0_0_0_4px_rgba(251,191,36,0.12)]"
               placeholder="Минимум 6 символов"
               autoComplete="current-password"
             />
@@ -96,7 +96,7 @@ export default function LoginPage() {
           <button
             type="submit"
             disabled={loading}
-            className="w-full rounded-lg bg-white py-2.5 text-sm font-medium text-black transition-all hover:bg-gray-200 active:scale-[0.98] disabled:opacity-50"
+            className="w-full rounded-2xl bg-slate-950 py-3 text-sm font-semibold text-white shadow-[0_14px_30px_rgba(15,23,42,0.18)] transition-all duration-200 hover:-translate-y-0.5 hover:bg-slate-800 active:scale-[0.98] disabled:opacity-50"
           >
             {loading ? (
               <span className="inline-flex items-center gap-2">
@@ -112,9 +112,9 @@ export default function LoginPage() {
           </button>
         </form>
 
-        <p className="mt-5 text-center text-sm text-gray-500 sm:mt-6">
+        <p className="mt-5 text-center text-sm text-slate-500 sm:mt-6">
           Нет аккаунта?{" "}
-          <Link href="/register" className="font-medium text-white hover:underline">
+          <Link href="/register" className="font-semibold text-slate-950 hover:underline">
             Зарегистрироваться
           </Link>
         </p>

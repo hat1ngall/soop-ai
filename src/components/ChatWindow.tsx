@@ -81,12 +81,28 @@ export function ChatWindow() {
     <div className="flex h-full flex-col animate-fade-in">
       {/* Messages */}
       <div className="flex-1 overflow-y-auto">
-        <div className="mx-auto max-w-3xl px-4 py-6">
+        <div className="mx-auto max-w-3xl px-3 py-4 sm:px-4 sm:py-6 lg:px-6">
           {messages.length === 0 && !loading ? (
-            <div className="flex flex-col items-center justify-center py-32 text-center">
-              <img src="/logo.svg" alt="Soop AI" className="mb-6 h-14 w-14 rounded-full" />
-              <h2 className="mb-2 text-2xl font-medium text-white">Чем могу помочь?</h2>
-              <p className="text-sm text-gray-500">Я могу отвечать на вопросы, писать код, анализировать данные и многое другое.</p>
+            <div className="flex flex-col items-center justify-center py-24 text-center sm:py-32">
+              <div className="mb-6 flex h-20 w-20 items-center justify-center rounded-[28px] border border-white/80 bg-white/75 shadow-[0_18px_50px_rgba(80,93,120,0.18)] animate-float-slow">
+                <img src="/logo.svg" alt="Soop AI" className="h-12 w-12 rounded-2xl" />
+              </div>
+              <h2 className="mb-3 text-2xl font-semibold tracking-tight text-slate-900 sm:text-3xl">Чем могу помочь?</h2>
+              <p className="max-w-xl text-sm leading-6 text-slate-500 sm:text-base">Я могу отвечать на вопросы, писать код, анализировать данные и многое другое.</p>
+              <div className="mt-8 grid w-full max-w-2xl grid-cols-1 gap-3 sm:grid-cols-3">
+                <div className="rounded-3xl border border-white/80 bg-white/70 px-4 py-4 text-left shadow-[0_14px_40px_rgba(80,93,120,0.12)]">
+                  <div className="text-xs font-semibold uppercase tracking-[0.18em] text-amber-600">Code</div>
+                  <div className="mt-2 text-sm text-slate-700">Напиши код на Python</div>
+                </div>
+                <div className="rounded-3xl border border-white/80 bg-white/70 px-4 py-4 text-left shadow-[0_14px_40px_rgba(80,93,120,0.12)]">
+                  <div className="text-xs font-semibold uppercase tracking-[0.18em] text-sky-600">Explain</div>
+                  <div className="mt-2 text-sm text-slate-700">Объясни квантовую физику</div>
+                </div>
+                <div className="rounded-3xl border border-white/80 bg-white/70 px-4 py-4 text-left shadow-[0_14px_40px_rgba(80,93,120,0.12)]">
+                  <div className="text-xs font-semibold uppercase tracking-[0.18em] text-violet-600">Design</div>
+                  <div className="mt-2 text-sm text-slate-700">Помоги с дизайном</div>
+                </div>
+              </div>
             </div>
           ) : (
             <div className="space-y-6">
@@ -100,16 +116,16 @@ export function ChatWindow() {
       </div>
 
       {/* Input area */}
-      <div className="border-t border-white/5 bg-[#171717] px-4 pb-4 pt-3">
+      <div className="border-t border-white/70 bg-white/45 px-3 pb-3 pt-3 backdrop-blur-xl sm:px-4 sm:pb-4">
         <div className="mx-auto max-w-3xl animate-slide-up">
           {usage && usage.limit !== -1 && (
             <div className="mb-2 flex items-center justify-between px-1">
-              <span className="text-[11px] text-gray-600">{usage.used}/{usage.limit} сообщений сегодня</span>
-              {usage.remaining <= 5 && usage.remaining > 0 && <span className="text-[11px] text-yellow-500/80">Осталось {usage.remaining}</span>}
+              <span className="text-[11px] text-slate-500">{usage.used}/{usage.limit} сообщений сегодня</span>
+              {usage.remaining <= 5 && usage.remaining > 0 && <span className="text-[11px] text-amber-600">Осталось {usage.remaining}</span>}
             </div>
           )}
 
-            <div className={`flex items-end gap-2 rounded-2xl border p-2 transition-all duration-200 ${isLimitExceeded ? "border-red-500/30 bg-red-500/5" : "border-white/10 bg-[#2a2a2a] focus-within:border-white/20"}`}>
+          <div className={`flex items-end gap-2 rounded-[24px] border p-2.5 transition-all duration-200 shadow-[0_18px_50px_rgba(80,93,120,0.12)] ${isLimitExceeded ? "border-red-300 bg-red-50/90" : "border-white/80 bg-white/80 focus-within:border-slate-300"}`}>
             <textarea
               ref={textareaRef}
               value={input}
@@ -118,7 +134,7 @@ export function ChatWindow() {
               placeholder={isLimitExceeded ? "Лимит исчерпан..." : "Напишите сообщение..."}
               rows={1}
               disabled={loading || isLimitExceeded}
-              className="max-h-40 flex-1 resize-none bg-transparent px-1 py-1.5 text-sm text-white outline-none placeholder:text-gray-500 disabled:opacity-50"
+              className="max-h-40 flex-1 resize-none bg-transparent px-1 py-1.5 text-sm text-slate-800 outline-none placeholder:text-slate-400 disabled:opacity-50"
               style={{ minHeight: "20px" }}
             />
 
@@ -126,7 +142,7 @@ export function ChatWindow() {
             <div ref={modelRef} className="relative shrink-0">
               <button
                 onClick={() => setModelMenuOpen(!modelMenuOpen)}
-                className="flex items-center gap-1.5 rounded-full border border-white/10 bg-white/5 px-3 py-1.5 text-xs text-gray-300 transition-all duration-200 hover:-translate-y-0.5 hover:bg-white/10"
+                className="flex items-center gap-1.5 rounded-full border border-slate-200/80 bg-slate-50 px-3 py-1.5 text-xs text-slate-600 transition-all duration-200 hover:-translate-y-0.5 hover:bg-white"
               >
                 <span className={selectedModel.color}>{selectedModel.icon}</span>
                 <span>{selectedModel.name}</span>
@@ -136,32 +152,32 @@ export function ChatWindow() {
               </button>
 
               {modelMenuOpen && (
-                <div className="absolute bottom-full right-0 mb-2 w-64 overflow-hidden rounded-xl border border-white/10 bg-[#2f2f2f] shadow-2xl animate-pop-in">
-                  <div className="max-h-[50vh] overflow-y-auto p-1.5" style={{ scrollbarColor: "#555 #2f2f2f" }}>
-                    <div className="px-2 py-1 text-[10px] font-medium text-gray-500">Free</div>
+                <div className="absolute bottom-full right-0 mb-2 w-64 overflow-hidden rounded-2xl border border-white/80 bg-white shadow-[0_24px_60px_rgba(80,93,120,0.18)] animate-pop-in">
+                  <div className="max-h-[50vh] overflow-y-auto p-1.5" style={{ scrollbarColor: "#b9c3d6 #eef2f8" }}>
+                    <div className="px-2 py-1 text-[10px] font-semibold uppercase tracking-[0.18em] text-slate-400">Free</div>
                     {MODEL_LIST.filter(m => m.tier === "free").map((m) => (
-                      <button key={m.id} onClick={() => { setModel(m.id); setModelMenuOpen(false); }} className={`flex w-full items-center gap-2 rounded-lg px-3 py-2 text-left text-sm transition-colors ${model === m.id ? "bg-white text-black font-medium" : "text-gray-300 hover:bg-white/10"}`}>
+                        <button key={m.id} onClick={() => { setModel(m.id); setModelMenuOpen(false); }} className={`flex w-full items-center gap-2 rounded-xl px-3 py-2 text-left text-sm transition-all duration-200 ${model === m.id ? "bg-slate-950 text-white font-semibold shadow-sm" : "text-slate-600 hover:bg-slate-50"}`}>
                         <span className={m.color}>{m.icon}</span><span>{m.name}</span>
                         {model === m.id && <svg className="ml-auto h-3.5 w-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" /></svg>}
                       </button>
                     ))}
-                    <div className="mt-2 flex items-center gap-2 px-2 py-1"><span className="text-[10px] font-medium text-gray-500">Pro</span><span className="rounded bg-white/10 px-1.5 py-0.5 text-[8px] font-bold text-gray-400">Pro</span></div>
+                    <div className="mt-2 flex items-center gap-2 px-2 py-1"><span className="text-[10px] font-semibold uppercase tracking-[0.18em] text-slate-400">Pro</span><span className="rounded-full bg-amber-100 px-1.5 py-0.5 text-[8px] font-bold text-amber-700">Pro</span></div>
                     {MODEL_LIST.filter(m => m.tier === "pro").map((m) => (
-                      <button key={m.id} onClick={() => { setModel(m.id); setModelMenuOpen(false); }} className={`flex w-full items-center gap-2 rounded-lg px-3 py-2 text-left text-sm transition-colors ${model === m.id ? "bg-white text-black font-medium" : "text-gray-300 hover:bg-white/10"}`}>
+                        <button key={m.id} onClick={() => { setModel(m.id); setModelMenuOpen(false); }} className={`flex w-full items-center gap-2 rounded-xl px-3 py-2 text-left text-sm transition-all duration-200 ${model === m.id ? "bg-slate-950 text-white font-semibold shadow-sm" : "text-slate-600 hover:bg-slate-50"}`}>
                         <span className={m.color}>{m.icon}</span><span>{m.name}</span>
                         {model === m.id && <svg className="ml-auto h-3.5 w-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" /></svg>}
                       </button>
                     ))}
-                    <div className="mt-2 flex items-center gap-2 px-2 py-1"><span className="text-[10px] font-medium text-gray-500">Boost</span><span className="rounded bg-white/10 px-1.5 py-0.5 text-[8px] font-bold text-gray-400">Boost</span></div>
+                    <div className="mt-2 flex items-center gap-2 px-2 py-1"><span className="text-[10px] font-semibold uppercase tracking-[0.18em] text-slate-400">Boost</span><span className="rounded-full bg-violet-100 px-1.5 py-0.5 text-[8px] font-bold text-violet-700">Boost</span></div>
                     {MODEL_LIST.filter(m => m.tier === "boost").map((m) => (
-                      <button key={m.id} onClick={() => { setModel(m.id); setModelMenuOpen(false); }} className={`flex w-full items-center gap-2 rounded-lg px-3 py-2 text-left text-sm transition-colors ${model === m.id ? "bg-white text-black font-medium" : "text-gray-300 hover:bg-white/10"}`}>
+                        <button key={m.id} onClick={() => { setModel(m.id); setModelMenuOpen(false); }} className={`flex w-full items-center gap-2 rounded-xl px-3 py-2 text-left text-sm transition-all duration-200 ${model === m.id ? "bg-slate-950 text-white font-semibold shadow-sm" : "text-slate-600 hover:bg-slate-50"}`}>
                         <span className={m.color}>{m.icon}</span><span>{m.name}</span>
                         {model === m.id && <svg className="ml-auto h-3.5 w-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" /></svg>}
                       </button>
                     ))}
-                    <div className="mt-2 flex items-center gap-2 px-2 py-1"><span className="text-[10px] font-medium text-gray-500">Enterprise</span><span className="rounded bg-white/10 px-1.5 py-0.5 text-[8px] font-bold text-gray-400">All</span></div>
+                    <div className="mt-2 flex items-center gap-2 px-2 py-1"><span className="text-[10px] font-semibold uppercase tracking-[0.18em] text-slate-400">Enterprise</span><span className="rounded-full bg-emerald-100 px-1.5 py-0.5 text-[8px] font-bold text-emerald-700">All</span></div>
                     {MODEL_LIST.filter(m => m.tier === "enterprise").map((m) => (
-                      <button key={m.id} onClick={() => { setModel(m.id); setModelMenuOpen(false); }} className={`flex w-full items-center gap-2 rounded-lg px-3 py-2 text-left text-sm transition-colors ${model === m.id ? "bg-white text-black font-medium" : "text-gray-300 hover:bg-white/10"}`}>
+                        <button key={m.id} onClick={() => { setModel(m.id); setModelMenuOpen(false); }} className={`flex w-full items-center gap-2 rounded-xl px-3 py-2 text-left text-sm transition-all duration-200 ${model === m.id ? "bg-slate-950 text-white font-semibold shadow-sm" : "text-slate-600 hover:bg-slate-50"}`}>
                         <span className={m.color}>{m.icon}</span><span>{m.name}</span>
                         {model === m.id && <svg className="ml-auto h-3.5 w-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" /></svg>}
                       </button>
@@ -175,7 +191,7 @@ export function ChatWindow() {
             <button
               onClick={handleSend}
               disabled={!input.trim() || loading || isLimitExceeded}
-              className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-white text-black transition-all hover:bg-gray-200 disabled:opacity-20"
+              className="flex h-9 w-9 shrink-0 items-center justify-center rounded-2xl bg-slate-950 text-white shadow-[0_12px_24px_rgba(15,23,42,0.18)] transition-all duration-200 hover:-translate-y-0.5 hover:bg-slate-800 disabled:opacity-25"
             >
               {loading ? (
                 <svg className="h-4 w-4 animate-spin" fill="none" viewBox="0 0 24 24">
@@ -192,7 +208,7 @@ export function ChatWindow() {
 
           {isLimitExceeded && (
             <div className="mt-2 text-center">
-              <button onClick={() => setUpgradeOpen(true)} className="text-xs text-white hover:underline">Обновить план</button>
+              <button onClick={() => setUpgradeOpen(true)} className="text-xs font-semibold text-slate-700 hover:text-slate-950 hover:underline">Обновить план</button>
             </div>
           )}
         </div>

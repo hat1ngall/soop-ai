@@ -38,7 +38,7 @@ export function MessageBubble({ message, isLoading, isThinking, model }: Message
   if (isUser) {
     return (
       <div className="flex justify-end animate-slide-up">
-        <div className="max-w-[85%] rounded-2xl bg-[#2a2a2a] px-4 py-2.5 text-sm leading-relaxed text-white shadow-[0_8px_30px_rgba(0,0,0,0.18)] transition-transform duration-200 hover:-translate-y-0.5">
+        <div className="max-w-[85%] rounded-[22px] rounded-br-md bg-slate-950 px-4 py-2.5 text-sm leading-relaxed text-white shadow-[0_14px_36px_rgba(15,23,42,0.18)] transition-transform duration-200 hover:-translate-y-0.5">
           {message.content}
         </div>
       </div>
@@ -47,24 +47,24 @@ export function MessageBubble({ message, isLoading, isThinking, model }: Message
 
   return (
     <div className="flex gap-3 animate-slide-up">
-      <img src="/logo.svg" alt="" className="h-7 w-7 shrink-0 rounded-full shadow-[0_0_22px_rgba(255,255,255,0.12)] animate-pulse-glow" />
+      <img src="/logo.svg" alt="" className="h-8 w-8 shrink-0 rounded-2xl shadow-[0_14px_34px_rgba(80,93,120,0.16)] animate-pulse-glow" />
       <div className="min-w-0 flex-1 pt-0.5">
         {isLoading && isThinking && !message.content ? (
-          <div className="space-y-2 py-1">
+          <div className="space-y-2 rounded-[22px] rounded-tl-md border border-white/80 bg-white/70 px-4 py-3 shadow-[0_14px_40px_rgba(80,93,120,0.12)]">
             <div className="flex items-center gap-2">
               <div className="flex gap-1">
-                <span className="h-1.5 w-1.5 animate-pulse rounded-full bg-gray-500" style={{ animationDelay: "0ms" }} />
-                <span className="h-1.5 w-1.5 animate-pulse rounded-full bg-gray-500" style={{ animationDelay: "200ms" }} />
-                <span className="h-1.5 w-1.5 animate-pulse rounded-full bg-gray-500" style={{ animationDelay: "400ms" }} />
+                <span className="h-1.5 w-1.5 animate-pulse rounded-full bg-slate-400" style={{ animationDelay: "0ms" }} />
+                <span className="h-1.5 w-1.5 animate-pulse rounded-full bg-slate-400" style={{ animationDelay: "200ms" }} />
+                <span className="h-1.5 w-1.5 animate-pulse rounded-full bg-slate-400" style={{ animationDelay: "400ms" }} />
               </div>
-              <span className="text-xs text-gray-500">{THINKING_STAGES[thinkingStage]}</span>
+              <span className="text-xs text-slate-500">{THINKING_STAGES[thinkingStage]}</span>
             </div>
           </div>
         ) : message.content ? (
-          <div className="text-sm leading-relaxed text-gray-300">
+          <div className="rounded-[22px] rounded-tl-md border border-white/80 bg-white/70 px-4 py-3 text-sm leading-relaxed text-slate-700 shadow-[0_14px_40px_rgba(80,93,120,0.12)]">
             <MarkdownContent content={message.content} />
             {isLoading && (
-              <span className="ml-0.5 inline-block h-3.5 w-0.5 animate-pulse bg-gray-500 align-text-bottom" />
+              <span className="ml-0.5 inline-block h-3.5 w-0.5 animate-pulse bg-slate-500 align-text-bottom" />
             )}
           </div>
         ) : null}
@@ -83,15 +83,15 @@ function MarkdownContent({ content }: { content: string }) {
 
           if (isInline) {
             return (
-              <code className="rounded bg-white/10 px-1.5 py-0.5 text-xs text-gray-200" {...props}>
+              <code className="rounded-lg bg-slate-100 px-1.5 py-0.5 text-xs text-slate-700" {...props}>
                 {children}
               </code>
             );
           }
 
           return (
-            <div className="my-3 overflow-hidden rounded-lg border border-white/5">
-              <div className="flex items-center justify-between bg-[#1a1a1a] px-3 py-1.5 text-[11px] text-gray-500">
+            <div className="my-3 overflow-hidden rounded-2xl border border-slate-200 bg-slate-950 shadow-[0_14px_36px_rgba(15,23,42,0.16)]">
+              <div className="flex items-center justify-between bg-slate-900 px-3 py-1.5 text-[11px] text-slate-400">
                 <span>{match ? match[1] : "code"}</span>
                 <CopyButton text={String(children).replace(/\n$/, "")} />
               </div>
@@ -102,7 +102,7 @@ function MarkdownContent({ content }: { content: string }) {
                 customStyle={{
                   margin: 0,
                   borderRadius: 0,
-                  background: "#0a0a0a",
+                  background: "#020617",
                   fontSize: "12px",
                   lineHeight: "1.5",
                 }}
@@ -119,13 +119,13 @@ function MarkdownContent({ content }: { content: string }) {
           return <p className="mb-2 last:mb-0">{children}</p>;
         },
         h1({ children }) {
-          return <h1 className="mb-3 mt-5 text-xl font-bold text-white">{children}</h1>;
+          return <h1 className="mb-3 mt-5 text-xl font-bold text-slate-950">{children}</h1>;
         },
         h2({ children }) {
-          return <h2 className="mb-2 mt-4 text-lg font-bold text-white">{children}</h2>;
+          return <h2 className="mb-2 mt-4 text-lg font-bold text-slate-950">{children}</h2>;
         },
         h3({ children }) {
-          return <h3 className="mb-2 mt-3 text-base font-semibold text-white">{children}</h3>;
+          return <h3 className="mb-2 mt-3 text-base font-semibold text-slate-950">{children}</h3>;
         },
         ul({ children }) {
           return <ul className="mb-2 list-disc pl-4 space-y-0.5">{children}</ul>;
@@ -134,40 +134,40 @@ function MarkdownContent({ content }: { content: string }) {
           return <ol className="mb-2 list-decimal pl-4 space-y-0.5">{children}</ol>;
         },
         li({ children }) {
-          return <li className="text-gray-300">{children}</li>;
+          return <li className="text-slate-700">{children}</li>;
         },
         blockquote({ children }) {
           return (
-            <blockquote className="my-2 border-l-2 border-gray-600 pl-3 text-gray-400 italic">
+            <blockquote className="my-2 border-l-2 border-slate-300 pl-3 text-slate-500 italic">
               {children}
             </blockquote>
           );
         },
         a({ href, children }) {
           return (
-            <a href={href} target="_blank" rel="noopener noreferrer" className="text-blue-400 hover:underline">
+            <a href={href} target="_blank" rel="noopener noreferrer" className="font-medium text-sky-600 hover:underline">
               {children}
             </a>
           );
         },
         strong({ children }) {
-          return <strong className="font-semibold text-white">{children}</strong>;
+          return <strong className="font-semibold text-slate-950">{children}</strong>;
         },
         table({ children }) {
           return (
-            <div className="my-3 overflow-x-auto rounded-lg border border-white/5">
+            <div className="my-3 overflow-x-auto rounded-2xl border border-slate-200">
               <table className="w-full text-xs">{children}</table>
             </div>
           );
         },
         thead({ children }) {
-          return <thead className="border-b border-white/5 bg-white/5">{children}</thead>;
+          return <thead className="border-b border-slate-200 bg-slate-50">{children}</thead>;
         },
         th({ children }) {
-          return <th className="px-3 py-1.5 text-left font-medium text-gray-300">{children}</th>;
+          return <th className="px-3 py-1.5 text-left font-medium text-slate-700">{children}</th>;
         },
         td({ children }) {
-          return <td className="border-b border-white/5 px-3 py-1.5 text-gray-400">{children}</td>;
+          return <td className="border-b border-slate-200 px-3 py-1.5 text-slate-600">{children}</td>;
         },
       }}
     >
@@ -188,7 +188,7 @@ function CopyButton({ text }: { text: string }) {
   return (
     <button
       onClick={handleCopy}
-      className="flex items-center gap-1 rounded px-1.5 py-0.5 text-[10px] text-gray-500 transition-colors hover:bg-white/5 hover:text-gray-300"
+      className="flex items-center gap-1 rounded-lg px-1.5 py-0.5 text-[10px] text-slate-400 transition-colors hover:bg-white/10 hover:text-white"
     >
       {copied ? (
         <>
