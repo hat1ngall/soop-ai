@@ -68,38 +68,44 @@ function getTypingSpeed(model: string): number {
   return speeds[model] || 30;
 }
 
-// Задержка "размышления" перед ответом (мс)
+// Скорость для кода — в 5 раз быстрее
+function getCodeTypingSpeed(model: string): number {
+  return Math.max(3, Math.floor(getTypingSpeed(model) / 5));
+}
+
+// Задержка "размышления" перед ответом (мс) — зависит от модели и длины
 function getThinkingDelay(model: string, messageLength: number): number {
   const base: Record<string, number> = {
-    // Free
-    "gemini-flash-3.5": 800,
-    "minimax-2.5": 1000,
-    "llama-4-scout": 900,
-    "kimi-k2.6": 1100,
-    "kimi-k2.7-code": 1100,
-    "deepseek-v4-pro": 1200,
-    // Pro
-    "claude-sonnet-4.6": 2000,
-    "gpt-5.2": 1800,
-    "gpt-5.4": 2100,
-    "gpt-5.5": 2300,
-    "grok-4.3": 1700,
-    "grok-4.5": 2200,
-    // Boost
-    "claude-sonnet-5": 2800,
-    "claude-opus-4.7": 3000,
-    "claude-opus-4.8": 3200,
-    "claude-opus-5": 3500,
-    "claude-fable-5": 3300,
-    "gemini-3.1-pro": 2600,
-    "gpt-5.6-sol": 3100,
-    "gpt-5.6-terra": 3200,
-    "glm-5.2": 2700,
+    // Free — быстро думает
+    "gemini-flash-3.5": 1200,
+    "minimax-2.5": 1500,
+    "llama-4-scout": 1300,
+    "kimi-k2.6": 1600,
+    "kimi-k2.7-code": 1600,
+    "deepseek-v4-pro": 1700,
+    // Pro — среднее
+    "claude-sonnet-4.6": 2500,
+    "gpt-5.2": 2300,
+    "gpt-5.4": 2700,
+    "gpt-5.5": 2900,
+    "grok-4.3": 2200,
+    "grok-4.5": 2800,
+    // Boost — долго думает (самый умный)
+    "claude-sonnet-5": 3500,
+    "claude-opus-4.7": 3800,
+    "claude-opus-4.8": 4000,
+    "claude-opus-5": 4500,
+    "claude-fable-5": 4200,
+    "gemini-3.1-pro": 3300,
+    "gpt-5.6-sol": 3900,
+    "gpt-5.6-terra": 4100,
+    "glm-5.2": 3400,
     // Enterprise
-    "grok-build-0.1": 3400,
+    "grok-build-0.1": 4300,
   };
-  const b = base[model] || 2000;
-  const lengthBonus = Math.min(messageLength * 8, 4000);
+  const b = base[model] || 2500;
+  // Чем длиннее сообщение — тем дольше думает (макс +5 сек)
+  const lengthBonus = Math.min(messageLength * 10, 5000);
   return b + lengthBonus;
 }
 
@@ -126,11 +132,12 @@ function getDemoResponse(message: string, model: string): string {
 }
 
 // Считаем задержку для символа
-function charDelay(char: string, baseSpeed: number): number {
-  if (char === "\n") return baseSpeed * 6;
-  if (".!?".includes(char)) return baseSpeed * 4;
-  if (",;:".includes(char)) return baseSpeed * 3;
-  if (char === " ") return baseSpeed * 2;
+function charDelay(char: string, baseSpeed: number, inCode: boolean): number {
+  if (inCode) return Math.max(1, Math.floor(baseSpeed / 6)); // Код — в 6 раз быстрее
+  if (char === "\n") return baseSpeed * 4;
+  if (".!?".includes(char)) return baseSpeed * 3;
+  if (",;:".includes(char)) return baseSpeed * 2;
+  if (char === " ") return baseSpeed * 1.5;
   return baseSpeed;
 }
 
@@ -207,12 +214,14 @@ export async function POST(req: Request) {
       await new Promise((r) => setTimeout(r, thinkingDelay));
 
       if (!isApiConfigured) {
-        // ДЕМО — побуквенно с задержками
+        // ДЕМО — побуквенно с задержками, код быстрее
         const demoText = getDemoResponse(message, model);
+        let inCode = false;
         for (const char of demoText) {
+          if (char === "`" && demoText.substr(fullContent.length, 3) === "```") inCode = !inCode;
           fullContent += char;
           controller.enqueue(encoder.encode(`data: ${JSON.stringify({ chunk: char })}\n\n`));
-          await new Promise((r) => setTimeout(r, charDelay(char, typingSpeed)));
+          await new Promise((r) => setTimeout(r, charDelay(char, typingSpeed, inCode)));
         }
       } else {
         // Реальный API — сначала получаем полный ответ
@@ -247,11 +256,13 @@ export async function POST(req: Request) {
             data.content ||
             "Пустой ответ от модели.";
 
-          // 2. Выдаём посимвольно с задержками
+          // 2. Выдаём посимвольно — код быстрее, текст медленнее
+          let inCode = false;
           for (const char of fullText) {
+            if (char === "\n" && fullText.substr(fullContent.length, 4) === "\n```") inCode = !inCode;
             fullContent += char;
             controller.enqueue(encoder.encode(`data: ${JSON.stringify({ chunk: char })}\n\n`));
-            await new Promise((r) => setTimeout(r, charDelay(char, typingSpeed)));
+            await new Promise((r) => setTimeout(r, charDelay(char, typingSpeed, inCode)));
           }
         } catch (error) {
           console.error("Chat API error:", error);
