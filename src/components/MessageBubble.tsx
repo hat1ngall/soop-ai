@@ -188,7 +188,7 @@ function CopyButton({ text }: { text: string }) {
   return (
     <button
       onClick={handleCopy}
-      className="flex items-center gap-1 rounded-lg px-1.5 py-0.5 text-[10px] text-slate-400 transition-colors hover:bg-white/10 hover:text-white"
+      className="flex shrink-0 items-center gap-1.5 rounded-xl border border-slate-200 bg-white/80 px-2.5 py-1.5 text-[10px] font-semibold text-slate-500 shadow-sm transition-all duration-200 hover:-translate-y-0.5 hover:text-slate-950"
     >
       {copied ? (
         <>
