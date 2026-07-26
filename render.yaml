@@ -7,7 +7,7 @@ services:
     startCommand: npx prisma db push && npm start
     envVars:
       - key: DATABASE_URL
-        value: "file:./prod.db"
+        sync: false
       - key: NEXTAUTH_SECRET
         generateValue: true
       - key: NEXTAUTH_URL
