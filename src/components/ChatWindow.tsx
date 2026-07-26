@@ -10,31 +10,31 @@ interface UsageInfo { plan: string; used: number; limit: number; remaining: numb
 
 const MODEL_LIST = [
   // Free
-  { id: "gemini-flash-3.5", name: "Gemini 3.5 Flash", tier: "free", icon: "✦", color: "text-blue-400" },
-  { id: "minimax-2.5", name: "Minimax 2.5", tier: "free", icon: "◆", color: "text-gray-400" },
-  { id: "llama-4-scout", name: "Llama 4 Scout", tier: "free", icon: "◆", color: "text-orange-400" },
-  { id: "kimi-k2.6", name: "Kimi K2.6", tier: "free", icon: "≋", color: "text-gray-400" },
-  { id: "kimi-k2.7-code", name: "Kimi K2.7 Code", tier: "free", icon: "≋", color: "text-gray-400" },
-  { id: "deepseek-v4-pro", name: "DeepSeek V4 Pro", tier: "free", icon: "≋", color: "text-blue-400" },
+  { id: "gemini-flash-3.5", name: "Gemini 3.5 Flash", tier: "free", icon: "/models/Google_Gemini.png", color: "text-blue-400" },
+  { id: "minimax-2.5", name: "Minimax 2.5", tier: "free", icon: "/models/minimax.png", color: "text-gray-400" },
+  { id: "llama-4-scout", name: "Llama 4 Scout", tier: "free", icon: "/models/llama.png", color: "text-orange-400" },
+  { id: "kimi-k2.6", name: "Kimi K2.6", tier: "free", icon: "/models/kimi.png", color: "text-gray-400" },
+  { id: "kimi-k2.7-code", name: "Kimi K2.7 Code", tier: "free", icon: "/models/kimi.png", color: "text-gray-400" },
+  { id: "deepseek-v4-pro", name: "DeepSeek V4 Pro", tier: "free", icon: "/models/Deepseek.png", color: "text-blue-400" },
   // Pro
   { id: "claude-sonnet-4.6", name: "Sonnet 4.6", tier: "pro", icon: "/models/claude.png", color: "text-orange-500" },
-  { id: "gpt-5.2", name: "GPT 5.2", tier: "pro", icon: "◎", color: "text-gray-400" },
-  { id: "gpt-5.4", name: "GPT 5.4", tier: "pro", icon: "◎", color: "text-gray-400" },
-  { id: "gpt-5.5", name: "GPT 5.5", tier: "pro", icon: "◎", color: "text-gray-400" },
-  { id: "grok-4.3", name: "Grok 4.3", tier: "pro", icon: "⊗", color: "text-gray-400" },
-  { id: "grok-4.5", name: "Grok 4.5", tier: "pro", icon: "⊗", color: "text-gray-400" },
+  { id: "gpt-5.2", name: "GPT 5.2", tier: "pro", icon: "/models/chatgpt.png", color: "text-gray-400" },
+  { id: "gpt-5.4", name: "GPT 5.4", tier: "pro", icon: "/models/chatgpt.png", color: "text-gray-400" },
+  { id: "gpt-5.5", name: "GPT 5.5", tier: "pro", icon: "/models/chatgpt.png", color: "text-gray-400" },
+  { id: "grok-4.3", name: "Grok 4.3", tier: "pro", icon: "/models/grok.png", color: "text-gray-400" },
+  { id: "grok-4.5", name: "Grok 4.5", tier: "pro", icon: "/models/grok.png", color: "text-gray-400" },
   // Boost
   { id: "claude-sonnet-5", name: "Sonnet 5", tier: "boost", icon: "/models/claude.png", color: "text-orange-500" },
   { id: "claude-opus-4.7", name: "Opus 4.7", tier: "boost", icon: "/models/claude.png", color: "text-orange-500" },
   { id: "claude-opus-4.8", name: "Opus 4.8", tier: "boost", icon: "/models/claude.png", color: "text-orange-500" },
   { id: "claude-opus-5", name: "Opus 5", tier: "boost", icon: "/models/claude.png", color: "text-orange-500" },
   { id: "claude-fable-5", name: "Fable 5", tier: "boost", icon: "/models/claude.png", color: "text-orange-400" },
-  { id: "gemini-3.1-pro", name: "Gemini 3.1 Pro", tier: "boost", icon: "✦", color: "text-blue-500" },
-  { id: "gpt-5.6-sol", name: "GPT 5.6 Sol", tier: "boost", icon: "◎", color: "text-gray-400" },
-  { id: "gpt-5.6-terra", name: "GPT 5.6 Terra", tier: "boost", icon: "◎", color: "text-gray-400" },
-  { id: "glm-5.2", name: "GLM 5.2", tier: "boost", icon: "✦", color: "text-green-400" },
+  { id: "gemini-3.1-pro", name: "Gemini 3.1 Pro", tier: "boost", icon: "/models/Google_Gemini.png", color: "text-blue-500" },
+  { id: "gpt-5.6-sol", name: "GPT 5.6 Sol", tier: "boost", icon: "/models/chatgpt.png", color: "text-gray-400" },
+  { id: "gpt-5.6-terra", name: "GPT 5.6 Terra", tier: "boost", icon: "/models/chatgpt.png", color: "text-gray-400" },
+  { id: "glm-5.2", name: "GLM 5.2", tier: "boost", icon: "/models/glm.png", color: "text-green-400" },
   // Enterprise
-  { id: "grok-build-0.1", name: "Grok Build 0.1", tier: "enterprise", icon: "⊗", color: "text-gray-400" },
+  { id: "grok-build-0.1", name: "Grok Build 0.1", tier: "enterprise", icon: "/models/grok.png", color: "text-gray-400" },
 ];
 
 function ModelIcon({ icon, color }: { icon: string; color: string }) {
