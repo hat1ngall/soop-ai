@@ -39,33 +39,33 @@ function mapModelName(model: string): string {
 function getTypingSpeed(model: string): number {
   const speeds: Record<string, number> = {
     // Free — быстрые
-    "gemini-flash-3.5": 20,
-    "minimax-2.5": 22,
-    "llama-4-scout": 21,
-    "kimi-k2.6": 23,
-    "kimi-k2.7-code": 23,
-    "deepseek-v4-pro": 24,
+    "gemini-flash-3.5": 12,
+    "minimax-2.5": 13,
+    "llama-4-scout": 12,
+    "kimi-k2.6": 14,
+    "kimi-k2.7-code": 14,
+    "deepseek-v4-pro": 14,
     // Pro — средние
-    "claude-sonnet-4.6": 35,
-    "gpt-5.2": 33,
-    "gpt-5.4": 36,
-    "gpt-5.5": 38,
-    "grok-4.3": 32,
-    "grok-4.5": 37,
+    "claude-sonnet-4.6": 20,
+    "gpt-5.2": 19,
+    "gpt-5.4": 21,
+    "gpt-5.5": 22,
+    "grok-4.3": 18,
+    "grok-4.5": 21,
     // Boost — медленные (умные)
-    "claude-sonnet-5": 45,
-    "claude-opus-4.7": 48,
-    "claude-opus-4.8": 50,
-    "claude-opus-5": 55,
-    "claude-fable-5": 52,
-    "gemini-3.1-pro": 42,
-    "gpt-5.6-sol": 47,
-    "gpt-5.6-terra": 49,
-    "glm-5.2": 44,
+    "claude-sonnet-5": 26,
+    "claude-opus-4.7": 28,
+    "claude-opus-4.8": 30,
+    "claude-opus-5": 32,
+    "claude-fable-5": 30,
+    "gemini-3.1-pro": 24,
+    "gpt-5.6-sol": 27,
+    "gpt-5.6-terra": 28,
+    "glm-5.2": 25,
     // Enterprise
-    "grok-build-0.1": 50,
+    "grok-build-0.1": 29,
   };
-  return speeds[model] || 30;
+  return speeds[model] || 18;
 }
 
 // Скорость для кода — в 5 раз быстрее
