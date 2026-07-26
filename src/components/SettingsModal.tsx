@@ -15,9 +15,9 @@ export function SettingsModal({ isOpen, onClose, currentPlan, daysLeft }: Settin
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 z-50 flex items-end justify-center sm:items-center sm:p-4">
-      <div className="fixed inset-0 bg-black/70 backdrop-blur-sm" onClick={onClose} />
-      <div className="relative z-10 w-full max-w-md rounded-t-2xl border border-white/10 bg-[#2f2f2f] p-5 shadow-2xl sm:rounded-2xl sm:p-6">
+    <div className="fixed inset-0 z-50 flex items-end justify-center sm:items-center sm:p-4 animate-fade-in">
+      <div className="fixed inset-0 bg-black/70 backdrop-blur-sm animate-fade-in" onClick={onClose} />
+      <div className="relative z-10 w-full max-w-md rounded-t-2xl border border-white/10 bg-[#2f2f2f] p-5 shadow-2xl sm:rounded-2xl sm:p-6 animate-pop-in">
         <button
           onClick={onClose}
           className="absolute right-3 top-3 rounded-lg p-1.5 text-gray-400 transition-colors hover:bg-white/10 hover:text-white sm:right-4 sm:top-4"
@@ -32,11 +32,11 @@ export function SettingsModal({ isOpen, onClose, currentPlan, daysLeft }: Settin
         <div className="space-y-4">
           <div>
             <label className="mb-1.5 block text-sm text-gray-400">Имя</label>
-            <input
-              type="text"
-              defaultValue={session?.user?.name || ""}
-              className="w-full rounded-xl border border-white/10 bg-white/5 px-4 py-2.5 text-sm text-white outline-none transition-all focus:border-white/30"
-            />
+          <input
+            type="text"
+            defaultValue={session?.user?.name || ""}
+              className="w-full rounded-xl border border-white/10 bg-white/5 px-4 py-2.5 text-sm text-white outline-none transition-all duration-200 focus:border-white/30 focus:bg-white/10"
+          />
           </div>
 
           <div>
@@ -68,7 +68,7 @@ export function SettingsModal({ isOpen, onClose, currentPlan, daysLeft }: Settin
 
           <button
             onClick={() => signOut({ callbackUrl: "/login" })}
-            className="flex w-full items-center justify-center gap-2 rounded-xl border border-white/10 px-4 py-2.5 text-sm text-gray-400 transition-colors hover:bg-white/5 hover:text-white"
+            className="flex w-full items-center justify-center gap-2 rounded-xl border border-white/10 px-4 py-2.5 text-sm text-gray-400 transition-all duration-200 hover:-translate-y-0.5 hover:bg-white/5 hover:text-white"
           >
             <svg className="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />

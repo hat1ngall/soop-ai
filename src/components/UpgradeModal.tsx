@@ -128,13 +128,13 @@ export function UpgradeModal({ isOpen, onClose }: UpgradeModalProps) {
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-end justify-center sm:items-center sm:p-4">
-      <div className="fixed inset-0 bg-black/70 backdrop-blur-sm" onClick={handleClose} />
+    <div className="fixed inset-0 z-50 flex items-end justify-center sm:items-center sm:p-4 animate-fade-in">
+      <div className="fixed inset-0 bg-black/70 backdrop-blur-sm animate-fade-in" onClick={handleClose} />
 
-      <div className="relative z-10 w-full max-w-4xl rounded-t-3xl bg-[#1a1a1a] shadow-2xl sm:rounded-3xl">
+      <div className="relative z-10 w-full max-w-4xl rounded-t-3xl bg-[#1a1a1a] shadow-2xl sm:rounded-3xl animate-pop-in">
         <button
           onClick={handleClose}
-          className="absolute right-4 top-4 z-10 rounded-full bg-white/10 p-2 text-gray-400 transition-colors hover:bg-white/20 hover:text-white"
+          className="absolute right-4 top-4 z-10 rounded-full bg-white/10 p-2 text-gray-400 transition-all duration-200 hover:-translate-y-0.5 hover:bg-white/20 hover:text-white"
         >
           <svg className="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
@@ -165,7 +165,7 @@ export function UpgradeModal({ isOpen, onClose }: UpgradeModalProps) {
                 <button
                   key={plan.id}
                   onClick={() => setSelectedPlan(plan.id)}
-                  className={`relative rounded-2xl border-2 p-6 text-left transition-all ${
+                  className={`relative rounded-2xl border-2 p-6 text-left transition-all duration-200 hover:-translate-y-1 hover:shadow-[0_18px_45px_rgba(0,0,0,0.25)] ${
                     selectedPlan === plan.id
                       ? "border-white bg-white/5"
                       : "border-white/10 bg-white/[0.02] hover:border-white/20"
@@ -217,7 +217,7 @@ export function UpgradeModal({ isOpen, onClose }: UpgradeModalProps) {
             <div className="mt-8 flex flex-col items-center gap-4">
               <button
                 onClick={() => setStep("activate")}
-                className="w-full max-w-md rounded-2xl bg-white py-4 text-base font-semibold text-black transition-all hover:bg-gray-200 active:scale-[0.98]"
+                className="w-full max-w-md rounded-2xl bg-white py-4 text-base font-semibold text-black transition-all duration-200 hover:-translate-y-0.5 hover:bg-gray-200 active:scale-[0.98]"
               >
                 Продолжить с планом {currentPlan.name}
               </button>
@@ -271,7 +271,7 @@ export function UpgradeModal({ isOpen, onClose }: UpgradeModalProps) {
 
             <div className="mx-auto max-w-md">
               <label className="mb-3 block text-sm font-medium text-gray-400">Код активации</label>
-              <input
+                <input
                 type="text"
                 value={code}
                 onChange={(e) => setCode(e.target.value)}
@@ -279,7 +279,7 @@ export function UpgradeModal({ isOpen, onClose }: UpgradeModalProps) {
                   if (e.key === "Enter" && code.trim()) handleActivate();
                 }}
                 placeholder="Введите промокод"
-                className="w-full rounded-2xl border border-white/10 bg-white/5 px-6 py-4 text-center text-xl font-mono tracking-widest text-white outline-none transition-all focus:border-white/30 focus:bg-white/10"
+                className="w-full rounded-2xl border border-white/10 bg-white/5 px-6 py-4 text-center text-xl font-mono tracking-widest text-white outline-none transition-all duration-200 focus:border-white/30 focus:bg-white/10"
                 autoFocus
               />
 
@@ -292,7 +292,7 @@ export function UpgradeModal({ isOpen, onClose }: UpgradeModalProps) {
               <button
                 onClick={handleActivate}
                 disabled={!code.trim() || loading}
-                className="mt-6 w-full rounded-2xl bg-white py-4 text-base font-semibold text-black transition-all hover:bg-gray-200 active:scale-[0.98] disabled:opacity-50"
+                className="mt-6 w-full rounded-2xl bg-white py-4 text-base font-semibold text-black transition-all duration-200 hover:-translate-y-0.5 hover:bg-gray-200 active:scale-[0.98] disabled:opacity-50"
               >
                 {loading ? (
                   <span className="inline-flex items-center gap-2">

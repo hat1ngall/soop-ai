@@ -37,8 +37,8 @@ export function MessageBubble({ message, isLoading, isThinking, model }: Message
 
   if (isUser) {
     return (
-      <div className="flex justify-end">
-        <div className="max-w-[85%] rounded-2xl bg-[#2a2a2a] px-4 py-2.5 text-sm leading-relaxed text-white">
+      <div className="flex justify-end animate-slide-up">
+        <div className="max-w-[85%] rounded-2xl bg-[#2a2a2a] px-4 py-2.5 text-sm leading-relaxed text-white shadow-[0_8px_30px_rgba(0,0,0,0.18)] transition-transform duration-200 hover:-translate-y-0.5">
           {message.content}
         </div>
       </div>
@@ -46,8 +46,8 @@ export function MessageBubble({ message, isLoading, isThinking, model }: Message
   }
 
   return (
-    <div className="flex gap-3">
-      <img src="/logo.svg" alt="" className="h-7 w-7 shrink-0 rounded-full" />
+    <div className="flex gap-3 animate-slide-up">
+      <img src="/logo.svg" alt="" className="h-7 w-7 shrink-0 rounded-full shadow-[0_0_22px_rgba(255,255,255,0.12)] animate-pulse-glow" />
       <div className="min-w-0 flex-1 pt-0.5">
         {isLoading && isThinking && !message.content ? (
           <div className="space-y-2 py-1">

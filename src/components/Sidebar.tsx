@@ -82,7 +82,7 @@ export function Sidebar({
   if (!isOpen) return null;
 
   return (
-    <aside className="flex h-[260px] w-full flex-col border-r border-white/5 bg-[#171717] sm:h-screen sm:w-[260px]">
+    <aside className="flex h-[260px] w-full flex-col border-r border-white/5 bg-[#171717] shadow-[0_0_50px_rgba(0,0,0,0.25)] sm:h-screen sm:w-[260px] animate-slide-up">
       {/* Header */}
       <div className="flex items-center justify-between p-3">
         <Link href="/" className="flex items-center gap-2.5">
@@ -103,7 +103,7 @@ export function Sidebar({
       <div className="px-3 pb-3">
         <button
           onClick={createNewChat}
-          className="flex w-full items-center gap-2.5 rounded-lg border border-white/10 px-3 py-2 text-xs text-gray-300 transition-colors hover:bg-white/5 hover:text-white"
+          className="flex w-full items-center gap-2.5 rounded-lg border border-white/10 px-3 py-2 text-xs text-gray-300 transition-all duration-200 hover:-translate-y-0.5 hover:bg-white/5 hover:text-white active:translate-y-0"
         >
           <svg className="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
@@ -125,10 +125,10 @@ export function Sidebar({
                 <Link
                   href={`/chat/${chat.id}`}
                   onClick={() => { if (window.innerWidth < 768) onToggle(); }}
-                  className={`flex items-center gap-2 rounded-lg px-2.5 py-2 text-xs transition-colors ${
+                  className={`flex items-center gap-2 rounded-lg px-2.5 py-2 text-xs transition-all duration-200 ${
                     pathname === `/chat/${chat.id}`
-                      ? "bg-white text-black"
-                      : "text-gray-400 hover:bg-white/5 hover:text-gray-200"
+                      ? "bg-white text-black shadow-[0_10px_25px_rgba(255,255,255,0.08)]"
+                      : "text-gray-400 hover:bg-white/5 hover:text-gray-200 hover:translate-x-0.5"
                   }`}
                 >
                   <svg className={`h-3.5 w-3.5 shrink-0 ${pathname === `/chat/${chat.id}` ? "text-black/40" : "text-gray-600"}`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -159,7 +159,7 @@ export function Sidebar({
         {currentPlan === "free" ? (
           <button
             onClick={onOpenUpgrade}
-            className="mb-3 flex w-full items-center justify-center gap-2 rounded-lg bg-white py-2 text-xs font-medium text-black transition-all hover:bg-gray-200"
+            className="mb-3 flex w-full items-center justify-center gap-2 rounded-lg bg-white py-2 text-xs font-medium text-black transition-all duration-200 hover:-translate-y-0.5 hover:bg-gray-200 active:translate-y-0"
           >
             <svg className="h-3.5 w-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" />
@@ -188,7 +188,7 @@ export function Sidebar({
           <div className="flex items-center gap-0.5">
             <button
               onClick={onOpenSettings}
-              className="rounded p-1.5 text-gray-500 transition-colors hover:bg-white/5 hover:text-gray-300"
+              className="rounded p-1.5 text-gray-500 transition-all duration-200 hover:-translate-y-0.5 hover:bg-white/5 hover:text-gray-300"
               title="Настройки"
             >
               <svg className="h-3.5 w-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -198,7 +198,7 @@ export function Sidebar({
             </button>
             <button
               onClick={() => signOut({ callbackUrl: "/login" })}
-              className="rounded p-1.5 text-gray-500 transition-colors hover:bg-white/5 hover:text-gray-300"
+              className="rounded p-1.5 text-gray-500 transition-all duration-200 hover:-translate-y-0.5 hover:bg-white/5 hover:text-gray-300"
               title="Выйти"
             >
               <svg className="h-3.5 w-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">

@@ -78,7 +78,7 @@ export function ChatWindow() {
   const selectedModel = MODEL_LIST.find(m => m.id === model) || MODEL_LIST[0];
 
   return (
-    <div className="flex h-full flex-col">
+    <div className="flex h-full flex-col animate-fade-in">
       {/* Messages */}
       <div className="flex-1 overflow-y-auto">
         <div className="mx-auto max-w-3xl px-4 py-6">
@@ -101,7 +101,7 @@ export function ChatWindow() {
 
       {/* Input area */}
       <div className="border-t border-white/5 bg-[#171717] px-4 pb-4 pt-3">
-        <div className="mx-auto max-w-3xl">
+        <div className="mx-auto max-w-3xl animate-slide-up">
           {usage && usage.limit !== -1 && (
             <div className="mb-2 flex items-center justify-between px-1">
               <span className="text-[11px] text-gray-600">{usage.used}/{usage.limit} сообщений сегодня</span>
@@ -109,7 +109,7 @@ export function ChatWindow() {
             </div>
           )}
 
-          <div className={`flex items-end gap-2 rounded-2xl border p-2 transition-colors ${isLimitExceeded ? "border-red-500/30 bg-red-500/5" : "border-white/10 bg-[#2a2a2a] focus-within:border-white/20"}`}>
+            <div className={`flex items-end gap-2 rounded-2xl border p-2 transition-all duration-200 ${isLimitExceeded ? "border-red-500/30 bg-red-500/5" : "border-white/10 bg-[#2a2a2a] focus-within:border-white/20"}`}>
             <textarea
               ref={textareaRef}
               value={input}
@@ -126,7 +126,7 @@ export function ChatWindow() {
             <div ref={modelRef} className="relative shrink-0">
               <button
                 onClick={() => setModelMenuOpen(!modelMenuOpen)}
-                className="flex items-center gap-1.5 rounded-full border border-white/10 bg-white/5 px-3 py-1.5 text-xs text-gray-300 transition-colors hover:bg-white/10"
+                className="flex items-center gap-1.5 rounded-full border border-white/10 bg-white/5 px-3 py-1.5 text-xs text-gray-300 transition-all duration-200 hover:-translate-y-0.5 hover:bg-white/10"
               >
                 <span className={selectedModel.color}>{selectedModel.icon}</span>
                 <span>{selectedModel.name}</span>
@@ -136,7 +136,7 @@ export function ChatWindow() {
               </button>
 
               {modelMenuOpen && (
-                <div className="absolute bottom-full right-0 mb-2 w-64 overflow-hidden rounded-xl border border-white/10 bg-[#2f2f2f] shadow-2xl">
+                <div className="absolute bottom-full right-0 mb-2 w-64 overflow-hidden rounded-xl border border-white/10 bg-[#2f2f2f] shadow-2xl animate-pop-in">
                   <div className="max-h-[50vh] overflow-y-auto p-1.5" style={{ scrollbarColor: "#555 #2f2f2f" }}>
                     <div className="px-2 py-1 text-[10px] font-medium text-gray-500">Free</div>
                     {MODEL_LIST.filter(m => m.tier === "free").map((m) => (
