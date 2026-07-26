@@ -133,12 +133,14 @@ function getDemoResponse(message: string, model: string): string {
 
 // Считаем задержку для символа
 function charDelay(char: string, baseSpeed: number, inCode: boolean): number {
-  if (inCode) return Math.max(1, Math.floor(baseSpeed / 6)); // Код — в 6 раз быстрее
+  const outputSpeed = Math.max(1, Math.floor(baseSpeed * 0.55));
+
+  if (inCode) return Math.max(1, Math.floor(outputSpeed / 6)); // Код — в 6 раз быстрее
   if (char === "\n") return baseSpeed * 4;
-  if (".!?".includes(char)) return baseSpeed * 3;
-  if (",;:".includes(char)) return baseSpeed * 2;
-  if (char === " ") return baseSpeed * 1.5;
-  return baseSpeed;
+  if (".!?".includes(char)) return outputSpeed * 3;
+  if (",;:".includes(char)) return outputSpeed * 2;
+  if (char === " ") return outputSpeed * 1.5;
+  return outputSpeed;
 }
 
 export async function POST(req: Request) {

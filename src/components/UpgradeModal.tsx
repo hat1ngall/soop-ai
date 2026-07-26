@@ -17,6 +17,8 @@ interface Plan {
   models: string[];
 }
 
+const ACTIVATION_TIMEOUT_MS = 20_000;
+
 const PLANS: Plan[] = [
   {
     id: "pro",
@@ -80,11 +82,15 @@ export function UpgradeModal({ isOpen, onClose }: UpgradeModalProps) {
     setLoading(true);
     setError("");
 
+    const controller = new AbortController();
+    const timeoutId = window.setTimeout(() => controller.abort(), ACTIVATION_TIMEOUT_MS);
+
     try {
       const res = await fetch("/api/activate", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ code: code.trim(), selectedPlan }),
+        signal: controller.signal,
       });
 
       const contentType = res.headers.get("content-type") || "";
@@ -105,9 +111,10 @@ export function UpgradeModal({ isOpen, onClose }: UpgradeModalProps) {
         setSuccess(false);
         window.location.reload();
       }, 2000);
-    } catch {
-      setError("Ошибка сети");
+    } catch (error) {
+      setError(error instanceof DOMException && error.name === "AbortError" ? "Сервер долго не отвечает. Попробуйте ещё раз." : "Ошибка сети");
     } finally {
+      window.clearTimeout(timeoutId);
       setLoading(false);
     }
   };

@@ -12,7 +12,7 @@ export default function DashboardLayout({
 }: {
   children: React.ReactNode;
 }) {
-  const { data: session, status } = useSession();
+  const { data: session, status, update } = useSession();
   const router = useRouter();
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [settingsOpen, setSettingsOpen] = useState(false);
@@ -50,6 +50,34 @@ export default function DashboardLayout({
         .catch(() => {});
     }
   }, [session]);
+
+  useEffect(() => {
+    const refreshAfterIdle = () => {
+      if (document.visibilityState !== "visible") return;
+
+      update();
+      setSettingsOpen(false);
+      setUpgradeOpen(false);
+      setSidebarOpen(window.innerWidth >= 768);
+
+      fetch("/api/user/me")
+        .then((res) => (res.ok ? res.json() : null))
+        .then((data) => {
+          if (!data) return;
+          setCurrentPlan(data.plan);
+          setDaysLeft(data.daysLeft);
+        })
+        .catch(() => {});
+    };
+
+    document.addEventListener("visibilitychange", refreshAfterIdle);
+    window.addEventListener("pageshow", refreshAfterIdle);
+
+    return () => {
+      document.removeEventListener("visibilitychange", refreshAfterIdle);
+      window.removeEventListener("pageshow", refreshAfterIdle);
+    };
+  }, [update]);
 
   const handleUpgradeRequest = () => {
     setUpgradeOpen(true);

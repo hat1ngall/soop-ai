@@ -3,6 +3,8 @@
 import { useState, useCallback } from "react";
 import { Message } from "@/types";
 
+const CHAT_REQUEST_TIMEOUT_MS = 60_000;
+
 interface UseChatOptions {
   sessionId: string;
   model: string;
@@ -40,11 +42,15 @@ export function useChat({ sessionId, model }: UseChatOptions) {
       setThinking(true);
       setError(null);
 
+      const controller = new AbortController();
+      const timeoutId = window.setTimeout(() => controller.abort(), CHAT_REQUEST_TIMEOUT_MS);
+
       try {
         const res = await fetch("/api/chat", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({ message: content.trim(), model, sessionId }),
+          signal: controller.signal,
         });
 
         if (!res.ok) {
@@ -121,12 +127,16 @@ export function useChat({ sessionId, model }: UseChatOptions) {
         setLoading(false);
         setThinking(false);
         return { upgradeRequired: false, limitExceeded: false };
-      } catch {
-        setError("Сервис недоступен");
+      } catch (error) {
+        setError(error instanceof DOMException && error.name === "AbortError" ? "Запрос слишком долго не отвечал" : "Сервис недоступен");
         setMessages((prev) => prev.filter((m) => m.id !== userMsg.id));
         setLoading(false);
         setThinking(false);
         return { upgradeRequired: false, limitExceeded: false };
+      } finally {
+        window.clearTimeout(timeoutId);
+        setLoading(false);
+        setThinking(false);
       }
     },
     [sessionId, model, loading]
