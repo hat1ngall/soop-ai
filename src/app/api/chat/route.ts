@@ -35,34 +35,70 @@ function mapModelName(model: string): string {
   return GROQ_MODEL_MAP[model] || model;
 }
 
-// Скорость печати (мс на символ)
+// Скорость печати (мс на символ) — слабые быстрее, мощные медленнее
 function getTypingSpeed(model: string): number {
   const speeds: Record<string, number> = {
-    "gemini-flash-3.5": 30,
-    "minimax-2.5": 35,
-    "claude-sonnet-4.6": 40,
-    "llama-4-scout": 38,
-    "gpt-5.6-sol": 50,
-    "gemini-3.1-pro": 45,
-    "claude-fable-5": 55,
-    "claude-opus-5": 63,
+    // Free — быстрые
+    "gemini-flash-3.5": 20,
+    "minimax-2.5": 22,
+    "llama-4-scout": 21,
+    "kimi-k2.6": 23,
+    "kimi-k2.7-code": 23,
+    "deepseek-v4-pro": 24,
+    // Pro — средние
+    "claude-sonnet-4.6": 35,
+    "gpt-5.2": 33,
+    "gpt-5.4": 36,
+    "gpt-5.5": 38,
+    "grok-4.3": 32,
+    "grok-4.5": 37,
+    // Boost — медленные (умные)
+    "claude-sonnet-5": 45,
+    "claude-opus-4.7": 48,
+    "claude-opus-4.8": 50,
+    "claude-opus-5": 55,
+    "claude-fable-5": 52,
+    "gemini-3.1-pro": 42,
+    "gpt-5.6-sol": 47,
+    "gpt-5.6-terra": 49,
+    "glm-5.2": 44,
+    // Enterprise
+    "grok-build-0.1": 50,
   };
-  return speeds[model] || 38;
+  return speeds[model] || 30;
 }
 
 // Задержка "размышления" перед ответом (мс)
 function getThinkingDelay(model: string, messageLength: number): number {
   const base: Record<string, number> = {
-    "gemini-flash-3.5": 1500,
-    "minimax-2.5": 2000,
-    "claude-sonnet-4.6": 2500,
-    "llama-4-scout": 2200,
-    "gpt-5.6-sol": 3000,
-    "gemini-3.1-pro": 2800,
-    "claude-fable-5": 3500,
-    "claude-opus-5": 4000,
+    // Free
+    "gemini-flash-3.5": 800,
+    "minimax-2.5": 1000,
+    "llama-4-scout": 900,
+    "kimi-k2.6": 1100,
+    "kimi-k2.7-code": 1100,
+    "deepseek-v4-pro": 1200,
+    // Pro
+    "claude-sonnet-4.6": 2000,
+    "gpt-5.2": 1800,
+    "gpt-5.4": 2100,
+    "gpt-5.5": 2300,
+    "grok-4.3": 1700,
+    "grok-4.5": 2200,
+    // Boost
+    "claude-sonnet-5": 2800,
+    "claude-opus-4.7": 3000,
+    "claude-opus-4.8": 3200,
+    "claude-opus-5": 3500,
+    "claude-fable-5": 3300,
+    "gemini-3.1-pro": 2600,
+    "gpt-5.6-sol": 3100,
+    "gpt-5.6-terra": 3200,
+    "glm-5.2": 2700,
+    // Enterprise
+    "grok-build-0.1": 3400,
   };
-  const b = base[model] || 2500;
+  const b = base[model] || 2000;
   const lengthBonus = Math.min(messageLength * 8, 4000);
   return b + lengthBonus;
 }

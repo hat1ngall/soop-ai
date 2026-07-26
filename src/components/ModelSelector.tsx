@@ -25,7 +25,6 @@ const MODELS: Model[] = [
   { id: "kimi-k2.6", name: "Kimi K2.6", tier: "free", icon: "≋", iconColor: "text-gray-400" },
   { id: "kimi-k2.7-code", name: "Kimi K2.7 Code", tier: "free", icon: "≋", iconColor: "text-gray-400" },
   { id: "deepseek-v4-pro", name: "DeepSeek V4 Pro", tier: "free", icon: "≋", iconColor: "text-blue-400" },
-  { id: "glm-5.2", name: "GLM 5.2", tier: "free", icon: "✦", iconColor: "text-green-400" },
   // Pro — средние модели
   { id: "claude-sonnet-4.6", name: "Sonnet 4.6", tier: "pro", icon: "✳", iconColor: "text-orange-500" },
   { id: "gpt-5.2", name: "GPT 5.2", tier: "pro", icon: "◎", iconColor: "text-gray-400" },
@@ -42,6 +41,7 @@ const MODELS: Model[] = [
   { id: "gemini-3.1-pro", name: "Gemini 3.1 Pro", tier: "boost", icon: "✦", iconColor: "text-blue-500" },
   { id: "gpt-5.6-sol", name: "GPT 5.6 Sol", tier: "boost", icon: "◎", iconColor: "text-gray-400" },
   { id: "gpt-5.6-terra", name: "GPT 5.6 Terra", tier: "boost", icon: "◎", iconColor: "text-gray-400" },
+  { id: "glm-5.2", name: "GLM 5.2", tier: "boost", icon: "✦", iconColor: "text-green-400" },
   // Enterprise — всё + эксклюзив
   { id: "grok-build-0.1", name: "Grok Build 0.1", tier: "enterprise", icon: "⊗", iconColor: "text-gray-400" },
 ];

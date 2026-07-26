@@ -3,7 +3,7 @@ export type PlanTier = "free" | "pro" | "boost" | "enterprise";
 // Free — слабые модели (rank 20+)
 export const FREE_MODELS = [
   "gemini-flash-3.5", "minimax-2.5", "llama-4-scout",
-  "kimi-k2.6", "kimi-k2.7-code", "deepseek-v4-pro", "glm-5.2",
+  "kimi-k2.6", "kimi-k2.7-code", "deepseek-v4-pro",
 ];
 
 // Pro — средние модели (rank 11-20)
@@ -16,7 +16,7 @@ export const PRO_MODELS = [
 export const BOOST_MODELS = [
   "claude-sonnet-5", "claude-opus-4.7", "claude-opus-4.8",
   "claude-opus-5", "claude-fable-5", "gemini-3.1-pro",
-  "gpt-5.6-sol", "gpt-5.6-terra",
+  "gpt-5.6-sol", "gpt-5.6-terra", "glm-5.2",
 ];
 
 // Enterprise — всё + эксклюзив
