@@ -52,17 +52,17 @@ export default function LoginPage() {
   };
 
   return (
-    <div className="flex min-h-screen items-center justify-center px-4 py-8">
+    <div className="flex min-h-screen items-center justify-center bg-[#fbfbfa] px-4 py-8">
       <div className="w-full max-w-md animate-fade-in">
         <div className="mb-6 text-center sm:mb-8">
           <Link href="/" className="inline-block">
-            <img src="/logo.svg" alt="Soop AI" className="mx-auto mb-4 h-14 w-14 rounded-2xl shadow-[0_16px_40px_rgba(80,93,120,0.18)]" />
+            <img src="/logo.svg" alt="Soop AI" className="mx-auto mb-4 h-12 w-12 rounded-xl border border-[#e9e9e7]" />
           </Link>
-          <h1 className="text-2xl font-semibold tracking-tight text-slate-950">Вход в Soop AI</h1>
-          <p className="mt-2 text-sm text-slate-500">Войдите в свой аккаунт Soop AI</p>
+          <h1 className="text-2xl font-semibold tracking-[-0.03em] text-[#191919]">Вход в Soop AI</h1>
+          <p className="mt-2 text-sm text-[#787774]">Продолжайте работу с вашего места.</p>
         </div>
 
-        <form onSubmit={handleSubmit} className="space-y-3 rounded-[28px] border border-white/80 bg-white/75 p-5 shadow-[0_24px_70px_rgba(80,93,120,0.14)] backdrop-blur-xl sm:p-6 sm:space-y-4">
+        <form onSubmit={handleSubmit} className="space-y-4 rounded-xl border border-[#e9e9e7] bg-white p-5 sm:p-6">
           {error && (
             <div className="animate-shake rounded-2xl border border-red-200 bg-red-50 px-3 py-2 text-sm text-red-600">
               {error}
@@ -75,7 +75,7 @@ export default function LoginPage() {
               type="email"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
-              className="w-full rounded-2xl border border-slate-200 bg-white px-4 py-3 text-sm text-slate-900 outline-none transition-all duration-200 focus:border-slate-300 focus:shadow-[0_0_0_4px_rgba(251,191,36,0.12)]"
+              className="w-full rounded-md border border-[#dcdcd8] bg-white px-3 py-2.5 text-sm text-[#191919] outline-none transition focus:border-[#9b9a97] focus:ring-2 focus:ring-[#191919]/5"
               placeholder="you@example.com"
               autoComplete="email"
             />
@@ -87,7 +87,7 @@ export default function LoginPage() {
               type="password"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
-              className="w-full rounded-2xl border border-slate-200 bg-white px-4 py-3 text-sm text-slate-900 outline-none transition-all duration-200 focus:border-slate-300 focus:shadow-[0_0_0_4px_rgba(251,191,36,0.12)]"
+              className="w-full rounded-md border border-[#dcdcd8] bg-white px-3 py-2.5 text-sm text-[#191919] outline-none transition focus:border-[#9b9a97] focus:ring-2 focus:ring-[#191919]/5"
               placeholder="Минимум 6 символов"
               autoComplete="current-password"
             />
@@ -96,7 +96,7 @@ export default function LoginPage() {
           <button
             type="submit"
             disabled={loading}
-            className="w-full rounded-2xl bg-slate-950 py-3 text-sm font-semibold text-white shadow-[0_14px_30px_rgba(15,23,42,0.18)] transition-all duration-200 hover:-translate-y-0.5 hover:bg-slate-800 active:scale-[0.98] disabled:opacity-50"
+            className="w-full rounded-md bg-[#191919] py-3 text-sm font-medium text-white transition-colors hover:bg-[#37352f] disabled:opacity-50"
           >
             {loading ? (
               <span className="inline-flex items-center gap-2">

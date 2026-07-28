@@ -129,12 +129,12 @@ export function UpgradeModal({ isOpen, onClose }: UpgradeModalProps) {
 
   return (
     <div className="fixed inset-0 z-50 flex items-end justify-center sm:items-center sm:p-4 animate-fade-in">
-      <div className="fixed inset-0 bg-slate-950/30 backdrop-blur-sm animate-fade-in" onClick={handleClose} />
+      <div className="fixed inset-0 bg-black/20 animate-fade-in" onClick={handleClose} />
 
-      <div className="relative z-10 max-h-[92vh] w-full max-w-4xl overflow-y-auto rounded-t-[32px] border border-white/80 bg-white/90 shadow-[0_28px_90px_rgba(15,23,42,0.24)] backdrop-blur-2xl sm:rounded-[32px] animate-pop-in">
+      <div className="relative z-10 max-h-[92vh] w-full max-w-4xl overflow-y-auto rounded-t-xl border border-[#e9e9e7] bg-white shadow-2xl sm:rounded-xl animate-pop-in">
         <button
           onClick={handleClose}
-          className="absolute right-4 top-4 z-10 rounded-full bg-slate-100 p-2 text-slate-400 transition-all duration-200 hover:-translate-y-0.5 hover:bg-slate-200 hover:text-slate-900"
+          className="absolute right-4 top-4 z-10 rounded-md bg-[#f1f1ef] p-2 text-[#787774] transition-colors hover:bg-[#e9e9e7] hover:text-[#191919]"
         >
           <svg className="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
@@ -167,8 +167,8 @@ export function UpgradeModal({ isOpen, onClose }: UpgradeModalProps) {
                   onClick={() => setSelectedPlan(plan.id)}
                   className={`relative rounded-[28px] border-2 p-6 text-left transition-all duration-200 hover:-translate-y-1 hover:shadow-[0_18px_45px_rgba(80,93,120,0.16)] ${
                     selectedPlan === plan.id
-                      ? "border-slate-950 bg-slate-950 text-white"
-                      : "border-slate-200 bg-white/70 hover:border-slate-300"
+                      ? "border-[#191919] bg-[#191919] text-white"
+                      : "border-[#e9e9e7] bg-white hover:border-[#9b9a97]"
                   }`}
                 >
                   {plan.id === "boost" && (
@@ -217,7 +217,7 @@ export function UpgradeModal({ isOpen, onClose }: UpgradeModalProps) {
             <div className="mt-8 flex flex-col items-center gap-4">
               <button
                 onClick={() => setStep("activate")}
-                className="w-full max-w-md rounded-2xl bg-slate-950 py-4 text-base font-semibold text-white shadow-[0_16px_35px_rgba(15,23,42,0.18)] transition-all duration-200 hover:-translate-y-0.5 hover:bg-slate-800 active:scale-[0.98]"
+                className="w-full max-w-md rounded-md bg-[#191919] py-3.5 text-base font-medium text-white transition-colors hover:bg-[#37352f]"
               >
                 Продолжить с планом {currentPlan.name}
               </button>
@@ -292,7 +292,7 @@ export function UpgradeModal({ isOpen, onClose }: UpgradeModalProps) {
               <button
                 onClick={handleActivate}
                 disabled={!code.trim() || loading}
-                className="mt-6 w-full rounded-2xl bg-slate-950 py-4 text-base font-semibold text-white shadow-[0_16px_35px_rgba(15,23,42,0.18)] transition-all duration-200 hover:-translate-y-0.5 hover:bg-slate-800 active:scale-[0.98] disabled:opacity-50"
+                className="mt-6 w-full rounded-md bg-[#191919] py-3.5 text-base font-medium text-white transition-colors hover:bg-[#37352f] disabled:opacity-50"
               >
                 {loading ? (
                   <span className="inline-flex items-center gap-2">

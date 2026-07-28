@@ -98,18 +98,18 @@ export default function DashboardLayout({
   if (!session) return null;
 
   return (
-    <div className="flex h-screen flex-col overflow-hidden p-2 sm:flex-row sm:p-3">
+    <div className="flex h-screen overflow-hidden bg-[#fbfbfa]">
       {/* Mobile overlay */}
       {sidebarOpen && (
         <div
-          className="fixed inset-0 z-30 bg-slate-950/25 backdrop-blur-sm sm:hidden animate-fade-in"
+          className="fixed inset-0 z-30 bg-black/20 sm:hidden animate-fade-in"
           onClick={() => setSidebarOpen(false)}
         />
       )}
 
       {/* Sidebar - top on mobile, left on desktop */}
-      <div className={`fixed inset-0 z-40 transform transition-transform duration-300 ease-out md:static md:h-full md:shrink-0 md:overflow-hidden md:translate-x-0 md:transition-[width,margin] ${
-        sidebarOpen ? "translate-x-0 md:mr-3 md:w-[278px]" : "-translate-x-[110%] md:mr-0 md:w-0"
+      <div className={`fixed inset-y-0 left-0 z-40 w-[280px] transform transition-transform duration-200 ease-out md:static md:h-full md:shrink-0 md:overflow-hidden md:translate-x-0 md:transition-[width] ${
+        sidebarOpen ? "translate-x-0 md:w-[272px]" : "-translate-x-full md:w-0"
       }`}>
         <Sidebar
           isOpen={sidebarOpen}
@@ -122,20 +122,18 @@ export default function DashboardLayout({
       </div>
 
       {/* Main content */}
-      <div className="flex min-w-0 flex-1 flex-col overflow-hidden rounded-[28px] border border-white/70 bg-white/55 shadow-[0_24px_80px_rgba(80,93,120,0.18)] backdrop-blur-2xl">
+      <div className="flex min-w-0 flex-1 flex-col overflow-hidden bg-white">
         {/* Top bar */}
-        <header className="flex h-14 shrink-0 items-center justify-between border-b border-slate-200/70 bg-white/45 px-3 backdrop-blur-xl sm:px-4">
+        <header className="flex h-14 shrink-0 items-center justify-between border-b border-[#e9e9e7] bg-white px-4 sm:px-5">
           <button
             onClick={() => setSidebarOpen(!sidebarOpen)}
-            className="rounded-2xl border border-slate-200/80 bg-white/70 p-2 text-slate-500 shadow-sm transition-all duration-200 hover:-translate-y-0.5 hover:text-slate-900 active:translate-y-0"
+            className="rounded-md p-2 text-[#787774] transition-colors hover:bg-[#f1f1ef] hover:text-[#191919]"
           >
             <svg className="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
             </svg>
           </button>
-          <div className="rounded-full border border-slate-200/80 bg-white/70 px-3 py-1 text-[11px] font-semibold uppercase tracking-[0.24em] text-slate-500 shadow-sm">
-            Soop AI
-          </div>
+          <div className="text-xs font-medium text-[#787774]">AI workspace</div>
         </header>
 
         {/* Main content */}
