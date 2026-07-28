@@ -60,6 +60,13 @@ export function ChatWindow() {
   const { messages, loading, thinking, sendMessage, loadMessages } = useChat({ sessionId, model });
 
   useEffect(() => { loadMessages(); fetchUsage(); }, [sessionId]);
+  useEffect(() => {
+    const pending = window.sessionStorage.getItem("soop:pending-prompt");
+    if (!pending) return;
+    window.sessionStorage.removeItem("soop:pending-prompt");
+    const timer = window.setTimeout(() => { void sendMessage(pending); }, 200);
+    return () => window.clearTimeout(timer);
+  }, [sessionId, sendMessage]);
   useEffect(() => { bottomRef.current?.scrollIntoView({ behavior: "smooth" }); }, [messages, loading]);
   useEffect(() => {
     const h = (e: MouseEvent) => { if (modelRef.current && !modelRef.current.contains(e.target as Node)) setModelMenuOpen(false); };
@@ -89,31 +96,31 @@ export function ChatWindow() {
     <div className="flex h-full flex-col animate-fade-in">
       {/* Messages */}
       <div className="flex-1 overflow-y-auto">
-        <div className="mx-auto max-w-4xl px-5 py-6 sm:px-8 sm:py-10">
+        <div className="mx-auto max-w-4xl px-5 py-6 sm:px-8 sm:py-9">
           {messages.length === 0 && !loading ? (
             <div className="flex flex-col items-center justify-center py-24 text-center sm:py-32">
-              <div className="mb-5 flex h-14 w-14 items-center justify-center rounded-xl border border-[#e9e9e7] bg-white">
-                <img src="/logo.svg" alt="Soop AI" className="h-10 w-10 rounded-lg" />
+              <div className="mb-5 flex h-16 w-16 items-center justify-center rounded-[22px] border border-[#e7e1d9] bg-[#fffefd] shadow-[0_12px_35px_rgba(67,50,87,0.10)] animate-float-slow">
+                <img src="/logo.svg" alt="Soop AI" className="h-11 w-11 rounded-xl" />
               </div>
-              <h2 className="mb-2 text-3xl font-semibold tracking-[-0.04em] text-[#191919]">Чем я могу помочь?</h2>
-              <p className="max-w-xl text-sm leading-6 text-[#787774] sm:text-base">Задайте вопрос, попросите написать код или помогите себе с новой идеей.</p>
+              <h2 className="mb-3 text-2xl font-semibold tracking-tight text-slate-900 sm:text-3xl">Чем могу помочь?</h2>
+              <p className="max-w-xl text-sm leading-6 text-slate-500 sm:text-base">Я могу отвечать на вопросы, писать код, анализировать данные и многое другое.</p>
               <div className="mt-8 grid w-full max-w-2xl grid-cols-1 gap-3 sm:grid-cols-3">
-                <div className="rounded-lg border border-[#e9e9e7] bg-white px-4 py-4 text-left">
-                  <div className="text-xs font-medium text-[#9b9a97]">КОД</div>
+                <div className="rounded-3xl border border-white/80 bg-white/70 px-4 py-4 text-left shadow-[0_14px_40px_rgba(80,93,120,0.12)]">
+                  <div className="text-xs font-semibold uppercase tracking-[0.18em] text-amber-600">Code</div>
                   <div className="mt-2 text-sm text-slate-700">Напиши код на Python</div>
                 </div>
-                <div className="rounded-lg border border-[#e9e9e7] bg-white px-4 py-4 text-left">
-                  <div className="text-xs font-medium text-[#9b9a97]">ОБЪЯСНИ</div>
+                <div className="rounded-3xl border border-white/80 bg-white/70 px-4 py-4 text-left shadow-[0_14px_40px_rgba(80,93,120,0.12)]">
+                  <div className="text-xs font-semibold uppercase tracking-[0.18em] text-sky-600">Explain</div>
                   <div className="mt-2 text-sm text-slate-700">Объясни квантовую физику</div>
                 </div>
-                <div className="rounded-lg border border-[#e9e9e7] bg-white px-4 py-4 text-left">
-                  <div className="text-xs font-medium text-[#9b9a97]">ДИЗАЙН</div>
+                <div className="rounded-3xl border border-white/80 bg-white/70 px-4 py-4 text-left shadow-[0_14px_40px_rgba(80,93,120,0.12)]">
+                  <div className="text-xs font-semibold uppercase tracking-[0.18em] text-violet-600">Design</div>
                   <div className="mt-2 text-sm text-slate-700">Помоги с дизайном</div>
                 </div>
               </div>
             </div>
           ) : (
-            <div className="space-y-7">
+            <div className="space-y-6">
               {messages.map((msg) => (
                 <MessageBubble key={msg.id} message={msg} isLoading={loading && msg.role === "assistant" && msg.id === messages[messages.length - 1]?.id} isThinking={thinking && msg.role === "assistant" && msg.id === messages[messages.length - 1]?.id} model={model} />
               ))}
@@ -124,25 +131,25 @@ export function ChatWindow() {
       </div>
 
       {/* Input area */}
-      <div className="border-t border-[#e9e9e7] bg-white px-4 pb-4 pt-3 sm:px-8 sm:pb-6">
+      <div className="border-t border-[#eeeae5] bg-[#fffefd] px-4 pb-4 pt-3 sm:px-8 sm:pb-6">
         <div className="mx-auto max-w-4xl animate-slide-up">
           {usage && usage.limit !== -1 && (
             <div className="mb-2 flex items-center justify-between px-1">
-              <span className="text-[11px] text-[#9b9a97]">{usage.used}/{usage.limit} сообщений сегодня</span>
-              {usage.remaining <= 5 && usage.remaining > 0 && <span className="text-[11px] text-[#c96b00]">Осталось {usage.remaining}</span>}
+              <span className="text-[11px] text-slate-500">{usage.used}/{usage.limit} сообщений сегодня</span>
+              {usage.remaining <= 5 && usage.remaining > 0 && <span className="text-[11px] text-amber-600">Осталось {usage.remaining}</span>}
             </div>
           )}
 
-          <div className={`flex items-end gap-2 rounded-xl border p-2 transition-all duration-200 ${isLimitExceeded ? "border-red-300 bg-red-50" : "border-[#dcdcd8] bg-white focus-within:border-[#9b9a97] focus-within:ring-2 focus-within:ring-[#191919]/5"}`}>
+          <div className={`flex items-end gap-2 rounded-[20px] border p-2.5 transition-all duration-200 shadow-[0_16px_42px_rgba(63,48,85,0.09)] ${isLimitExceeded ? "border-red-300 bg-red-50/90" : "border-[#e4ded6] bg-white focus-within:border-[#aa95e8] focus-within:shadow-[0_16px_42px_rgba(103,80,164,0.14)]"}`}>
             <textarea
               ref={textareaRef}
               value={input}
               onChange={(e) => setInput(e.target.value)}
               onKeyDown={handleKeyDown}
-              placeholder={isLimitExceeded ? "Лимит исчерпан…" : "Напишите сообщение…"}
+              placeholder={isLimitExceeded ? "Лимит исчерпан..." : "Напишите сообщение..."}
               rows={1}
               disabled={loading || isLimitExceeded}
-              className="max-h-40 flex-1 resize-none bg-transparent px-2 py-2 text-sm text-[#37352f] outline-none placeholder:text-[#9b9a97] disabled:opacity-50"
+              className="max-h-40 flex-1 resize-none bg-transparent px-2 py-2 text-sm text-[#302b27] outline-none placeholder:text-[#aaa39c] disabled:opacity-50"
               style={{ minHeight: "20px" }}
             />
 
@@ -150,7 +157,7 @@ export function ChatWindow() {
             <div ref={modelRef} className="relative shrink-0">
               <button
                 onClick={() => setModelMenuOpen(!modelMenuOpen)}
-                className="flex items-center gap-1.5 rounded-md bg-[#f1f1ef] px-2.5 py-2 text-xs text-[#55534f] transition-colors hover:bg-[#e9e9e7]"
+                className="flex items-center gap-1.5 rounded-xl bg-[#f3effc] px-3 py-2 text-xs text-[#6750a4] transition-colors hover:bg-[#ece5fb]"
               >
                 <ModelIcon icon={selectedModel.icon} color={selectedModel.color} />
                 <span>{selectedModel.name}</span>
@@ -160,7 +167,7 @@ export function ChatWindow() {
               </button>
 
               {modelMenuOpen && (
-                <div className="absolute bottom-full right-0 mb-2 w-64 overflow-hidden rounded-lg border border-[#e9e9e7] bg-white shadow-lg animate-pop-in">
+                <div className="absolute bottom-full right-0 mb-2 w-64 overflow-hidden rounded-xl border border-[#e7e1d9] bg-white shadow-[0_20px_52px_rgba(63,48,85,0.16)] animate-pop-in">
                   <div className="max-h-[50vh] overflow-y-auto p-1.5" style={{ scrollbarColor: "#b9c3d6 #eef2f8" }}>
                     <div className="px-2 py-1 text-[10px] font-semibold uppercase tracking-[0.18em] text-slate-400">Free</div>
                     {MODEL_LIST.filter(m => m.tier === "free").map((m) => (
@@ -199,7 +206,7 @@ export function ChatWindow() {
             <button
               onClick={handleSend}
               disabled={!input.trim() || loading || isLimitExceeded}
-              className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-[#191919] text-white transition-colors hover:bg-[#37352f] disabled:opacity-25"
+              className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-[#6750a4] text-white shadow-sm transition-all duration-200 hover:-translate-y-0.5 hover:bg-[#58428e] disabled:opacity-25"
             >
               {loading ? (
                 <svg className="h-4 w-4 animate-spin" fill="none" viewBox="0 0 24 24">

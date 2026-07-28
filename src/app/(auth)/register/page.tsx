@@ -89,17 +89,17 @@ export default function RegisterPage() {
   };
 
   return (
-    <div className="flex min-h-screen items-center justify-center bg-[#fbfbfa] px-4 py-8">
+    <div className="flex min-h-screen items-center justify-center bg-[#f8f7f4] px-4 py-8">
       <div className="w-full max-w-md animate-fade-in">
         <div className="mb-6 text-center sm:mb-8">
           <Link href="/" className="inline-block">
-            <img src="/logo.svg" alt="Soop AI" className="mx-auto mb-4 h-12 w-12 rounded-xl border border-[#e9e9e7]" />
+            <img src="/logo.svg" alt="Soop AI" className="mx-auto mb-4 h-14 w-14 rounded-2xl border border-[#e7e1d9] bg-white shadow-[0_10px_28px_rgba(63,48,85,0.10)]" />
           </Link>
           <h1 className="text-2xl font-semibold tracking-tight text-slate-950">Регистрация</h1>
           <p className="mt-2 text-sm text-slate-500">Создайте аккаунт в Soop AI</p>
         </div>
 
-        <form onSubmit={handleSubmit} className="space-y-3 rounded-xl border border-[#e9e9e7] bg-white p-5 sm:p-6">
+        <form onSubmit={handleSubmit} className="space-y-3 rounded-[24px] border border-[#e7e1d9] bg-white p-5 shadow-[0_18px_48px_rgba(63,48,85,0.10)] sm:p-6">
           {error && (
             <div className="animate-shake rounded-2xl border border-red-200 bg-red-50 px-3 py-2 text-sm text-red-600">
               {error}
@@ -112,7 +112,7 @@ export default function RegisterPage() {
               type="text"
               value={name}
               onChange={(e) => setName(e.target.value)}
-              className="w-full rounded-md border border-[#dcdcd8] bg-white px-3 py-2.5 text-sm text-[#191919] outline-none transition focus:border-[#9b9a97] focus:ring-2 focus:ring-[#191919]/5"
+              className="w-full rounded-xl border border-[#e4ded6] bg-white px-4 py-3 text-sm text-[#302b27] outline-none transition-all duration-200 focus:border-[#aa95e8] focus:shadow-[0_0_0_4px_rgba(103,80,164,0.10)]"
               placeholder="Ваше имя"
               autoComplete="name"
             />
@@ -124,7 +124,7 @@ export default function RegisterPage() {
               type="email"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
-              className="w-full rounded-md border border-[#dcdcd8] bg-white px-3 py-2.5 text-sm text-[#191919] outline-none transition focus:border-[#9b9a97] focus:ring-2 focus:ring-[#191919]/5"
+              className="w-full rounded-xl border border-[#e4ded6] bg-white px-4 py-3 text-sm text-[#302b27] outline-none transition-all duration-200 focus:border-[#aa95e8] focus:shadow-[0_0_0_4px_rgba(103,80,164,0.10)]"
               placeholder="you@example.com"
               autoComplete="email"
             />
@@ -136,7 +136,7 @@ export default function RegisterPage() {
               type="password"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
-              className="w-full rounded-md border border-[#dcdcd8] bg-white px-3 py-2.5 text-sm text-[#191919] outline-none transition focus:border-[#9b9a97] focus:ring-2 focus:ring-[#191919]/5"
+              className="w-full rounded-xl border border-[#e4ded6] bg-white px-4 py-3 text-sm text-[#302b27] outline-none transition-all duration-200 focus:border-[#aa95e8] focus:shadow-[0_0_0_4px_rgba(103,80,164,0.10)]"
               placeholder="Минимум 6 символов"
               autoComplete="new-password"
             />
@@ -148,7 +148,7 @@ export default function RegisterPage() {
               type="password"
               value={confirm}
               onChange={(e) => setConfirm(e.target.value)}
-              className="w-full rounded-md border border-[#dcdcd8] bg-white px-3 py-2.5 text-sm text-[#191919] outline-none transition focus:border-[#9b9a97] focus:ring-2 focus:ring-[#191919]/5"
+              className="w-full rounded-xl border border-[#e4ded6] bg-white px-4 py-3 text-sm text-[#302b27] outline-none transition-all duration-200 focus:border-[#aa95e8] focus:shadow-[0_0_0_4px_rgba(103,80,164,0.10)]"
               placeholder="Повторите пароль"
               autoComplete="new-password"
             />
@@ -157,7 +157,7 @@ export default function RegisterPage() {
           <button
             type="submit"
             disabled={loading}
-            className="w-full rounded-md bg-[#191919] py-3 text-sm font-medium text-white transition-colors hover:bg-[#37352f] disabled:opacity-50"
+            className="w-full rounded-xl bg-[#6750a4] py-3 text-sm font-semibold text-white shadow-[0_10px_22px_rgba(103,80,164,0.22)] transition-all duration-200 hover:-translate-y-0.5 hover:bg-[#58428e] active:scale-[0.98] disabled:opacity-50"
           >
             {loading ? (
               <span className="inline-flex items-center gap-2">

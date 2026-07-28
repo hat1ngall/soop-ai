@@ -16,18 +16,18 @@ export function SettingsModal({ isOpen, onClose, currentPlan, daysLeft }: Settin
 
   return (
     <div className="fixed inset-0 z-50 flex items-end justify-center sm:items-center sm:p-4 animate-fade-in">
-      <div className="fixed inset-0 bg-black/20 animate-fade-in" onClick={onClose} />
-      <div className="relative z-10 w-full max-w-md rounded-t-xl border border-[#e9e9e7] bg-white p-5 shadow-2xl sm:rounded-xl sm:p-6 animate-pop-in">
+      <div className="fixed inset-0 bg-slate-950/30 backdrop-blur-sm animate-fade-in" onClick={onClose} />
+      <div className="relative z-10 w-full max-w-md rounded-t-[28px] border border-white/80 bg-white/85 p-5 shadow-[0_24px_80px_rgba(15,23,42,0.22)] backdrop-blur-2xl sm:rounded-[28px] sm:p-6 animate-pop-in">
         <button
           onClick={onClose}
-          className="absolute right-3 top-3 rounded-md p-1.5 text-[#9b9a97] transition-colors hover:bg-[#f1f1ef] hover:text-[#191919] sm:right-4 sm:top-4"
+          className="absolute right-3 top-3 rounded-xl p-1.5 text-slate-400 transition-colors hover:bg-slate-100 hover:text-slate-900 sm:right-4 sm:top-4"
         >
           <svg className="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
           </svg>
         </button>
 
-        <h2 className="mb-5 text-lg font-semibold tracking-[-0.02em] text-[#191919] sm:mb-6">Настройки</h2>
+        <h2 className="mb-5 text-lg font-semibold text-slate-950 sm:mb-6">Настройки</h2>
 
         <div className="space-y-4">
           <div>
@@ -35,7 +35,7 @@ export function SettingsModal({ isOpen, onClose, currentPlan, daysLeft }: Settin
           <input
             type="text"
             defaultValue={session?.user?.name || ""}
-              className="w-full rounded-md border border-[#dcdcd8] bg-white px-3 py-2.5 text-sm text-[#191919] outline-none focus:border-[#9b9a97]"
+              className="w-full rounded-2xl border border-slate-200 bg-white px-4 py-3 text-sm text-slate-900 outline-none transition-all duration-200 focus:border-slate-300"
           />
           </div>
 
@@ -45,11 +45,11 @@ export function SettingsModal({ isOpen, onClose, currentPlan, daysLeft }: Settin
               type="email"
               defaultValue={session?.user?.email || ""}
               disabled
-              className="w-full rounded-md border border-[#e9e9e7] bg-[#f7f7f5] px-3 py-2.5 text-sm text-[#787774]"
+              className="w-full rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm text-slate-500"
             />
           </div>
 
-          <div className="rounded-lg border border-[#e9e9e7] bg-[#f7f7f5] p-4">
+          <div className="rounded-2xl border border-slate-200 bg-slate-50/80 p-4">
             <div className="flex items-center justify-between">
               <span className="text-sm text-slate-500">Текущий план</span>
               <span className={`rounded-full px-2.5 py-0.5 text-xs font-medium ${
@@ -68,7 +68,7 @@ export function SettingsModal({ isOpen, onClose, currentPlan, daysLeft }: Settin
 
           <button
             onClick={() => signOut({ callbackUrl: "/login" })}
-            className="flex w-full items-center justify-center gap-2 rounded-md border border-[#dcdcd8] bg-white px-4 py-3 text-sm font-medium text-[#55534f] transition-colors hover:bg-[#f7f7f5] hover:text-[#191919]"
+            className="flex w-full items-center justify-center gap-2 rounded-2xl border border-slate-200 bg-white px-4 py-3 text-sm font-semibold text-slate-500 transition-all duration-200 hover:-translate-y-0.5 hover:text-slate-950"
           >
             <svg className="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />

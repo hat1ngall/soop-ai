@@ -36,7 +36,7 @@ export function MessageBubble({ message, isLoading, isThinking, model }: Message
   if (isUser) {
     return (
       <div className="flex justify-end animate-slide-up">
-        <div className="max-w-[85%] rounded-xl rounded-br-sm bg-[#191919] px-4 py-2.5 text-sm leading-relaxed text-white">
+        <div className="max-w-[85%] rounded-[22px] rounded-br-md bg-slate-950 px-4 py-2.5 text-sm leading-relaxed text-white shadow-[0_14px_36px_rgba(15,23,42,0.18)] transition-transform duration-200 hover:-translate-y-0.5">
           {message.content}
         </div>
       </div>
@@ -45,21 +45,21 @@ export function MessageBubble({ message, isLoading, isThinking, model }: Message
 
   return (
     <div className="flex gap-3 animate-slide-up">
-      <img src="/logo.svg" alt="" className="h-7 w-7 shrink-0 rounded-md" />
+      <img src="/logo.svg" alt="" className="h-8 w-8 shrink-0 rounded-2xl shadow-[0_14px_34px_rgba(80,93,120,0.16)] animate-pulse-glow" />
       <div className="min-w-0 flex-1 pt-0.5">
         {isLoading && isThinking && !message.content ? (
-          <div className="space-y-2 rounded-lg border border-[#e9e9e7] bg-[#f7f7f5] px-4 py-3">
+          <div className="space-y-2 rounded-[22px] rounded-tl-md border border-white/80 bg-white/70 px-4 py-3 shadow-[0_14px_40px_rgba(80,93,120,0.12)]">
             <div className="flex items-center gap-2">
               <div className="flex gap-1">
                 <span className="h-1.5 w-1.5 animate-pulse rounded-full bg-slate-400" style={{ animationDelay: "0ms" }} />
                 <span className="h-1.5 w-1.5 animate-pulse rounded-full bg-slate-400" style={{ animationDelay: "200ms" }} />
                 <span className="h-1.5 w-1.5 animate-pulse rounded-full bg-slate-400" style={{ animationDelay: "400ms" }} />
               </div>
-              <span className="text-xs text-[#787774]">{THINKING_STAGES[thinkingStage]}</span>
+              <span className="text-xs text-slate-500">{THINKING_STAGES[thinkingStage]}</span>
             </div>
           </div>
         ) : message.content ? (
-          <div className="rounded-lg border border-[#e9e9e7] bg-white px-4 py-3 text-sm leading-relaxed text-[#37352f]">
+          <div className="rounded-[22px] rounded-tl-md border border-white/80 bg-white/70 px-4 py-3 text-sm leading-relaxed text-slate-700 shadow-[0_14px_40px_rgba(80,93,120,0.12)]">
             <MarkdownContent content={message.content} />
             {isLoading && (
               <span className="ml-0.5 inline-block h-3.5 w-0.5 animate-pulse bg-slate-500 align-text-bottom" />
@@ -81,7 +81,7 @@ function MarkdownContent({ content }: { content: string }) {
 
           if (isInline) {
             return (
-              <code className="rounded bg-[#f1f1ef] px-1.5 py-0.5 text-xs text-[#37352f]" {...props}>
+              <code className="rounded-lg bg-slate-100 px-1.5 py-0.5 text-xs text-slate-700" {...props}>
                 {children}
               </code>
             );
@@ -91,10 +91,10 @@ function MarkdownContent({ content }: { content: string }) {
           const code = String(children).replace(/\n$/, "");
 
           return (
-            <div className="my-4 max-w-full overflow-hidden rounded-lg border border-[#e9e9e7] bg-white">
-              <div className="flex items-center justify-between border-b border-[#e9e9e7] bg-[#f7f7f5] px-3 py-2.5 sm:px-4">
+            <div className="my-4 max-w-full overflow-hidden rounded-[24px] border border-slate-200/80 bg-white/95 shadow-[0_18px_45px_rgba(80,93,120,0.14)]">
+              <div className="flex items-center justify-between border-b border-slate-200/80 bg-gradient-to-r from-slate-50 to-amber-50/70 px-3 py-2.5 sm:px-4">
                 <div className="flex min-w-0 items-center gap-2">
-                  <span className="flex h-6 w-6 shrink-0 items-center justify-center rounded-md bg-[#e9e9e7] text-[10px] font-black text-[#55534f]">
+                  <span className="flex h-6 w-6 shrink-0 items-center justify-center rounded-xl bg-amber-200 text-[10px] font-black text-amber-900">
                     {language.slice(0, 1).toUpperCase()}
                   </span>
                   <div className="min-w-0">
@@ -108,7 +108,7 @@ function MarkdownContent({ content }: { content: string }) {
                 </div>
                 <CopyButton text={code} />
               </div>
-              <pre className="max-w-full overflow-x-auto bg-[#fbfbfa] px-4 py-4 text-[13px] leading-7 text-[#37352f] sm:px-5">
+              <pre className="max-w-full overflow-x-auto bg-gradient-to-br from-white to-slate-50 px-4 py-4 text-[13px] leading-7 text-slate-800 sm:px-5">
                 <code className="font-mono">{code}</code>
               </pre>
             </div>

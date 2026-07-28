@@ -37,7 +37,7 @@ export default function RootLayout({
       <head>
         <link rel="icon" href="/logo.svg" type="image/svg+xml" />
       </head>
-      <body className={`${inter.className} min-h-screen bg-[#fbfbfa] text-[#191919] antialiased`}>
+      <body className={`${inter.className} min-h-screen bg-[#f8f7f4] text-[#25211f] antialiased`}>
         <div className="min-h-screen"><Providers>{children}</Providers></div>
       </body>
     </html>
