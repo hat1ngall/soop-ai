@@ -89,17 +89,17 @@ export default function RegisterPage() {
   };
 
   return (
-    <div className="flex min-h-screen items-center justify-center bg-[#f8f7f4] px-4 py-8">
+    <div className="flex min-h-screen items-center justify-center bg-[#f5f6f8] px-4 py-8">
       <div className="w-full max-w-md animate-fade-in">
         <div className="mb-6 text-center sm:mb-8">
           <Link href="/" className="inline-block">
-            <img src="/logo.svg" alt="Soop AI" className="mx-auto mb-4 h-14 w-14 rounded-2xl border border-[#e7e1d9] bg-white shadow-[0_10px_28px_rgba(63,48,85,0.10)]" />
+            <img src="/logo.svg" alt="Soop AI" className="mx-auto mb-4 h-14 w-14 rounded-2xl border border-[#e2e6ec] bg-white shadow-[0_10px_28px_rgba(35,48,70,.10)]" />
           </Link>
           <h1 className="text-2xl font-semibold tracking-tight text-slate-950">Регистрация</h1>
           <p className="mt-2 text-sm text-slate-500">Создайте аккаунт в Soop AI</p>
         </div>
 
-        <form onSubmit={handleSubmit} className="space-y-3 rounded-[24px] border border-[#e7e1d9] bg-white p-5 shadow-[0_18px_48px_rgba(63,48,85,0.10)] sm:p-6">
+        <form onSubmit={handleSubmit} className="space-y-3 rounded-2xl border border-[#e2e6ec] bg-white p-5 shadow-[0_18px_48px_rgba(35,48,70,.08)] sm:p-6">
           {error && (
             <div className="animate-shake rounded-2xl border border-red-200 bg-red-50 px-3 py-2 text-sm text-red-600">
               {error}
@@ -157,7 +157,7 @@ export default function RegisterPage() {
           <button
             type="submit"
             disabled={loading}
-            className="w-full rounded-xl bg-[#6750a4] py-3 text-sm font-semibold text-white shadow-[0_10px_22px_rgba(103,80,164,0.22)] transition-all duration-200 hover:-translate-y-0.5 hover:bg-[#58428e] active:scale-[0.98] disabled:opacity-50"
+            className="w-full rounded-xl bg-[#4662f0] py-3 text-sm font-semibold text-white shadow-[0_10px_22px_rgba(70,98,240,.22)] transition-all duration-200 hover:-translate-y-0.5 hover:bg-[#3857e8] active:scale-[0.98] disabled:opacity-50"
           >
             {loading ? (
               <span className="inline-flex items-center gap-2">

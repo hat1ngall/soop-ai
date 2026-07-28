@@ -98,18 +98,18 @@ export default function DashboardLayout({
   if (!session) return null;
 
   return (
-    <div className="flex h-screen overflow-hidden bg-[#f8f7f4]">
+    <div className="flex h-screen overflow-hidden bg-[#f5f6f8]">
       {/* Mobile overlay */}
       {sidebarOpen && (
         <div
-          className="fixed inset-0 z-30 bg-[#25211f]/20 sm:hidden animate-fade-in"
+          className="fixed inset-0 z-30 bg-[#101827]/30 backdrop-blur-sm sm:hidden animate-fade-in"
           onClick={() => setSidebarOpen(false)}
         />
       )}
 
       {/* Sidebar - top on mobile, left on desktop */}
-      <div className={`fixed inset-y-0 left-0 z-40 w-[264px] transform transition-transform duration-200 ease-out md:static md:h-full md:shrink-0 md:overflow-hidden md:translate-x-0 md:transition-[width] ${
-        sidebarOpen ? "translate-x-0 md:w-[248px]" : "-translate-x-full md:w-0"
+      <div className={`fixed inset-y-0 left-0 z-40 w-[280px] transform transition-transform duration-200 ease-out md:static md:h-full md:shrink-0 md:overflow-hidden md:translate-x-0 md:transition-[width] ${
+        sidebarOpen ? "translate-x-0 md:w-[264px]" : "-translate-x-full md:w-0"
       }`}>
         <Sidebar
           isOpen={sidebarOpen}
@@ -122,18 +122,18 @@ export default function DashboardLayout({
       </div>
 
       {/* Main content */}
-      <div className="flex min-w-0 flex-1 flex-col overflow-hidden bg-[#fffefd]">
+      <div className="m-0 flex min-w-0 flex-1 flex-col overflow-hidden bg-white md:my-3 md:mr-3 md:rounded-2xl md:border md:border-[#e2e6ec] md:shadow-[0_10px_40px_rgba(35,48,70,0.06)]">
         {/* Top bar */}
-        <header className="flex h-12 shrink-0 items-center justify-between border-b border-[#eeeae5] bg-[#fffefd] px-3 sm:px-5">
+        <header className="flex h-14 shrink-0 items-center justify-between border-b border-[#edf0f4] bg-white px-4 sm:px-6">
           <button
             onClick={() => setSidebarOpen(!sidebarOpen)}
-            className="rounded-lg p-2 text-[#8b8580] transition-colors hover:bg-[#f1efeb] hover:text-[#25211f]"
+            className="rounded-lg p-2 text-[#7a8799] transition-colors hover:bg-[#f2f4f7] hover:text-[#18212f]"
           >
             <svg className="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
             </svg>
           </button>
-          <div className="rounded-full bg-[#f3f0ea] px-2.5 py-1 text-[10px] font-medium tracking-[0.08em] text-[#776e67]">SOOP LAB</div>
+          <div className="flex items-center gap-2 text-xs font-medium text-[#7a8799]"><span className="h-2 w-2 rounded-full bg-[#4dce91]" />Workspace</div>
         </header>
 
         {/* Main content */}

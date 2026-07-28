@@ -99,13 +99,13 @@ export function ChatWindow() {
         <div className="mx-auto max-w-4xl px-5 py-6 sm:px-8 sm:py-9">
           {messages.length === 0 && !loading ? (
             <div className="flex flex-col items-center justify-center py-24 text-center sm:py-32">
-              <div className="mb-5 flex h-16 w-16 items-center justify-center rounded-[22px] border border-[#e7e1d9] bg-[#fffefd] shadow-[0_12px_35px_rgba(67,50,87,0.10)] animate-float-slow">
-                <img src="/logo.svg" alt="Soop AI" className="h-11 w-11 rounded-xl" />
+              <div className="mb-5 flex h-14 w-14 items-center justify-center rounded-2xl border border-[#e2e6ec] bg-white shadow-[0_10px_28px_rgba(35,48,70,.08)]">
+                <img src="/logo.svg" alt="Soop AI" className="h-10 w-10 rounded-xl" />
               </div>
               <h2 className="mb-3 text-2xl font-semibold tracking-tight text-slate-900 sm:text-3xl">Чем могу помочь?</h2>
               <p className="max-w-xl text-sm leading-6 text-slate-500 sm:text-base">Я могу отвечать на вопросы, писать код, анализировать данные и многое другое.</p>
               <div className="mt-8 grid w-full max-w-2xl grid-cols-1 gap-3 sm:grid-cols-3">
-                <div className="rounded-3xl border border-white/80 bg-white/70 px-4 py-4 text-left shadow-[0_14px_40px_rgba(80,93,120,0.12)]">
+                <div className="rounded-2xl border border-[#e2e6ec] bg-white px-4 py-4 text-left shadow-[0_8px_22px_rgba(35,48,70,.05)] transition-all hover:-translate-y-0.5 hover:border-[#b6c1f7]">
                   <div className="text-xs font-semibold uppercase tracking-[0.18em] text-amber-600">Code</div>
                   <div className="mt-2 text-sm text-slate-700">Напиши код на Python</div>
                 </div>
@@ -140,7 +140,7 @@ export function ChatWindow() {
             </div>
           )}
 
-          <div className={`flex items-end gap-2 rounded-[20px] border p-2.5 transition-all duration-200 shadow-[0_16px_42px_rgba(63,48,85,0.09)] ${isLimitExceeded ? "border-red-300 bg-red-50/90" : "border-[#e4ded6] bg-white focus-within:border-[#aa95e8] focus-within:shadow-[0_16px_42px_rgba(103,80,164,0.14)]"}`}>
+          <div className={`flex items-end gap-2 rounded-2xl border p-2.5 transition-all duration-200 shadow-[0_12px_34px_rgba(35,48,70,.08)] ${isLimitExceeded ? "border-red-300 bg-red-50/90" : "border-[#dfe4eb] bg-white focus-within:border-[#91a4f7] focus-within:shadow-[0_12px_34px_rgba(70,98,240,.14)]"}`}>
             <textarea
               ref={textareaRef}
               value={input}
@@ -167,7 +167,7 @@ export function ChatWindow() {
               </button>
 
               {modelMenuOpen && (
-                <div className="absolute bottom-full right-0 mb-2 w-64 overflow-hidden rounded-xl border border-[#e7e1d9] bg-white shadow-[0_20px_52px_rgba(63,48,85,0.16)] animate-pop-in">
+                <div className="absolute bottom-full right-0 mb-2 w-64 overflow-hidden rounded-xl border border-[#dfe4eb] bg-white shadow-[0_18px_50px_rgba(35,48,70,.16)] animate-pop-in">
                   <div className="max-h-[50vh] overflow-y-auto p-1.5" style={{ scrollbarColor: "#b9c3d6 #eef2f8" }}>
                     <div className="px-2 py-1 text-[10px] font-semibold uppercase tracking-[0.18em] text-slate-400">Free</div>
                     {MODEL_LIST.filter(m => m.tier === "free").map((m) => (
@@ -206,7 +206,7 @@ export function ChatWindow() {
             <button
               onClick={handleSend}
               disabled={!input.trim() || loading || isLimitExceeded}
-              className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-[#6750a4] text-white shadow-sm transition-all duration-200 hover:-translate-y-0.5 hover:bg-[#58428e] disabled:opacity-25"
+              className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-[#4662f0] text-white shadow-[0_6px_14px_rgba(70,98,240,.25)] transition-all duration-200 hover:-translate-y-0.5 hover:bg-[#3857e8] disabled:opacity-25"
             >
               {loading ? (
                 <svg className="h-4 w-4 animate-spin" fill="none" viewBox="0 0 24 24">
