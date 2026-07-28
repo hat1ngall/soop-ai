@@ -3,6 +3,7 @@ import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 import { PlanTier } from "@/lib/plans";
+import { checkAndResetExpiredSubscription } from "@/lib/subscription";
 
 // Промокоды — просто валидные коды, план берётся из выбора пользователя
 const VALID_PROMOCODES = ["soopcool"];
@@ -18,6 +19,16 @@ export async function POST(req: Request) {
 
     const userId = (session.user as any).id;
     const { code, selectedPlan } = await req.json();
+
+    // An active subscription cannot be activated again. Expired plans are
+    // reset here first so that renewal remains possible after the term ends.
+    const activePlan = await checkAndResetExpiredSubscription(userId);
+    if (activePlan !== "free") {
+      return NextResponse.json(
+        { error: "У вас уже есть активная подписка" },
+        { status: 409 }
+      );
+    }
 
     if (!code || !selectedPlan) {
       return NextResponse.json({ error: "Введите код и выберите план" }, { status: 400 });
