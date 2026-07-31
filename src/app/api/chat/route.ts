@@ -6,33 +6,8 @@ import { getAvailableModels, getDailyLimit } from "@/lib/plans";
 import { checkAndResetExpiredSubscription } from "@/lib/subscription";
 import { getSystemPrompt } from "@/lib/system-prompt";
 
-const GROQ_MODEL_MAP: Record<string, string> = {
-  "gemini-flash-3.5": "openai/gpt-oss-120b",
-  "minimax-2.5": "openai/gpt-oss-120b",
-  "llama-4-scout": "openai/gpt-oss-120b",
-  "claude-sonnet-4.6": "openai/gpt-oss-120b",
-  "gpt-5.2": "openai/gpt-oss-120b",
-  "gpt-5.4": "openai/gpt-oss-120b",
-  "gpt-5.6-sol": "openai/gpt-oss-120b",
-  "claude-sonnet-5": "openai/gpt-oss-120b",
-  "claude-opus-4.7": "openai/gpt-oss-120b",
-  "claude-opus-4.8": "openai/gpt-oss-120b",
-  "claude-opus-5": "openai/gpt-oss-120b",
-  "claude-fable-5": "openai/gpt-oss-120b",
-  "gemini-3.1-pro": "openai/gpt-oss-120b",
-  "gpt-5.6-terra": "openai/gpt-oss-120b",
-  "gpt-5.5": "openai/gpt-oss-120b",
-  "grok-4.3": "openai/gpt-oss-120b",
-  "grok-4.5": "openai/gpt-oss-120b",
-  "grok-build-0.1": "openai/gpt-oss-120b",
-  "kimi-k2.6": "openai/gpt-oss-120b",
-  "kimi-k2.7-code": "openai/gpt-oss-120b",
-  "deepseek-v4-pro": "openai/gpt-oss-120b",
-  "glm-5.2": "openai/gpt-oss-120b",
-};
-
-function mapModelName(model: string): string {
-  return GROQ_MODEL_MAP[model] || model;
+function mapModelName(): string {
+  return "gpt-5.4-mini";
 }
 
 // Скорость печати (мс на символ) — слабые быстрее, мощные медленнее
@@ -235,7 +210,7 @@ export async function POST(req: Request) {
               Authorization: `Bearer ${apiKey}`,
             },
             body: JSON.stringify({
-              model: mapModelName(model),
+              model: mapModelName(),
               messages: [
                 { role: "system", content: getSystemPrompt(model) },
                 ...history.map((m) => ({ role: m.role, content: m.content })),
