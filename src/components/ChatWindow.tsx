@@ -150,7 +150,7 @@ export function ChatWindow() {
               rows={1}
               disabled={loading || isLimitExceeded}
               className="max-h-40 min-h-[20px] flex-1 resize-none overflow-y-auto bg-transparent px-2 py-2 text-sm text-[#302b27] outline-none placeholder:text-[#aaa39c] disabled:opacity-50"
-              style={{ minHeight: "20px" }}
+              style={{ minHeight: "20px", maxHeight: "160px" }}
             />
 
             {/* Model selector pill */}
