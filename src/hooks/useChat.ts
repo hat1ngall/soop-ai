@@ -32,7 +32,7 @@ export function useChat({ sessionId, model }: UseChatOptions) {
 
   const sendMessage = useCallback(
     async (content: string, attachments: ChatAttachment[] = []) => {
-      if (!content.trim() || loading) return;
+      if ((!content.trim() && attachments.length === 0) || loading) return;
 
       const userMsg: Message = {
         id: crypto.randomUUID(),

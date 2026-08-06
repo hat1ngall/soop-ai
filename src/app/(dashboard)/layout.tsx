@@ -14,7 +14,7 @@ export default function DashboardLayout({
 }) {
   const { data: session, status, update } = useSession();
   const router = useRouter();
-  const [sidebarOpen, setSidebarOpen] = useState(false);
+  const [sidebarOpen, setSidebarOpen] = useState(true);
   const [settingsOpen, setSettingsOpen] = useState(false);
   const [upgradeOpen, setUpgradeOpen] = useState(false);
   const [currentPlan, setCurrentPlan] = useState("free");
