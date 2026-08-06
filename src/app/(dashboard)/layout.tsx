@@ -12,7 +12,7 @@ export default function DashboardLayout({
 }: {
   children: React.ReactNode;
 }) {
-  const { data: session, status, update } = useSession();
+  const { data: session, status } = useSession();
   const router = useRouter();
   const [sidebarOpen, setSidebarOpen] = useState(true);
   const [settingsOpen, setSettingsOpen] = useState(false);
@@ -20,6 +20,18 @@ export default function DashboardLayout({
   const [currentPlan, setCurrentPlan] = useState("free");
   const [daysLeft, setDaysLeft] = useState<number | null>(null);
   const [darkMode, setDarkMode] = useState(false);
+
+  useEffect(() => {
+    if (status !== "authenticated") return;
+    const loadPlan = async () => {
+      const response = await fetch("/api/user/me", { cache: "no-store" });
+      if (!response.ok) return;
+      const data = await response.json();
+      setCurrentPlan(data.plan);
+      setDaysLeft(data.daysLeft);
+    };
+    void loadPlan();
+  }, [status]);
 
   useEffect(() => {
     if (status === "unauthenticated") {
@@ -100,6 +112,7 @@ export default function DashboardLayout({
       <UpgradeModal
         isOpen={upgradeOpen}
         onClose={() => setUpgradeOpen(false)}
+        onActivated={(plan, days) => { setCurrentPlan(plan); setDaysLeft(days); }}
       />
     </div>
   );

@@ -5,6 +5,7 @@ import { useState } from "react";
 interface UpgradeModalProps {
   isOpen: boolean;
   onClose: () => void;
+  onActivated?: (plan: string, daysLeft: number) => void;
 }
 
 interface Plan {
@@ -65,7 +66,7 @@ const PLANS: Plan[] = [
   },
 ];
 
-export function UpgradeModal({ isOpen, onClose }: UpgradeModalProps) {
+export function UpgradeModal({ isOpen, onClose, onActivated }: UpgradeModalProps) {
   const [step, setStep] = useState<"select" | "activate">("select");
   const [selectedPlan, setSelectedPlan] = useState<string>("pro");
   const [code, setCode] = useState("");
@@ -104,6 +105,7 @@ export function UpgradeModal({ isOpen, onClose }: UpgradeModalProps) {
       }
 
       setSuccess(true);
+      onActivated?.(data.plan, 30);
       setTimeout(() => {
         onClose();
         setStep("select");
