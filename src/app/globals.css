@@ -24,3 +24,10 @@
   .animate-float-slow { animation: none; }
   .animate-pulse-glow { animation: none; }
 }
+
+@layer base {
+  .dark body { background: #0f172a; color: #e2e8f0; }
+  .dark .bg-white, .dark .bg-[#fffefd] { background-color: #111827 !important; }
+  .dark .text-slate-900, .dark .text-[#18212f], .dark .text-[#302b27] { color: #e2e8f0 !important; }
+  .dark .border-[#edf0f4], .dark .border-[#eeeae5], .dark .border-[#dfe4eb], .dark .border-[#e2e6ec] { border-color: #334155 !important; }
+}

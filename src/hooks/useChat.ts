@@ -3,7 +3,7 @@
 import { useState, useCallback } from "react";
 import { Message } from "@/types";
 
-const CHAT_REQUEST_TIMEOUT_MS = 60_000;
+const CHAT_REQUEST_TIMEOUT_MS = 180_000;
 
 
 interface UseChatOptions {
