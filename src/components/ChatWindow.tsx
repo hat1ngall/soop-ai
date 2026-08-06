@@ -1,7 +1,6 @@
 "use client";
 
 import { useState, useRef, useEffect } from "react";
-import type { ChatAttachment } from "@/hooks/useChat";
 import { useParams } from "next/navigation";
 import { MessageBubble } from "./MessageBubble";
 import { useChat } from "@/hooks/useChat";
@@ -51,8 +50,6 @@ export function ChatWindow() {
   const sessionId = params.id as string;
   const [model, setModel] = useState("claude-opus-5");
   const [input, setInput] = useState("");
-  const [attachments, setAttachments] = useState<ChatAttachment[]>([]);
-  const fileInputRef = useRef<HTMLInputElement>(null);
   const [upgradeOpen, setUpgradeOpen] = useState(false);
   const [usage, setUsage] = useState<UsageInfo | null>(null);
   const [modelMenuOpen, setModelMenuOpen] = useState(false);
@@ -82,12 +79,10 @@ export function ChatWindow() {
   };
 
   const handleSend = async () => {
-    if ((!input.trim() && attachments.length === 0) || loading) return;
+    if (!input.trim() || loading) return;
     const text = input;
     setInput("");
-    const sentAttachments = attachments;
-    setAttachments([]);
-    const result = await sendMessage(text || "Please analyze the attached files.", sentAttachments);
+    const result = await sendMessage(text);
     if (result?.upgradeRequired) setUpgradeOpen(true);
     fetchUsage();
   };
@@ -145,25 +140,7 @@ export function ChatWindow() {
             </div>
           )}
 
-          <input ref={fileInputRef} type="file" multiple accept="image/*,.txt,.md,.csv,.json,.pdf" className="hidden" onChange={async (e) => {
-            const next: ChatAttachment[] = [];
-            for (const file of Array.from(e.target.files || [])) {
-              if (file.size > 10 * 1024 * 1024) continue;
-              if (file.type.startsWith("image/")) {
-                const dataUrl = await new Promise<string>((resolve, reject) => { const reader = new FileReader(); reader.onload = () => resolve(String(reader.result)); reader.onerror = reject; reader.readAsDataURL(file); });
-                next.push({ name: file.name, type: file.type, dataUrl });
-              } else {
-                next.push({ name: file.name, type: file.type || "text/plain", text: await file.text() });
-              }
-            }
-            setAttachments((prev) => [...prev, ...next]);
-            e.currentTarget.value = "";
-          }} />
-          {attachments.length > 0 && <div className="mb-2 flex flex-wrap gap-2">{attachments.map((a, i) => <span key={`${a.name}-${i}`} className="rounded-lg bg-slate-100 px-2 py-1 text-xs text-slate-600">{a.name}<button type="button" className="ml-1" onClick={() => setAttachments((prev) => prev.filter((_, n) => n !== i))}>×</button></span>)}</div>}
-
           <div className={`flex items-end gap-2 rounded-2xl border p-2.5 transition-all duration-200 shadow-[0_12px_34px_rgba(35,48,70,.08)] ${isLimitExceeded ? "border-red-300 bg-red-50/90" : "border-[#dfe4eb] bg-white focus-within:border-[#91a4f7] focus-within:shadow-[0_12px_34px_rgba(70,98,240,.14)]"}`}>
-            <button type="button" onClick={() => fileInputRef.current?.click()} disabled={loading || isLimitExceeded} className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl text-slate-500 hover:bg-slate-100" title="Attach files">📎</button>
-
             <textarea
               ref={textareaRef}
               value={input}
@@ -228,7 +205,7 @@ export function ChatWindow() {
             {/* Send button */}
             <button
               onClick={handleSend}
-              disabled={(!input.trim() && attachments.length === 0) || loading || isLimitExceeded}
+              disabled={!input.trim() || loading || isLimitExceeded}
               className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-[#4662f0] text-white shadow-[0_6px_14px_rgba(70,98,240,.25)] transition-all duration-200 hover:-translate-y-0.5 hover:bg-[#3857e8] disabled:opacity-25"
             >
               {loading ? (

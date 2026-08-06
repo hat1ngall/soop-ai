@@ -5,7 +5,6 @@ import { Message } from "@/types";
 
 const CHAT_REQUEST_TIMEOUT_MS = 180_000;
 
-export interface ChatAttachment { name: string; type: string; dataUrl?: string; text?: string; }
 
 
 interface UseChatOptions {
@@ -31,8 +30,8 @@ export function useChat({ sessionId, model }: UseChatOptions) {
   }, [sessionId]);
 
   const sendMessage = useCallback(
-    async (content: string, attachments: ChatAttachment[] = []) => {
-      if ((!content.trim() && attachments.length === 0) || loading) return;
+    async (content: string) => {
+      if (!content.trim() || loading) return;
 
       const userMsg: Message = {
         id: crypto.randomUUID(),
@@ -52,7 +51,7 @@ export function useChat({ sessionId, model }: UseChatOptions) {
         const res = await fetch("/api/chat", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ message: content.trim(), model, sessionId, attachments }),
+          body: JSON.stringify({ message: content.trim(), model, sessionId }),
           signal: controller.signal,
         });
 
