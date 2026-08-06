@@ -44,9 +44,9 @@ export async function POST(req: Request) {
   }
 
   const userId = (session.user as any).id;
-  const { message, model, sessionId, attachments = [] } = await req.json();
+  const { message, model, sessionId } = await req.json();
 
-  if ((!message && !attachments.length) || !model || !sessionId) {
+  if (!message || !model || !sessionId) {
     return NextResponse.json({ error: "Отсутствуют обязательные поля" }, { status: 400 });
   }
 
@@ -80,7 +80,7 @@ export async function POST(req: Request) {
   }
 
   await prisma.message.create({
-    data: { role: "user", content: attachments.length ? `${message}\n\n[Attachments: ${attachments.map((a: any) => a.name).join(", ")}]` : message, sessionId },
+    data: { role: "user", content: message, sessionId },
   });
 
   const history = await prisma.message.findMany({
