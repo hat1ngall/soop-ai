@@ -27,59 +27,6 @@ export default function DashboardLayout({
     }
   }, [status, router]);
 
-  useEffect(() => {
-    const handleResize = () => {
-      if (window.innerWidth >= 768) {
-        setSidebarOpen(true);
-      } else {
-        setSidebarOpen(false);
-      }
-    };
-    handleResize();
-    window.addEventListener("resize", handleResize);
-    return () => window.removeEventListener("resize", handleResize);
-  }, []);
-
-  useEffect(() => {
-    if (session) {
-      fetch("/api/user/me")
-        .then((res) => res.json())
-        .then((data) => {
-          setCurrentPlan(data.plan);
-          setDaysLeft(data.daysLeft);
-        })
-        .catch(() => {});
-    }
-  }, [session]);
-
-  useEffect(() => {
-    const refreshAfterIdle = () => {
-      if (document.visibilityState !== "visible") return;
-
-      update();
-      setSettingsOpen(false);
-      setUpgradeOpen(false);
-      setSidebarOpen(window.innerWidth >= 768);
-
-      fetch("/api/user/me")
-        .then((res) => (res.ok ? res.json() : null))
-        .then((data) => {
-          if (!data) return;
-          setCurrentPlan(data.plan);
-          setDaysLeft(data.daysLeft);
-        })
-        .catch(() => {});
-    };
-
-    document.addEventListener("visibilitychange", refreshAfterIdle);
-    window.addEventListener("pageshow", refreshAfterIdle);
-
-    return () => {
-      document.removeEventListener("visibilitychange", refreshAfterIdle);
-      window.removeEventListener("pageshow", refreshAfterIdle);
-    };
-  }, [update]);
-
   const handleUpgradeRequest = () => {
     setUpgradeOpen(true);
   };
