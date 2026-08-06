@@ -144,12 +144,12 @@ export function ChatWindow() {
             <textarea
               ref={textareaRef}
               value={input}
-              onChange={(e) => setInput(e.target.value)}
+              onChange={(e) => { setInput(e.target.value); e.currentTarget.style.height = "auto"; e.currentTarget.style.height = `${Math.min(e.currentTarget.scrollHeight, 160)}px`; }}
               onKeyDown={handleKeyDown}
               placeholder={isLimitExceeded ? "Лимит исчерпан..." : "Напишите сообщение..."}
               rows={1}
               disabled={loading || isLimitExceeded}
-              className="max-h-40 flex-1 resize-none bg-transparent px-2 py-2 text-sm text-[#302b27] outline-none placeholder:text-[#aaa39c] disabled:opacity-50"
+              className="max-h-40 min-h-[20px] flex-1 resize-none overflow-y-auto bg-transparent px-2 py-2 text-sm text-[#302b27] outline-none placeholder:text-[#aaa39c] disabled:opacity-50"
               style={{ minHeight: "20px" }}
             />
 
