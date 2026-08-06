@@ -46,7 +46,7 @@ export async function POST(req: Request) {
   const userId = (session.user as any).id;
   const { message, model, sessionId, attachments = [] } = await req.json();
 
-  if (!message || !model || !sessionId) {
+  if ((!message && !attachments.length) || !model || !sessionId) {
     return NextResponse.json({ error: "Отсутствуют обязательные поля" }, { status: 400 });
   }
 

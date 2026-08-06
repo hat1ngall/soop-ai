@@ -82,7 +82,7 @@ export function ChatWindow() {
   };
 
   const handleSend = async () => {
-    if (!input.trim() || loading) return;
+    if ((!input.trim() && attachments.length === 0) || loading) return;
     const text = input;
     setInput("");
     const result = await sendMessage(text);
