@@ -19,7 +19,7 @@ interface Model {
 
 const MODELS: Model[] = [
   // Free — слабые модели
-  { id: "gemini-flash-3.5", name: "Gemini 3.5 Flash", tier: "free", icon: "✦", iconColor: "text-blue-400" },
+  { id: "gemini-flash-3.5", name: "Gemini 3.8 Flash", tier: "free", icon: "✦", iconColor: "text-blue-400" },
   { id: "minimax-2.5", name: "Minimax 2.5", tier: "free", icon: "◆", iconColor: "text-gray-400" },
   { id: "llama-4-scout", name: "Llama 4 Scout", tier: "free", icon: "◆", iconColor: "text-orange-400" },
   { id: "kimi-k2.6", name: "Kimi K2.6", tier: "free", icon: "≋", iconColor: "text-gray-400" },
@@ -30,18 +30,18 @@ const MODELS: Model[] = [
   { id: "gpt-5.2", name: "GPT 5.2", tier: "pro", icon: "◎", iconColor: "text-gray-400" },
   { id: "gpt-5.4", name: "GPT 5.4", tier: "pro", icon: "◎", iconColor: "text-gray-400" },
   { id: "gpt-5.5", name: "GPT 5.5", tier: "pro", icon: "◎", iconColor: "text-gray-400" },
-  { id: "grok-4.3", name: "Grok 4.3", tier: "pro", icon: "⊗", iconColor: "text-gray-400" },
-  { id: "grok-4.5", name: "Grok 4.5", tier: "pro", icon: "⊗", iconColor: "text-gray-400" },
+  { id: "grok-4.3", name: "Grok 4.5", tier: "pro", icon: "⊗", iconColor: "text-gray-400" },
+  { id: "grok-4.5", name: "Grok 4.7", tier: "pro", icon: "⊗", iconColor: "text-gray-400" },
   // Boost — топовые модели
   { id: "claude-sonnet-5", name: "Sonnet 5", tier: "boost", icon: "✳", iconColor: "text-orange-500" },
   { id: "claude-opus-4.7", name: "Opus 4.7", tier: "boost", icon: "✳", iconColor: "text-orange-500" },
   { id: "claude-opus-4.8", name: "Opus 4.8", tier: "boost", icon: "✳", iconColor: "text-orange-500" },
   { id: "claude-opus-5", name: "Opus 5", tier: "boost", icon: "✳", iconColor: "text-orange-500" },
-  { id: "claude-fable-5", name: "Fable 5", tier: "boost", icon: "✳", iconColor: "text-orange-400" },
+  { id: "claude-fable-5", name: "Fable 5.1", tier: "boost", icon: "✳", iconColor: "text-orange-400" },
   { id: "gemini-3.1-pro", name: "Gemini 3.1 Pro", tier: "boost", icon: "✦", iconColor: "text-blue-500" },
-  { id: "gpt-5.6-sol", name: "GPT 5.6 Sol", tier: "boost", icon: "◎", iconColor: "text-gray-400" },
+  { id: "gpt-5.6-sol", name: "GPT 6 Astra", tier: "boost", icon: "◎", iconColor: "text-gray-400" },
   { id: "gpt-5.6-terra", name: "GPT 5.6 Terra", tier: "boost", icon: "◎", iconColor: "text-gray-400" },
-  { id: "glm-5.2", name: "GLM 5.2", tier: "boost", icon: "✦", iconColor: "text-green-400" },
+  { id: "glm-5.2", name: "GLM 5.3", tier: "boost", icon: "✦", iconColor: "text-green-400" },
   // Enterprise — всё + эксклюзив
   { id: "grok-build-0.1", name: "Grok Build 0.1", tier: "enterprise", icon: "⊗", iconColor: "text-gray-400" },
 ];

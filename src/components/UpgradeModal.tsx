@@ -27,7 +27,7 @@ const PLANS: Plan[] = [
     price: "$9.99",
     color: "blue",
     gradient: "from-blue-500 to-blue-600",
-    models: ["GPT 5.6 Sol", "Gemini 3.1 Pro"],
+    models: ["GPT 6 Astra", "Gemini 3.1 Pro"],
     features: [
       "100 сообщений в день",
       "Все бесплатные модели",
@@ -41,7 +41,7 @@ const PLANS: Plan[] = [
     price: "$19.99",
     color: "purple",
     gradient: "from-purple-500 to-purple-600",
-    models: ["Claude Fable 5", "Claude Opus 5"],
+    models: ["Claude Fable 5.1", "Claude Opus 5"],
     features: [
       "300 сообщений в день",
       "Все Pro модели",

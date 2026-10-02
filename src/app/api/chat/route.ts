@@ -7,7 +7,7 @@ import { checkAndResetExpiredSubscription } from "@/lib/subscription";
 import { getSystemPrompt } from "@/lib/system-prompt";
 
 function mapModelName(): string {
-  return "gpt-5.4-mini";
+  return "free/gpt-6-luna";
 }
 
 function getTodayStart(): Date {
