@@ -17,37 +17,62 @@ function getTodayStart(): Date {
 
 function getDemoResponse(message: string, model: string): string {
   const lower = message.toLowerCase();
-  if (lower.includes("РїСЂРёРІРµС‚") || lower.includes("hello") || lower.includes("hi")) {
-    return `РџСЂРёРІРµС‚! РЇ Soop AI, РјРѕРґРµР»СЊ **${model}**. Р§РµРј РјРѕРіСѓ РїРѕРјРѕС‡СЊ СЃРµРіРѕРґРЅСЏ?`;
+  if (lower.includes("привет") || lower.includes("hello") || lower.includes("hi")) {
+    return `Привет! Я Soop AI, модель **${model}**. Чем могу помочь сегодня?`;
   }
-  if (lower.includes("РєС‚Рѕ С‚С‹") || lower.includes("С‡С‚Рѕ С‚С‹") || lower.includes("who are you")) {
-    return `РЇ вЂ” **Soop AI**, AI-Р°СЃСЃРёСЃС‚РµРЅС‚, СЃРѕР·РґР°РЅРЅС‹Р№ РєРѕРјР°РЅРґРѕР№ Soop AI.\n\nРЎРµР№С‡Р°СЃ СЏ СЂР°Р±РѕС‚Р°СЋ РІ РґРµРјРѕ-СЂРµР¶РёРјРµ, С‚Р°Рє РєР°Рє API РєР»СЋС‡ РµС‰С‘ РЅРµ РЅР°СЃС‚СЂРѕРµРЅ. РљР°Рє С‚РѕР»СЊРєРѕ РЅР°СЃС‚СЂРѕРёС‚Рµ \`MY_CUSTOM_API_URL\` Рё \`MY_CUSTOM_API_KEY\` РІ С„Р°Р№Р»Рµ \`.env\`, СЏ РЅР°С‡РЅСѓ РѕС‚РІРµС‡Р°С‚СЊ С‡РµСЂРµР· СЂРµР°Р»СЊРЅСѓСЋ РјРѕРґРµР»СЊ.\n\nРџРѕРєР° РјРѕР¶РµС‚Рµ С‚РµСЃС‚РёСЂРѕРІР°С‚СЊ РёРЅС‚РµСЂС„РµР№СЃ!`;
+  if (lower.includes("кто ты") || lower.includes("что ты") || lower.includes("who are you")) {
+    return `Я — **Soop AI**, AI-ассистент, созданный командой Soop AI.\n\nСейчас я работаю в демо-режиме, так как API-ключ ещё не настроен. Как только настроите \`MY_CUSTOM_API_URL\` и \`MY_CUSTOM_API_KEY\` в файле \`.env\`, я начну отвечать через реальную модель.\n\nПока можете тестировать интерфейс!`;
   }
-  if (lower.includes("РїРѕРјРѕС‰СЊ") || lower.includes("help") || lower.includes("С‡С‚Рѕ СѓРјРµРµС€СЊ")) {
-    return `РЇ РјРѕРіСѓ РїРѕРјРѕС‡СЊ СЃ:\n\n- **РљРѕРґРѕРј** вЂ” РЅР°РїРёСЃР°РЅРёРµ, РѕС‚Р»Р°РґРєР°, СЂРµС„Р°РєС‚РѕСЂРёРЅРі\n- **РўРµРєСЃС‚Р°РјРё** вЂ” РіРµРЅРµСЂР°С†РёСЏ, СЂРµРґР°РєС‚РёСЂРѕРІР°РЅРёРµ, РїРµСЂРµРІРѕРґ\n- **РђРЅР°Р»РёР·РѕРј** вЂ” РґР°РЅРЅС‹Рµ, РґРѕРєСѓРјРµРЅС‚С‹, Р·Р°РґР°С‡Рё\n- **Р’РѕРїСЂРѕСЃР°РјРё** вЂ” Р·РЅР°РЅРёСЏ, РѕР±СЉСЏСЃРЅРµРЅРёСЏ, СЂРµРєРѕРјРµРЅРґР°С†РёРё\n\nРќР°РїРёС€РёС‚Рµ С‡С‚Рѕ-РЅРёР±СѓРґСЊ, Рё СЏ РѕС‚РІРµС‡Сѓ!`;
+  if (lower.includes("помощь") || lower.includes("help") || lower.includes("что умеешь")) {
+    return `Я могу помочь с:\n\n- **Кодом** — написание, отладка, рефакторинг\n- **Текстами** — генерация, редактирование, перевод\n- **Анализом** — данные, документы, задачи\n- **Вопросами** — знания, объяснения, рекомендации\n\nНапишите что-нибудь, и я отвечу!`;
   }
-  if (lower.includes("РєРѕРґ") || lower.includes("code") || lower.includes("РїСЂРёРјРµСЂ")) {
-    return `Р’РѕС‚ РїСЂРёРјРµСЂ РїСЂРѕСЃС‚РѕР№ С„СѓРЅРєС†РёРё РЅР° Python:\n\n\`\`\`python\ndef fibonacci(n: int) -> list[int]:\n    if n <= 0:\n        return []\n    if n == 1:\n        return [0]\n    fib = [0, 1]\n    for _ in range(2, n):\n        fib.append(fib[-1] + fib[-2])\n    return fib\n\nprint(fibonacci(10))\n# [0, 1, 1, 2, 3, 5, 8, 13, 21, 34]\n\`\`\``;
+  if (lower.includes("код") || lower.includes("code") || lower.includes("пример")) {
+    return `Вот пример простой функции на Python:\n\n\`\`\`python\ndef fibonacci(n: int) -> list[int]:\n    if n <= 0:\n        return []\n    if n == 1:\n        return [0]\n    fib = [0, 1]\n    for _ in range(2, n):\n        fib.append(fib[-1] + fib[-2])\n    return fib\n\nprint(fibonacci(10))\n# [0, 1, 1, 2, 3, 5, 8, 13, 21, 34]\n\`\`\``;
   }
-  return `Р­С‚Рѕ РґРµРјРѕ-РѕС‚РІРµС‚ РѕС‚ **Soop AI** (РјРѕРґРµР»СЊ: ${model}).\n\nР’Р°С€Рµ СЃРѕРѕР±С‰РµРЅРёРµ: "${message}"\n\nРќР°СЃС‚СЂРѕР№С‚Рµ \`MY_CUSTOM_API_URL\` Рё \`MY_CUSTOM_API_KEY\` РІ \`.env\` РґР»СЏ СЂРµР°Р»СЊРЅС‹С… РѕС‚РІРµС‚РѕРІ.`;
+  return `Это демо-ответ от **Soop AI** (модель: ${model}).\n\nВаше сообщение: "${message}"\n\nНастройте \`MY_CUSTOM_API_URL\` и \`MY_CUSTOM_API_KEY\` в \`.env\` для реальных ответов.`;
 }
 
-// РљРѕСЂРѕС‚РєР°СЏ РїРѕСЃС‚РѕСЏРЅРЅР°СЏ РїР°СѓР·Р° СЃРѕС…СЂР°РЅСЏРµС‚ РїРµС‡Р°С‚СЊ РїРѕ Р±СѓРєРІР°Рј Р±РµР· РёСЃРєСѓСЃСЃС‚РІРµРЅРЅС‹С… Р·Р°РґРµСЂР¶РµРє.
+// Короткая постоянная пауза сохраняет печать по буквам без искусственных задержек.
 function charDelay(): number {
   return 5;
+}
+
+function describeUpstreamError(status: number, body: string): string {
+  let detail = "";
+  try {
+    const parsed = JSON.parse(body);
+    detail = parsed?.error?.message || parsed?.message || "";
+  } catch {}
+  detail = String(detail || "").trim().slice(0, 300);
+
+  if (status === 402 || /check[- ]?in|insufficient|billing_error|payment|balance/i.test(detail)) {
+    const suffix = detail ? ` Провайдер: "${detail}"` : "";
+    return `API-аккаунт: недостаточно средств или не пройден ежедневный чек-ин на apinex.bond. Пополните баланс либо отметьтесь на странице airdrop, затем повторите запрос.${suffix}`;
+  }
+  if (status === 401 || status === 403) {
+    return detail || "Провайдер отклонил API-ключ. Проверьте MY_CUSTOM_API_KEY.";
+  }
+  if (status === 404) {
+    return detail || "Модель не найдена на стороне провайдера.";
+  }
+  if (status === 429) {
+    return detail || "Превышен лимит запросов провайдера. Попробуйте позже.";
+  }
+  if (detail) return detail;
+  return `Провайдер вернул ошибку HTTP ${status}.`;
 }
 
 export async function POST(req: Request) {
   const session = await getServerSession(authOptions);
   if (!session?.user) {
-    return NextResponse.json({ error: "РќРµ Р°РІС‚РѕСЂРёР·РѕРІР°РЅ" }, { status: 401 });
+    return NextResponse.json({ error: "Не авторизован" }, { status: 401 });
   }
 
   const userId = (session.user as any).id;
   const { message, model, sessionId } = await req.json();
 
   if (!message || !model || !sessionId) {
-    return NextResponse.json({ error: "РћС‚СЃСѓС‚СЃС‚РІСѓСЋС‚ РѕР±СЏР·Р°С‚РµР»СЊРЅС‹Рµ РїРѕР»СЏ" }, { status: 400 });
+    return NextResponse.json({ error: "Отсутствуют обязательные поля" }, { status: 400 });
   }
 
   const currentPlan = await checkAndResetExpiredSubscription(userId);
@@ -55,7 +80,7 @@ export async function POST(req: Request) {
   const available = getAvailableModels(currentPlan);
   if (!available.includes(model)) {
     return NextResponse.json(
-      { error: "upgrade_required", message: "Р­С‚Р° РјРѕРґРµР»СЊ РґРѕСЃС‚СѓРїРЅР° С‚РѕР»СЊРєРѕ РґР»СЏ Premium" },
+      { error: "upgrade_required", message: "Эта модель доступна только для Premium" },
       { status: 403 }
     );
   }
@@ -68,7 +93,7 @@ export async function POST(req: Request) {
     });
     if ((usage?.count || 0) >= dailyLimit) {
       return NextResponse.json(
-        { error: "limit_exceeded", message: `Р›РёРјРёС‚ РёСЃС‡РµСЂРїР°РЅ (${dailyLimit}/РґРµРЅСЊ)` },
+        { error: "limit_exceeded", message: `Лимит исчерпан (${dailyLimit}/день)` },
         { status: 429 }
       );
     }
@@ -76,7 +101,7 @@ export async function POST(req: Request) {
 
   const chat = await prisma.chatSession.findUnique({ where: { id: sessionId } });
   if (!chat || chat.userId !== userId) {
-    return NextResponse.json({ error: "РЎРµСЃСЃРёСЏ РЅРµ РЅР°Р№РґРµРЅР°" }, { status: 404 });
+    return NextResponse.json({ error: "Сессия не найдена" }, { status: 404 });
   }
 
   await prisma.message.create({
@@ -98,24 +123,28 @@ export async function POST(req: Request) {
     !apiUrl.includes("your-api-endpoint") &&
     !apiKey.includes("your-api-key");
 
-  // РЎС‚СЂРёРјРёРЅРі
+  // Стриминг
   const encoder = new TextEncoder();
   const stream = new ReadableStream({
     async start(controller) {
       let fullContent = "";
 
-      controller.enqueue(encoder.encode(`data: ${JSON.stringify({ thinking: true })}\n\n`));
+      const send = (payload: unknown) => {
+        controller.enqueue(encoder.encode(`data: ${JSON.stringify(payload)}\n\n`));
+      };
+
+      send({ thinking: true });
 
       if (!isApiConfigured) {
-        // Р”Р•РњРћ вЂ” Р±С‹СЃС‚СЂС‹Р№ РІС‹РІРѕРґ РїРѕ РѕРґРЅРѕРјСѓ СЃРёРјРІРѕР»Сѓ.
+        // ДЕМО — быстрый вывод по одному символу.
         const demoText = getDemoResponse(message, model);
         for (const char of demoText) {
           fullContent += char;
-          controller.enqueue(encoder.encode(`data: ${JSON.stringify({ chunk: char })}\n\n`));
+          send({ chunk: char });
           await new Promise((r) => setTimeout(r, charDelay()));
         }
       } else {
-        // Р РµР°Р»СЊРЅС‹Р№ API вЂ” СЃРЅР°С‡Р°Р»Р° РїРѕР»СѓС‡Р°РµРј РїРѕР»РЅС‹Р№ РѕС‚РІРµС‚
+        // Реальный API — сначала получаем полный ответ
         try {
           const apiRes = await fetch(apiUrl, {
             method: "POST",
@@ -135,37 +164,47 @@ export async function POST(req: Request) {
 
           if (!apiRes.ok) {
             const err = await apiRes.text();
-            console.error("Upstream API error:", err);
-            controller.enqueue(encoder.encode(`data: ${JSON.stringify({ error: "РћС€РёР±РєР° РјРѕРґРµР»Рё" })}\n\n`));
+            console.error("Upstream API error:", apiRes.status, err);
+            const detail = describeUpstreamError(apiRes.status, err);
+            send({ error: detail });
+            send({ done: true });
             controller.close();
             return;
           }
 
           const data = await apiRes.json();
-          clearTimeout(upstreamTimeout);
           const fullText =
             data.choices?.[0]?.message?.content ||
             data.response ||
             data.content ||
-            "РџСѓСЃС‚РѕР№ РѕС‚РІРµС‚ РѕС‚ РјРѕРґРµР»Рё.";
+            "Пустой ответ от модели.";
 
-          // Р’С‹РґР°С‘Рј РѕС‚РІРµС‚ РїРѕСЃРёРјРІРѕР»СЊРЅРѕ.
+          // Выдаём ответ посимвольно.
           for (const char of fullText) {
             fullContent += char;
-            controller.enqueue(encoder.encode(`data: ${JSON.stringify({ chunk: char })}\n\n`));
+            send({ chunk: char });
             await new Promise((r) => setTimeout(r, charDelay()));
           }
         } catch (error) {
-          clearTimeout(upstreamTimeout);
           console.error("Chat API error:", error);
-          controller.enqueue(encoder.encode(`data: ${JSON.stringify({ error: "РЎРµСЂРІРёСЃ РЅРµРґРѕСЃС‚СѓРїРµРЅ" })}\n\n`));
+          const detail = upstreamController.signal.aborted
+            ? "Провайдер не ответил за 240 секунд. Попробуйте ещё раз."
+            : "Сервис недоступен: не удалось связаться с провайдером.";
+          send({ error: detail });
+          send({ done: true });
+          controller.close();
+          return;
+        } finally {
+          clearTimeout(upstreamTimeout);
         }
       }
 
-      // РЎРѕС…СЂР°РЅСЏРµРј РІ Р‘Р”
-      await prisma.message.create({
-        data: { role: "assistant", content: fullContent, sessionId },
-      });
+      // Сохраняем в БД
+      if (fullContent) {
+        await prisma.message.create({
+          data: { role: "assistant", content: fullContent, sessionId },
+        });
+      }
 
       const todayStart = getTodayStart();
       await prisma.dailyUsage.upsert({
@@ -183,7 +222,7 @@ export async function POST(req: Request) {
         where: { userId_date: { userId, date: todayStart } },
       });
 
-      controller.enqueue(encoder.encode(`data: ${JSON.stringify({ done: true, usage: { used: updatedUsage?.count || 0, limit: dailyLimit } })}\n\n`));
+      send({ done: true, usage: { used: updatedUsage?.count || 0, limit: dailyLimit } });
       controller.close();
     },
   });

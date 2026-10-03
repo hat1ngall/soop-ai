@@ -76,62 +76,71 @@ export function useChat({ sessionId, model }: UseChatOptions) {
         const reader = res.body?.getReader();
         const decoder = new TextDecoder();
         let fullContent = "";
+        let buffer = "";
+        let finished = false;
+        let usage: { used: number; limit: number } | undefined;
+
+        const handleLine = (line: string) => {
+          const trimmed = line.trim();
+          if (!trimmed || !trimmed.startsWith("data: ")) return;
+
+          let parsed: any;
+          try {
+            parsed = JSON.parse(trimmed.slice(6));
+          } catch {
+            return;
+          }
+
+          if (parsed.thinking) {
+            setThinking(true);
+            return;
+          }
+
+          if (parsed.error) {
+            setError(parsed.error);
+            setMessages((prev) => prev.filter((m) => m.id !== assistantMsg.id));
+            finished = true;
+            return;
+          }
+
+          if (parsed.chunk) {
+            setThinking(false);
+            fullContent += parsed.chunk;
+            setMessages((prev) =>
+              prev.map((m) =>
+                m.id === assistantMsg.id ? { ...m, content: fullContent } : m
+              )
+            );
+          }
+
+          if (parsed.done) {
+            finished = true;
+            usage = parsed.usage;
+          }
+        };
 
         if (reader) {
-          while (true) {
+          while (!finished) {
             const { done, value } = await reader.read();
             if (done) break;
 
-            const chunk = decoder.decode(value, { stream: true });
-            const lines = chunk.split("\n");
+            buffer += decoder.decode(value, { stream: true });
+            const lines = buffer.split("\n");
+            buffer = lines.pop() ?? "";
 
             for (const line of lines) {
-              const trimmed = line.trim();
-              if (!trimmed || !trimmed.startsWith("data: ")) continue;
-              const data = trimmed.slice(6);
-
-              try {
-                const parsed = JSON.parse(data);
-
-                if (parsed.thinking) {
-                  setThinking(true);
-                  continue;
-                }
-
-                if (parsed.error) {
-                  setError(parsed.error);
-                  setMessages((prev) => prev.filter((m) => m.id !== assistantMsg.id));
-                  setLoading(false);
-                  setThinking(false);
-                  return { upgradeRequired: false, limitExceeded: false };
-                }
-
-                if (parsed.chunk) {
-                  setThinking(false);
-                  fullContent += parsed.chunk;
-                  setMessages((prev) =>
-                    prev.map((m) =>
-                      m.id === assistantMsg.id ? { ...m, content: fullContent } : m
-                    )
-                  );
-                }
-
-                if (parsed.done) {
-                  setLoading(false);
-                  setThinking(false);
-                  return { upgradeRequired: false, limitExceeded: false, usage: parsed.usage };
-                }
-              } catch {}
+              handleLine(line);
+              if (finished) break;
             }
           }
+          if (!finished && buffer) handleLine(buffer);
         }
 
         setLoading(false);
         setThinking(false);
-        return { upgradeRequired: false, limitExceeded: false };
+        return { upgradeRequired: false, limitExceeded: false, usage };
       } catch (error) {
         setError(error instanceof DOMException && error.name === "AbortError" ? "Запрос слишком долго не отвечал" : "Сервис недоступен");
-        setMessages((prev) => prev.filter((m) => m.id !== userMsg.id));
         setLoading(false);
         setThinking(false);
         return { upgradeRequired: false, limitExceeded: false };
