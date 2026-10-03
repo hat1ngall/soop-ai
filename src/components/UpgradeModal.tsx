@@ -41,7 +41,7 @@ const PLANS: Plan[] = [
     price: "$19.99",
     color: "purple",
     gradient: "from-purple-500 to-purple-600",
-    models: ["Claude Fable 5.1", "Claude Opus 5"],
+    models: ["Claude Fable 5.1", "Claude Opus 5.5"],
     features: [
       "300 сообщений в день",
       "Все Pro модели",

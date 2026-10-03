@@ -14,7 +14,7 @@ const MODEL_DISPLAY_NAMES: Record<string, string> = {
   "claude-sonnet-5": "Claude Sonnet 5",
   "claude-opus-4.7": "Claude Opus 4.7",
   "claude-opus-4.8": "Claude Opus 4.8",
-  "claude-opus-5": "Claude Opus 5",
+  "claude-opus-5.5": "Claude Opus 5.5",
   "claude-fable-5": "Claude Fable 5.1",
   "gemini-3.1-pro": "Gemini 3.1 Pro",
   "gpt-5.6-sol": "GPT 6 Astra",

@@ -9,7 +9,7 @@ const starters = [{ icon: "✦", title: "Spark an idea", text: "Start from a bla
 export default function DashboardPage() {
   const router = useRouter(); const { data: session, status } = useSession(); const [prompt, setPrompt] = useState(""); const [creating, setCreating] = useState(false);
   useEffect(() => { if (status === "unauthenticated") router.replace("/login"); }, [status, router]);
-  const startChat = async (value = prompt) => { if (creating) return; setCreating(true); try { const text = value.trim(); const response = await fetch("/api/sessions", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ title: text.slice(0, 42) || "New chat", model: "claude-opus-5" }) }); if (!response.ok) return; const chat = await response.json(); if (text) sessionStorage.setItem("soop:pending-prompt", text); router.push(`/chat/${chat.id}`); } finally { setCreating(false); } };
+  const startChat = async (value = prompt) => { if (creating) return; setCreating(true); try { const text = value.trim(); const response = await fetch("/api/sessions", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ title: text.slice(0, 42) || "New chat", model: "claude-opus-5.5" }) }); if (!response.ok) return; const chat = await response.json(); if (text) sessionStorage.setItem("soop:pending-prompt", text); router.push(`/chat/${chat.id}`); } finally { setCreating(false); } };
   if (status === "loading") return <div className="flex h-full items-center justify-center"><span className="h-5 w-5 animate-spin rounded-full border-2 border-[#d5dbe5] border-t-[#4662f0]" /></div>;
   if (!session) return null;
   const firstName = session.user?.name?.split(" ")[0] || "there";

@@ -15,7 +15,7 @@ export const PRO_MODELS = [
 // Boost — топовые модели (rank 1-10)
 export const BOOST_MODELS = [
   "claude-sonnet-5", "claude-opus-4.7", "claude-opus-4.8",
-  "claude-opus-5", "claude-fable-5", "gemini-3.1-pro",
+  "claude-opus-5.5", "claude-fable-5", "gemini-3.1-pro",
   "gpt-5.6-sol", "gpt-5.6-terra", "glm-5.2",
 ];
 

@@ -27,7 +27,7 @@ const MODEL_LIST = [
   { id: "claude-sonnet-5", name: "Sonnet 5", tier: "boost", icon: "/models/claude.png", color: "text-orange-500" },
   { id: "claude-opus-4.7", name: "Opus 4.7", tier: "boost", icon: "/models/claude.png", color: "text-orange-500" },
   { id: "claude-opus-4.8", name: "Opus 4.8", tier: "boost", icon: "/models/claude.png", color: "text-orange-500" },
-  { id: "claude-opus-5", name: "Opus 5", tier: "boost", icon: "/models/claude.png", color: "text-orange-500" },
+  { id: "claude-opus-5.5", name: "Opus 5.5", tier: "boost", icon: "/models/claude.png", color: "text-orange-500" },
   { id: "claude-fable-5", name: "Fable 5.1", tier: "boost", icon: "/models/claude.png", color: "text-orange-400" },
   { id: "gemini-3.1-pro", name: "Gemini 3.1 Pro", tier: "boost", icon: "/models/Google_Gemini.png", color: "text-blue-500" },
   { id: "gpt-5.6-sol", name: "GPT 6 Astra", tier: "boost", icon: "/models/chatgpt.png", color: "text-gray-400" },
@@ -48,7 +48,7 @@ function ModelIcon({ icon, color }: { icon: string; color: string }) {
 export function ChatWindow() {
   const params = useParams();
   const sessionId = params.id as string;
-  const [model, setModel] = useState("claude-opus-5");
+  const [model, setModel] = useState("claude-opus-5.5");
   const [input, setInput] = useState("");
   const [upgradeOpen, setUpgradeOpen] = useState(false);
   const [usage, setUsage] = useState<UsageInfo | null>(null);

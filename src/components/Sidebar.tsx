@@ -12,7 +12,7 @@ export function Sidebar({ isOpen, onToggle, onOpenSettings, onOpenUpgrade, curre
   const pathname = usePathname(); const router = useRouter(); const { data: session } = useSession();
   const [chats, setChats] = useState<ChatSession[]>([]); const [loadingChats, setLoadingChats] = useState(true);
   useEffect(() => { fetch("/api/sessions").then((response) => response.ok ? response.json() : []).then(setChats).finally(() => setLoadingChats(false)); }, []);
-  const createNewChat = async () => { const response = await fetch("/api/sessions", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ title: "New chat", model: "claude-opus-5" }) }); if (!response.ok) return; const chat = await response.json(); setChats((items) => [chat, ...items]); router.push(`/chat/${chat.id}`); if (window.innerWidth < 768) onToggle(); };
+  const createNewChat = async () => { const response = await fetch("/api/sessions", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ title: "New chat", model: "claude-opus-5.5" }) }); if (!response.ok) return; const chat = await response.json(); setChats((items) => [chat, ...items]); router.push(`/chat/${chat.id}`); if (window.innerWidth < 768) onToggle(); };
   const deleteChat = async (id: string, event: React.MouseEvent) => { event.preventDefault(); event.stopPropagation(); await fetch(`/api/sessions/${id}`, { method: "DELETE" }); setChats((items) => items.filter((chat) => chat.id !== id)); if (pathname === `/chat/${id}`) router.push("/"); };
   if (!isOpen) return null;
   return <aside className="flex h-full w-full flex-col overflow-hidden bg-[#111b2d] text-[#d7dfec]">
