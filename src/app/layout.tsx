@@ -33,9 +33,14 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="ru">
+    <html lang="ru" suppressHydrationWarning>
       <head>
         <link rel="icon" href="/logo.svg" type="image/svg+xml" />
+        <script
+          dangerouslySetInnerHTML={{
+            __html: `try{if(localStorage.getItem("soop:theme")==="dark"){document.documentElement.classList.add("dark");}}catch(e){}`,
+          }}
+        />
       </head>
       <body className={`${inter.className} min-h-screen bg-[#f8f7f4] text-[#25211f] antialiased`}>
         <div className="min-h-screen"><Providers>{children}</Providers></div>

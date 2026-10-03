@@ -27,7 +27,7 @@ const PLANS: Plan[] = [
     price: "$9.99",
     color: "blue",
     gradient: "from-blue-500 to-blue-600",
-    models: ["GPT 6 Astra", "Gemini 3.1 Pro"],
+    models: ["Claude Sonnet 4.6", "GPT 5.2", "GPT 5.4", "GPT 5.5", "Grok 4.5", "Grok 4.7"],
     features: [
       "100 сообщений в день",
       "Все бесплатные модели",
@@ -59,7 +59,6 @@ const PLANS: Plan[] = [
     features: [
       "Безлимитные сообщения",
       "Все модели без ограничений",
-      "API доступ",
       "Выделенный менеджер",
       "SLA 99.9%",
     ],

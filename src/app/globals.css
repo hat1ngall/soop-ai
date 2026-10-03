@@ -25,9 +25,138 @@
   .animate-pulse-glow { animation: none; }
 }
 
+/* =========================================================
+   DARK THEME
+   Класс .dark вешается на <html>. Палитра:
+   фон #0b111b, панели #121a28, подпанели #1a2334,
+   рамки #25324a, текст #e7ecf4 / #b7c2d4 / #8b9ab1
+   ========================================================= */
 @layer base {
-  .dark body { background: #0f172a; color: #e2e8f0; }
-  .dark .bg-white, .dark .bg-[#fffefd] { background-color: #111827 !important; }
-  .dark .text-slate-900, .dark .text-[#18212f], .dark .text-[#302b27] { color: #e2e8f0 !important; }
-  .dark .border-[#edf0f4], .dark .border-[#eeeae5], .dark .border-[#dfe4eb], .dark .border-[#e2e6ec] { border-color: #334155 !important; }
+  html.dark { color-scheme: dark; }
+
+  html.dark body {
+    background: #0b111b;
+    color: #e7ecf4;
+  }
+
+  html.dark * { scrollbar-color: #33415c transparent; }
+  html.dark *::-webkit-scrollbar-thumb { background: #33415c; }
+  html.dark *::-webkit-scrollbar-thumb:hover { background-color: #46587a; }
+  html.dark ::placeholder { color: #6b7a92; }
+
+  /* ---------- Поверхности ---------- */
+  /* Фон страницы (самый глубокий слой) */
+  html.dark .bg-\[\#f8f7f4\],
+  html.dark .bg-\[\#f5f6f8\] { background-color: #0b111b !important; }
+
+  /* Основные панели */
+  html.dark .bg-white,
+  html.dark .bg-\[\#fffefd\],
+  html.dark .bg-\[\#fbfcfd\],
+  html.dark .bg-slate-50,
+  html.dark .bg-\[\#f2f4f7\] { background-color: #121a28 !important; }
+
+  html.dark .bg-white\/70,
+  html.dark .bg-white\/85,
+  html.dark .bg-white\/90 { background-color: rgba(18, 26, 40, .93) !important; }
+
+  html.dark .bg-slate-100,
+  html.dark .bg-slate-200,
+  html.dark .bg-\[\#f7f8fa\],
+  html.dark .bg-\[\#eef1f5\],
+  html.dark .bg-\[\#eef1ff\],
+  html.dark .bg-\[\#e9edff\] { background-color: #1a2334 !important; }
+
+  /* Пузырь пользователя: в светлой теме тёмно-синий, в тёмной — контрастный */
+  html.dark .bg-\[\#18212f\] { background-color: #1c2b4a !important; }
+
+  html.dark .bg-\[\#fff0db\] { background-color: #2a2317 !important; }
+  html.dark .bg-\[\#f3effc\],
+  html.dark .bg-\[\#ece5fb\] { background-color: #1f1c33 !important; }
+
+  html.dark .bg-red-50 { background-color: #2a1a1e !important; }
+  html.dark .bg-emerald-100 { background-color: #10362a !important; }
+
+  /* ---------- Текст ---------- */
+  html.dark .text-slate-900,
+  html.dark .text-slate-950,
+  html.dark .text-\[\#18212f\],
+  html.dark .text-\[\#25211f\],
+  html.dark .text-\[\#302b27\],
+  html.dark .text-\[\#334155\],
+  html.dark .text-black { color: #e7ecf4 !important; }
+
+  html.dark .text-slate-700,
+  html.dark .text-slate-600,
+  html.dark .text-\[\#4b5563\],
+  html.dark .text-\[\#56657a\] { color: #b7c2d4 !important; }
+
+  html.dark .text-slate-500,
+  html.dark .text-slate-400,
+  html.dark .text-\[\#7a8799\],
+  html.dark .text-\[\#8290a3\],
+  html.dark .text-\[\#8390a3\],
+  html.dark .text-\[\#8995a7\],
+  html.dark .text-\[\#a0acbb\],
+  html.dark .text-\[\#a1acba\],
+  html.dark .text-\[\#aaa39c\],
+  html.dark .text-\[\#9aa9bf\],
+  html.dark .text-gray-800 { color: #8b9ab1 !important; }
+
+  html.dark .text-gray-500 { color: #7c8aa1 !important; }
+
+  /* Акценты должны светлеть на тёмном фоне */
+  html.dark .text-\[\#4662f0\],
+  html.dark .text-\[\#3857e8\] { color: #8fa4ff !important; }
+  html.dark .text-\[\#6750a4\] { color: #c4b4f7 !important; }
+  html.dark .text-red-700 { color: #fca5a5 !important; }
+  html.dark .text-emerald-700 { color: #6ee7b7 !important; }
+
+  /* ---------- Рамки ---------- */
+  html.dark .border-\[\#e2e6ec\],
+  html.dark .border-\[\#eeeae5\],
+  html.dark .border-\[\#dfe4eb\],
+  html.dark .border-\[\#edf0f4\],
+  html.dark .border-\[\#d5dbe5\],
+  html.dark .border-\[\#e0e5ed\],
+  html.dark .border-slate-200,
+  html.dark .border-slate-300,
+  html.dark .border-white\/80 { border-color: #25324a !important; }
+
+  html.dark .border-\[\#91a4f7\],
+  html.dark .border-\[\#b6c1f7\] { border-color: #46589a !important; }
+  html.dark .border-red-200 { border-color: rgba(248, 113, 113, .35) !important; }
+
+  /* ---------- Наведение ---------- */
+  html.dark .hover\:bg-\[\#f2f4f7\]:hover,
+  html.dark .hover\:bg-slate-50:hover,
+  html.dark .hover\:bg-slate-100:hover,
+  html.dark .hover\:bg-slate-200:hover,
+  html.dark .hover\:bg-\[\#fbfcfd\]:hover { background-color: #1a2334 !important; }
+
+  html.dark .hover\:bg-\[\#ece5fb\]:hover { background-color: #262142 !important; }
+  html.dark .hover\:bg-\[\#3857e8\]:hover,
+  html.dark .hover\:bg-\[\#5670f5\]:hover { background-color: #4f6cf5 !important; }
+
+  html.dark .hover\:text-\[\#18212f\]:hover,
+  html.dark .hover\:text-slate-900:hover,
+  html.dark .hover\:text-slate-950:hover { color: #e7ecf4 !important; }
+
+  html.dark .hover\:border-slate-300:hover { border-color: #33415c !important; }
+  html.dark .hover\:border-\[\#b6c1f7\]:hover { border-color: #5a6fc0 !important; }
+
+  html.dark .placeholder\:text-\[\#aaa39c\]::placeholder,
+  html.dark .placeholder\:text-\[\#a1acba\]::placeholder { color: #6b7a92 !important; }
+
+  /* ---------- Глубина панелей на тёмном фоне ---------- */
+  html.dark .shadow-\[0_10px_40px_rgba\(35\,48\,70\,0\.06\)\],
+  html.dark .shadow-\[0_10px_28px_rgba\(35\,48\,70\,\.08\)\],
+  html.dark .shadow-\[0_12px_34px_rgba\(35\,48\,70\,\.08\)\],
+  html.dark .shadow-\[0_8px_22px_rgba\(35\,48\,70\,\.05\)\],
+  html.dark .shadow-\[0_14px_36px_rgba\(35\,48\,70\,\.10\)\],
+  html.dark .shadow-\[0_22px_65px_rgba\(35\,48\,70\,\.10\)\],
+  html.dark .shadow-\[0_5px_18px_rgba\(35\,48\,70\,\.04\)\],
+  html.dark .shadow-\[0_18px_50px_rgba\(35\,48\,70\,\.16\)\] {
+    box-shadow: 0 14px 40px rgba(0, 0, 0, .45) !important;
+  }
 }

@@ -22,6 +22,19 @@ export default function DashboardLayout({
   const [darkMode, setDarkMode] = useState(false);
 
   useEffect(() => {
+    setDarkMode(document.documentElement.classList.contains("dark"));
+  }, []);
+
+  const toggleTheme = () => {
+    const next = !darkMode;
+    setDarkMode(next);
+    document.documentElement.classList.toggle("dark", next);
+    try {
+      localStorage.setItem("soop:theme", next ? "dark" : "light");
+    } catch {}
+  };
+
+  useEffect(() => {
     if (status !== "authenticated") return;
     const loadPlan = async () => {
       const response = await fetch("/api/user/me", { cache: "no-store" });
@@ -93,7 +106,7 @@ export default function DashboardLayout({
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
             </svg>
           </button>
-          <div className="flex items-center gap-2 text-xs font-medium text-[#7a8799]"><button onClick={() => setDarkMode((value) => !value)} className="rounded-lg border border-[#dfe4eb] px-2 py-1 text-xs hover:bg-[#f2f4f7] dark:border-slate-700 dark:hover:bg-slate-800" aria-label="Toggle theme">{darkMode ? "☀ Light" : "● Dark"}</button><span className="h-2 w-2 rounded-full bg-[#4dce91]" />Workspace</div>
+          <div className="flex items-center gap-2 text-xs font-medium text-[#7a8799]"><button onClick={toggleTheme} className="rounded-lg border border-[#dfe4eb] px-2 py-1 text-xs transition-colors hover:bg-[#f2f4f7] dark:border-slate-700 dark:hover:bg-slate-800" aria-label="Toggle theme" title={darkMode ? "Включить светлую тему" : "Включить тёмную тему"}>{darkMode ? "☀ Light" : "☾ Dark"}</button><span className="h-2 w-2 rounded-full bg-[#4dce91]" />Workspace</div>
         </header>
 
         {/* Main content */}
