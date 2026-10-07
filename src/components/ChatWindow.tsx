@@ -57,7 +57,7 @@ export function ChatWindow() {
   const textareaRef = useRef<HTMLTextAreaElement>(null);
   const modelRef = useRef<HTMLDivElement>(null);
 
-  const { messages, loading, thinking, error, setError, sendMessage, loadMessages } = useChat({ sessionId, model });
+  const { messages, loading, thinking, sendMessage, loadMessages } = useChat({ sessionId, model });
 
   useEffect(() => { loadMessages(); fetchUsage(); }, [sessionId]);
   useEffect(() => {
@@ -137,13 +137,6 @@ export function ChatWindow() {
             <div className="mb-2 flex items-center justify-between px-1">
               <span className="text-[11px] text-slate-500">{usage.used}/{usage.limit} сообщений сегодня</span>
               {usage.remaining <= 5 && usage.remaining > 0 && <span className="text-[11px] text-amber-600">Осталось {usage.remaining}</span>}
-            </div>
-          )}
-
-          {error && (
-            <div className="mb-2 flex items-start justify-between gap-3 rounded-xl border border-red-200 bg-red-50 px-3 py-2">
-              <p className="text-xs leading-5 text-red-600">{error}</p>
-              <button onClick={() => setError(null)} className="shrink-0 text-red-400 transition-colors hover:text-red-600" aria-label="Закрыть">✕</button>
             </div>
           )}
 
