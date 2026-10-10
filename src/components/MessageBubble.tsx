@@ -39,7 +39,7 @@ function UserMessageContent({ content }: { content: string }) {
               key={i}
               type="button"
               onClick={() => setSelectedImage(img.url)}
-              className="group relative h-20 w-20 sm:h-24 sm:w-24 overflow-hidden rounded-xl border border-white/20 bg-black/30 shadow-sm transition-all hover:scale-105 active:scale-95"
+              className="group relative h-14 w-14 sm:h-16 sm:w-16 overflow-hidden rounded-xl border border-white/20 bg-black/30 shadow-sm transition-all hover:scale-105 active:scale-95"
               title="Нажмите для просмотра в полном размере"
             >
               <img
@@ -47,8 +47,8 @@ function UserMessageContent({ content }: { content: string }) {
                 alt={img.alt || "Вложенное изображение"}
                 className="h-full w-full object-cover transition-opacity group-hover:opacity-90"
               />
-              <span className="absolute bottom-1 right-1 flex h-5 w-5 items-center justify-center rounded-md bg-black/60 text-white/90 backdrop-blur-sm opacity-0 transition-opacity group-hover:opacity-100">
-                <svg className="h-3 w-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <span className="absolute bottom-0.5 right-0.5 flex h-4 w-4 items-center justify-center rounded bg-black/70 text-white/90 backdrop-blur-sm opacity-0 transition-opacity group-hover:opacity-100">
+                <svg className="h-2.5 w-2.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0zM10 7v3m0 0v3m0-3h3m-3 0H7" />
                 </svg>
               </span>
