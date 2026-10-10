@@ -117,7 +117,7 @@ export async function POST(req: Request) {
     fullUserContent = fullUserContent ? `${imgs}\n\n${fullUserContent}` : imgs;
   }
   if (textAttachments.length > 0) {
-    const files = textAttachments.map((a: any) => `--- Файл: ${a.name || "файл"} ---\n${a.text}\n--- Конец файла ---`).join("\n\n");
+    const files = textAttachments.map((a: any) => `<<<FILE:${a.name || "файл"}>>>\n${a.text}\n<<<END_FILE>>>`).join("\n\n");
     fullUserContent = fullUserContent ? `${fullUserContent}\n\n${files}` : files;
   }
 
@@ -154,8 +154,10 @@ export async function POST(req: Request) {
       return { role: "user", content: parts };
     }
 
-    const cleaned = m.content.replace(/!\[(.*?)\]\(data:image\/[^)]+\)/g, "[Прикреплённое изображение: $1]");
-    return { role: "user", content: cleaned };
+    let contentForModel = m.content
+      .replace(/<<<FILE:(.*?)>>>\n?([\s\S]*?)\n?<<<END_FILE>>>/g, "\n--- Файл: $1 ---\n$2\n--- Конец файла ---\n")
+      .replace(/!\[(.*?)\]\(data:image\/[^)]+\)/g, "[Прикреплённое изображение: $1]");
+    return { role: "user", content: contentForModel };
   });
 
   const apiUrl = process.env.MY_CUSTOM_API_URL;

@@ -8,15 +8,29 @@ const stages = ["Thinking", "Connecting the dots", "Writing a clear answer"];
 
 function UserMessageContent({ content }: { content: string }) {
   const images: { alt: string; url: string }[] = [];
-  const textWithoutImages = content
+  const files: { name: string }[] = [];
+
+  let text = content
     .replace(/!\[(.*?)\]\(((?:data:image\/[^)]+)|(?:https?:\/\/[^)]+))\)/g, (_, alt, url) => {
       images.push({ alt, url });
       return "";
-    })
-    .trim();
+    });
+
+  text = text.replace(/<<<FILE:(.*?)>>>\n?([\s\S]*?)\n?<<<END_FILE>>>/g, (_, name) => {
+    files.push({ name: name.trim() });
+    return "";
+  });
+
+  text = text.replace(/---\s*Файл:\s*(.*?)\s*---\n?([\s\S]*?)(?:---\s*Конец файла\s*---|(?=---\s*Файл:)|\s*$)/g, (_, name) => {
+    files.push({ name: name.trim() });
+    return "";
+  });
+
+  const cleanText = text.trim();
 
   return (
     <div className="space-y-2.5">
+      {/* Вложенные изображения сверху */}
       {images.length > 0 && (
         <div className="flex flex-wrap gap-2">
           {images.map((img, i) => (
@@ -29,7 +43,31 @@ function UserMessageContent({ content }: { content: string }) {
           ))}
         </div>
       )}
-      {textWithoutImages && <div className="whitespace-pre-wrap">{textWithoutImages}</div>}
+
+      {/* Карточки прикреплённых файлов сверху */}
+      {files.length > 0 && (
+        <div className="flex flex-col gap-1.5">
+          {files.map((file, i) => (
+            <div
+              key={i}
+              className="flex items-center gap-2.5 rounded-xl border border-white/15 bg-white/10 px-3 py-2 text-xs text-white/95 shadow-sm backdrop-blur-sm"
+            >
+              <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-white/15 text-white shadow-inner">
+                <svg className="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                </svg>
+              </div>
+              <div className="min-w-0 flex-1">
+                <div className="truncate font-medium text-white">{file.name}</div>
+                <div className="text-[10px] text-white/60">Прикреплённый файл</div>
+              </div>
+            </div>
+          ))}
+        </div>
+      )}
+
+      {/* Текст запроса пользователя */}
+      {cleanText && <div className="whitespace-pre-wrap">{cleanText}</div>}
     </div>
   );
 }

@@ -42,7 +42,7 @@ export function useChat({ sessionId, model }: UseChatOptions) {
         displayContent = displayContent ? `${imgs}\n\n${displayContent}` : imgs;
       }
       if (textAttachments.length > 0) {
-        const files = textAttachments.map((a) => `--- Файл: ${a.name} ---\n${a.text}\n--- Конец файла ---`).join("\n\n");
+        const files = textAttachments.map((a) => `<<<FILE:${a.name}>>>\n${a.text}\n<<<END_FILE>>>`).join("\n\n");
         displayContent = displayContent ? `${displayContent}\n\n${files}` : files;
       }
 
