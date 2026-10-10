@@ -6,10 +6,38 @@ import Markdown from "react-markdown";
 interface Props { message: { id?: string; role: "user" | "assistant"; content: string }; isLoading?: boolean; isThinking?: boolean; model?: string; }
 const stages = ["Thinking", "Connecting the dots", "Writing a clear answer"];
 
+function UserMessageContent({ content }: { content: string }) {
+  const images: { alt: string; url: string }[] = [];
+  const textWithoutImages = content
+    .replace(/!\[(.*?)\]\(((?:data:image\/[^)]+)|(?:https?:\/\/[^)]+))\)/g, (_, alt, url) => {
+      images.push({ alt, url });
+      return "";
+    })
+    .trim();
+
+  return (
+    <div className="space-y-2.5">
+      {images.length > 0 && (
+        <div className="flex flex-wrap gap-2">
+          {images.map((img, i) => (
+            <img
+              key={i}
+              src={img.url}
+              alt={img.alt || "Вложенное изображение"}
+              className="max-h-64 max-w-full rounded-xl border border-white/10 object-contain shadow-sm bg-black/25"
+            />
+          ))}
+        </div>
+      )}
+      {textWithoutImages && <div className="whitespace-pre-wrap">{textWithoutImages}</div>}
+    </div>
+  );
+}
+
 export function MessageBubble({ message, isLoading, isThinking }: Props) {
   const [stage, setStage] = useState(0);
   useEffect(() => { if (!isThinking) return; const timer = window.setInterval(() => setStage((value) => (value + 1) % stages.length), 1800); return () => window.clearInterval(timer); }, [isThinking]);
-  if (message.role === "user") return <div className="flex justify-end animate-slide-up"><div className="max-w-[82%] rounded-2xl rounded-br-md bg-[#18212f] px-4 py-3 text-sm leading-6 text-white shadow-[0_8px_24px_rgba(24,33,47,.12)]">{message.content}</div></div>;
+  if (message.role === "user") return <div className="flex justify-end animate-slide-up"><div className="max-w-[82%] rounded-2xl rounded-br-md bg-[#18212f] px-4 py-3 text-sm leading-6 text-white shadow-[0_8px_24px_rgba(24,33,47,.12)]"><UserMessageContent content={message.content} /></div></div>;
   return <div className="flex gap-3 animate-slide-up"><img src="/logo.svg" alt="" className="h-8 w-8 shrink-0 rounded-xl border border-[#e0e5ed] bg-white p-1" /><div className="min-w-0 flex-1"><div className="mb-1 text-[11px] font-semibold uppercase tracking-[.12em] text-[#8390a3]">Soop AI</div>{isLoading && isThinking && !message.content ? <div className="inline-flex items-center gap-2 rounded-2xl rounded-tl-md border border-[#e2e6ec] bg-[#f7f8fa] px-4 py-3 text-xs text-[#718198]"><span className="flex gap-1"><i className="h-1.5 w-1.5 animate-pulse rounded-full bg-[#4662f0]" /><i className="h-1.5 w-1.5 animate-pulse rounded-full bg-[#4662f0] [animation-delay:200ms]" /><i className="h-1.5 w-1.5 animate-pulse rounded-full bg-[#4662f0] [animation-delay:400ms]" /></span>{stages[stage]}</div> : <div className="rounded-2xl rounded-tl-md border border-[#e2e6ec] bg-white px-4 py-3 text-sm leading-7 text-[#334155] shadow-[0_5px_18px_rgba(35,48,70,.04)]"><MarkdownContent content={message.content} />{isLoading && <span className="ml-1 inline-block h-4 w-0.5 animate-pulse bg-[#4662f0] align-text-bottom" />}</div>}</div></div>;
 }
 

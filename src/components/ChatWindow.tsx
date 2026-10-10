@@ -5,6 +5,7 @@ import { useParams } from "next/navigation";
 import { MessageBubble } from "./MessageBubble";
 import { useChat } from "@/hooks/useChat";
 import { UpgradeModal } from "./UpgradeModal";
+import { ChatAttachment, processFile } from "@/lib/attachments";
 
 interface UsageInfo { plan: string; used: number; limit: number; remaining: number; }
 
@@ -50,6 +51,9 @@ export function ChatWindow() {
   const sessionId = params.id as string;
   const [model, setModel] = useState("claude-opus-5.5");
   const [input, setInput] = useState("");
+  const [attachments, setAttachments] = useState<ChatAttachment[]>([]);
+  const [uploadingFiles, setUploadingFiles] = useState(false);
+  const fileInputRef = useRef<HTMLInputElement>(null);
   const [upgradeOpen, setUpgradeOpen] = useState(false);
   const [usage, setUsage] = useState<UsageInfo | null>(null);
   const [modelMenuOpen, setModelMenuOpen] = useState(false);
@@ -78,11 +82,45 @@ export function ChatWindow() {
     try { const r = await fetch("/api/user/usage"); if (r.ok) setUsage(await r.json()); } catch {}
   };
 
+  const addFiles = async (files: FileList | File[]) => {
+    if (!files || files.length === 0) return;
+    setUploadingFiles(true);
+    try {
+      const newAttachments: ChatAttachment[] = [];
+      for (const file of Array.from(files)) {
+        if (file.size > 15 * 1024 * 1024) continue;
+        const processed = await processFile(file);
+        if (processed) newAttachments.push(processed);
+      }
+      setAttachments((prev) => [...prev, ...newAttachments]);
+    } finally {
+      setUploadingFiles(false);
+    }
+  };
+
+  const handlePaste = (e: React.ClipboardEvent) => {
+    const items = e.clipboardData?.items;
+    if (!items) return;
+    const files: File[] = [];
+    for (const item of Array.from(items)) {
+      if (item.type.startsWith("image/")) {
+        const file = item.getAsFile();
+        if (file) files.push(file);
+      }
+    }
+    if (files.length > 0) {
+      e.preventDefault();
+      void addFiles(files);
+    }
+  };
+
   const handleSend = async () => {
-    if (!input.trim() || loading) return;
+    if ((!input.trim() && attachments.length === 0) || loading || uploadingFiles) return;
     const text = input;
+    const currentAttachments = attachments;
     setInput("");
-    const result = await sendMessage(text);
+    setAttachments([]);
+    const result = await sendMessage(text, currentAttachments);
     if (result?.upgradeRequired) setUpgradeOpen(true);
     fetchUsage();
   };
@@ -140,12 +178,74 @@ export function ChatWindow() {
             </div>
           )}
 
+          {/* Attachments preview list */}
+          {attachments.length > 0 && (
+            <div className="mb-2.5 flex flex-wrap gap-2 animate-fade-in">
+              {attachments.map((att, i) => (
+                <div
+                  key={`${att.name}-${i}`}
+                  className="flex items-center gap-2 rounded-xl border border-[#dfe4eb] bg-white px-3 py-1.5 text-xs text-[#334155] shadow-sm"
+                >
+                  {att.type.startsWith("image/") && att.dataUrl ? (
+                    <img src={att.dataUrl} alt="" className="h-6 w-6 rounded-md object-cover border border-[#e2e6ec]" />
+                  ) : (
+                    <svg className="h-4 w-4 text-[#718198]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                    </svg>
+                  )}
+                  <span className="max-w-[140px] truncate font-medium">{att.name}</span>
+                  <button
+                    type="button"
+                    onClick={() => setAttachments((prev) => prev.filter((_, idx) => idx !== i))}
+                    className="ml-0.5 flex h-4 w-4 items-center justify-center rounded-full text-slate-400 hover:bg-slate-100 hover:text-slate-700"
+                    title="Удалить"
+                  >
+                    ×
+                  </button>
+                </div>
+              ))}
+            </div>
+          )}
+
+          <input
+            ref={fileInputRef}
+            type="file"
+            multiple
+            accept="image/*,.txt,.md,.json,.csv,.js,.jsx,.ts,.tsx,.py,.html,.css,.sql,.xml,.yaml,.yml,.log"
+            className="hidden"
+            onChange={(e) => {
+              if (e.target.files) void addFiles(e.target.files);
+              e.target.value = "";
+            }}
+          />
+
           <div className={`flex items-end gap-2 rounded-2xl border p-2.5 transition-all duration-200 shadow-[0_12px_34px_rgba(35,48,70,.08)] ${isLimitExceeded ? "border-red-300 bg-red-50/90" : "border-[#dfe4eb] bg-white focus-within:border-[#91a4f7] focus-within:shadow-[0_12px_34px_rgba(70,98,240,.14)]"}`}>
+            {/* Attachment clip button */}
+            <button
+              type="button"
+              onClick={() => fileInputRef.current?.click()}
+              disabled={loading || isLimitExceeded || uploadingFiles}
+              className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl text-[#718198] transition-colors hover:bg-[#f1f4f8] hover:text-[#18212f] disabled:opacity-40"
+              title="Прикрепить изображение или файл"
+            >
+              {uploadingFiles ? (
+                <svg className="h-4 w-4 animate-spin text-[#4662f0]" fill="none" viewBox="0 0 24 24">
+                  <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
+                  <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z" />
+                </svg>
+              ) : (
+                <svg className="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.8} d="M15.172 7l-6.586 6.586a2 2 0 102.828 2.828l6.414-6.586a4 4 0 00-5.656-5.656l-6.415 6.585a6 6 0 108.486 8.486L20.5 13" />
+                </svg>
+              )}
+            </button>
+
             <textarea
               ref={textareaRef}
               value={input}
               onChange={(e) => { setInput(e.target.value); e.target.style.height = "auto"; e.target.style.height = `${Math.min(e.target.scrollHeight, 160)}px`; }}
               onKeyDown={handleKeyDown}
+              onPaste={handlePaste}
               placeholder={isLimitExceeded ? "Лимит исчерпан..." : "Напишите сообщение..."}
               rows={1}
               disabled={loading || isLimitExceeded}
@@ -205,7 +305,7 @@ export function ChatWindow() {
             {/* Send button */}
             <button
               onClick={handleSend}
-              disabled={!input.trim() || loading || isLimitExceeded}
+              disabled={(!input.trim() && attachments.length === 0) || loading || isLimitExceeded || uploadingFiles}
               className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-[#4662f0] text-white shadow-[0_6px_14px_rgba(70,98,240,.25)] transition-all duration-200 hover:-translate-y-0.5 hover:bg-[#3857e8] disabled:opacity-25"
             >
               {loading ? (

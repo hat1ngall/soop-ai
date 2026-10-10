@@ -2,10 +2,9 @@
 
 import { useState, useCallback } from "react";
 import { Message } from "@/types";
+import type { ChatAttachment } from "@/lib/attachments";
 
 const CHAT_REQUEST_TIMEOUT_MS = 180_000;
-
-
 
 interface UseChatOptions {
   sessionId: string;
@@ -30,13 +29,27 @@ export function useChat({ sessionId, model }: UseChatOptions) {
   }, [sessionId]);
 
   const sendMessage = useCallback(
-    async (content: string) => {
-      if (!content.trim() || loading) return;
+    async (content: string, attachments: ChatAttachment[] = []) => {
+      const trimmed = content.trim();
+      if ((!trimmed && attachments.length === 0) || loading) return;
+
+      let displayContent = trimmed;
+      const imageAttachments = attachments.filter((a) => a.dataUrl && a.type.startsWith("image/"));
+      const textAttachments = attachments.filter((a) => a.text);
+
+      if (imageAttachments.length > 0) {
+        const imgs = imageAttachments.map((a) => `![${a.name}](${a.dataUrl})`).join("\n\n");
+        displayContent = displayContent ? `${imgs}\n\n${displayContent}` : imgs;
+      }
+      if (textAttachments.length > 0) {
+        const files = textAttachments.map((a) => `--- Файл: ${a.name} ---\n${a.text}\n--- Конец файла ---`).join("\n\n");
+        displayContent = displayContent ? `${displayContent}\n\n${files}` : files;
+      }
 
       const userMsg: Message = {
         id: crypto.randomUUID(),
         role: "user",
-        content: content.trim(),
+        content: displayContent,
       };
 
       setMessages((prev) => [...prev, userMsg]);
@@ -52,7 +65,7 @@ export function useChat({ sessionId, model }: UseChatOptions) {
         const res = await fetch("/api/chat", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ message: content.trim(), model, sessionId }),
+          body: JSON.stringify({ message: trimmed, model, sessionId, attachments }),
           signal: controller.signal,
         });
 

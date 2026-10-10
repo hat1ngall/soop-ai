@@ -69,9 +69,9 @@ export async function POST(req: Request) {
   }
 
   const userId = (session.user as any).id;
-  const { message, model, sessionId } = await req.json();
+  const { message, model, sessionId, attachments = [] } = await req.json();
 
-  if (!message || !model || !sessionId) {
+  if ((!message && (!attachments || attachments.length === 0)) || !model || !sessionId) {
     return NextResponse.json({ error: "Отсутствуют обязательные поля" }, { status: 400 });
   }
 
@@ -104,14 +104,58 @@ export async function POST(req: Request) {
     return NextResponse.json({ error: "Сессия не найдена" }, { status: 404 });
   }
 
+  const imageAttachments = Array.isArray(attachments)
+    ? attachments.filter((a: any) => a?.dataUrl && typeof a.dataUrl === "string" && a?.type?.startsWith("image/"))
+    : [];
+  const textAttachments = Array.isArray(attachments)
+    ? attachments.filter((a: any) => typeof a?.text === "string" && a.text.trim())
+    : [];
+
+  let fullUserContent = message ? String(message).trim() : "";
+  if (imageAttachments.length > 0) {
+    const imgs = imageAttachments.map((a: any) => `![${a.name || "image"}](${a.dataUrl})`).join("\n\n");
+    fullUserContent = fullUserContent ? `${imgs}\n\n${fullUserContent}` : imgs;
+  }
+  if (textAttachments.length > 0) {
+    const files = textAttachments.map((a: any) => `--- Файл: ${a.name || "файл"} ---\n${a.text}\n--- Конец файла ---`).join("\n\n");
+    fullUserContent = fullUserContent ? `${fullUserContent}\n\n${files}` : files;
+  }
+
   await prisma.message.create({
-    data: { role: "user", content: message, sessionId },
+    data: { role: "user", content: fullUserContent, sessionId },
   });
 
   const history = await prisma.message.findMany({
     where: { sessionId },
     orderBy: { createdAt: "asc" },
     take: 50,
+  });
+
+  const upstreamMessages = history.map((m, idx) => {
+    const isLatest = idx === history.length - 1;
+    if (m.role === "assistant") {
+      return { role: "assistant", content: m.content };
+    }
+
+    if (isLatest && imageAttachments.length > 0) {
+      const promptText = (message ? String(message).trim() : "") || "Проанализируй прикреплённые изображения и файлы.";
+      let fullTextPart = promptText;
+      if (textAttachments.length > 0) {
+        fullTextPart += "\n\n" + textAttachments.map((a: any) => `--- Файл: ${a.name} ---\n${a.text}\n--- Конец файла ---`).join("\n\n");
+      }
+
+      const parts: any[] = [{ type: "text", text: fullTextPart }];
+      for (const img of imageAttachments) {
+        parts.push({
+          type: "image_url",
+          image_url: { url: img.dataUrl },
+        });
+      }
+      return { role: "user", content: parts };
+    }
+
+    const cleaned = m.content.replace(/!\[(.*?)\]\(data:image\/[^)]+\)/g, "[Прикреплённое изображение: $1]");
+    return { role: "user", content: cleaned };
   });
 
   const apiUrl = process.env.MY_CUSTOM_API_URL;
@@ -137,7 +181,7 @@ export async function POST(req: Request) {
 
       if (!isApiConfigured) {
         // ДЕМО — быстрый вывод по одному символу.
-        const demoText = getDemoResponse(message, model);
+        const demoText = getDemoResponse(message || "Вложенные файлы", model);
         for (const char of demoText) {
           fullContent += char;
           send({ chunk: char });
@@ -157,7 +201,7 @@ export async function POST(req: Request) {
               model: mapModelName(),
               messages: [
                 { role: "system", content: getSystemPrompt(model) },
-                ...history.map((m) => ({ role: m.role, content: m.content })),
+                ...upstreamMessages,
               ],
             }),
           });
@@ -214,7 +258,8 @@ export async function POST(req: Request) {
       });
 
       if (history.length <= 1) {
-        const shortTitle = message.slice(0, 50) + (message.length > 50 ? "..." : "");
+        const titleRaw = (message || imageAttachments[0]?.name || textAttachments[0]?.name || "Новый чат").trim();
+        const shortTitle = titleRaw.slice(0, 50) + (titleRaw.length > 50 ? "..." : "");
         await prisma.chatSession.update({ where: { id: sessionId }, data: { title: shortTitle, model } });
       }
 

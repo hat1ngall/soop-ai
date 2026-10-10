@@ -20,3 +20,5 @@ export interface Message {
   content: string;
   createdAt?: string;
 }
+
+export type { ChatAttachment } from "@/lib/attachments";
