@@ -7,6 +7,7 @@ interface Props { message: { id?: string; role: "user" | "assistant"; content: s
 const stages = ["Thinking", "Connecting the dots", "Writing a clear answer"];
 
 function UserMessageContent({ content }: { content: string }) {
+  const [selectedImage, setSelectedImage] = useState<string | null>(null);
   const images: { alt: string; url: string }[] = [];
   const files: { name: string }[] = [];
 
@@ -29,30 +30,42 @@ function UserMessageContent({ content }: { content: string }) {
   const cleanText = text.trim();
 
   return (
-    <div className="space-y-2.5">
-      {/* Вложенные изображения сверху */}
+    <div className="space-y-2">
+      {/* Компактные превью фото сверху */}
       {images.length > 0 && (
-        <div className="flex flex-wrap gap-2">
+        <div className="flex flex-wrap gap-2 pt-0.5">
           {images.map((img, i) => (
-            <img
+            <button
               key={i}
-              src={img.url}
-              alt={img.alt || "Вложенное изображение"}
-              className="max-h-64 max-w-full rounded-xl border border-white/10 object-contain shadow-sm bg-black/25"
-            />
+              type="button"
+              onClick={() => setSelectedImage(img.url)}
+              className="group relative h-20 w-20 sm:h-24 sm:w-24 overflow-hidden rounded-xl border border-white/20 bg-black/30 shadow-sm transition-all hover:scale-105 active:scale-95"
+              title="Нажмите для просмотра в полном размере"
+            >
+              <img
+                src={img.url}
+                alt={img.alt || "Вложенное изображение"}
+                className="h-full w-full object-cover transition-opacity group-hover:opacity-90"
+              />
+              <span className="absolute bottom-1 right-1 flex h-5 w-5 items-center justify-center rounded-md bg-black/60 text-white/90 backdrop-blur-sm opacity-0 transition-opacity group-hover:opacity-100">
+                <svg className="h-3 w-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0zM10 7v3m0 0v3m0-3h3m-3 0H7" />
+                </svg>
+              </span>
+            </button>
           ))}
         </div>
       )}
 
       {/* Карточки прикреплённых файлов сверху */}
       {files.length > 0 && (
-        <div className="flex flex-col gap-1.5">
+        <div className="flex flex-col gap-1.5 pt-0.5">
           {files.map((file, i) => (
             <div
               key={i}
               className="flex items-center gap-2.5 rounded-xl border border-white/15 bg-white/10 px-3 py-2 text-xs text-white/95 shadow-sm backdrop-blur-sm"
             >
-              <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-white/15 text-white shadow-inner">
+              <div className="flex h-7 w-7 shrink-0 items-center justify-center rounded-lg bg-white/15 text-white shadow-inner">
                 <svg className="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
                 </svg>
@@ -68,6 +81,29 @@ function UserMessageContent({ content }: { content: string }) {
 
       {/* Текст запроса пользователя */}
       {cleanText && <div className="whitespace-pre-wrap">{cleanText}</div>}
+
+      {/* Модальное окно для полного размера при клике */}
+      {selectedImage && (
+        <div
+          className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 p-4 backdrop-blur-sm animate-fade-in"
+          onClick={() => setSelectedImage(null)}
+        >
+          <div className="relative max-h-[90vh] max-w-[90vw]" onClick={(e) => e.stopPropagation()}>
+            <img
+              src={selectedImage}
+              alt="Изображение"
+              className="max-h-[85vh] max-w-[85vw] rounded-2xl object-contain shadow-2xl"
+            />
+            <button
+              type="button"
+              onClick={() => setSelectedImage(null)}
+              className="absolute -right-3 -top-3 flex h-8 w-8 items-center justify-center rounded-full bg-white/20 text-white backdrop-blur-md hover:bg-white/40 transition-colors"
+            >
+              ✕
+            </button>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
