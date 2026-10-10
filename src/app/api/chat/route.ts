@@ -7,7 +7,7 @@ import { checkAndResetExpiredSubscription } from "@/lib/subscription";
 import { getSystemPrompt } from "@/lib/system-prompt";
 
 function mapModelName(): string {
-  return "free/gpt-6-luna";
+  return "claude-haiku-5.5:free";
 }
 
 function getTodayStart(): Date {
@@ -47,7 +47,7 @@ function describeUpstreamError(status: number, body: string): string {
 
   if (status === 402 || /check[- ]?in|insufficient|billing_error|payment|balance/i.test(detail)) {
     const suffix = detail ? ` Провайдер: "${detail}"` : "";
-    return `API-аккаунт: недостаточно средств или не пройден ежедневный чек-ин на apinex.bond. Пополните баланс либо отметьтесь на странице airdrop, затем повторите запрос.${suffix}`;
+    return `API-аккаунт: недостаточно средств или ошибка баланса у провайдера.${suffix}`;
   }
   if (status === 401 || status === 403) {
     return detail || "Провайдер отклонил API-ключ. Проверьте MY_CUSTOM_API_KEY.";
