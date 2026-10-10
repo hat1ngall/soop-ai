@@ -46,6 +46,7 @@ export function useChat({ sessionId, model }: UseChatOptions) {
 
       const controller = new AbortController();
       const timeoutId = window.setTimeout(() => controller.abort(), CHAT_REQUEST_TIMEOUT_MS);
+      let assistantMsgId: string | null = null;
 
       try {
         const res = await fetch("/api/chat", {
@@ -71,6 +72,7 @@ export function useChat({ sessionId, model }: UseChatOptions) {
           role: "assistant",
           content: "",
         };
+        assistantMsgId = assistantMsg.id;
         setMessages((prev) => [...prev, assistantMsg]);
 
         const reader = res.body?.getReader();
@@ -98,7 +100,12 @@ export function useChat({ sessionId, model }: UseChatOptions) {
 
           if (parsed.error) {
             setError(parsed.error);
-            setMessages((prev) => prev.filter((m) => m.id !== assistantMsg.id));
+            setThinking(false);
+            setMessages((prev) =>
+              prev.map((m) =>
+                m.id === assistantMsg.id ? { ...m, content: `⚠️ ${parsed.error}` } : m
+              )
+            );
             finished = true;
             return;
           }
@@ -140,7 +147,15 @@ export function useChat({ sessionId, model }: UseChatOptions) {
         setThinking(false);
         return { upgradeRequired: false, limitExceeded: false, usage };
       } catch (error) {
-        setError(error instanceof DOMException && error.name === "AbortError" ? "Запрос слишком долго не отвечал" : "Сервис недоступен");
+        const errMsg = error instanceof DOMException && error.name === "AbortError" ? "Запрос слишком долго не отвечал" : "Сервис недоступен";
+        setError(errMsg);
+        if (assistantMsgId) {
+          setMessages((prev) =>
+            prev.map((m) =>
+              m.id === assistantMsgId && !m.content ? { ...m, content: `⚠️ ${errMsg}` } : m
+            )
+          );
+        }
         setLoading(false);
         setThinking(false);
         return { upgradeRequired: false, limitExceeded: false };
