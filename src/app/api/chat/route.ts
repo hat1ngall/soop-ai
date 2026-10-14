@@ -7,7 +7,7 @@ import { checkAndResetExpiredSubscription } from "@/lib/subscription";
 import { getSystemPrompt } from "@/lib/system-prompt";
 
 function mapModelName(): string {
-  return process.env.DEFAULT_AI_MODEL || "gemini-4-argon";
+  return process.env.DEFAULT_AI_MODEL || "mimo-v2.6-flash:free";
 }
 
 function getTodayStart(): Date {
@@ -164,11 +164,11 @@ export async function POST(req: Request) {
     return { role: "user", content: contentForModel };
   });
 
-  const rawApiUrl = process.env.MY_CUSTOM_API_URL || "https://api.experientiallabs.ai/v1";
+  const rawApiUrl = process.env.MY_CUSTOM_API_URL || "https://tokenharbor.ai/v1/chat/completions";
   const apiUrl = rawApiUrl.endsWith("/chat/completions")
     ? rawApiUrl
     : `${rawApiUrl.replace(/\/+$/, "")}/chat/completions`;
-  const apiKey = process.env.MY_CUSTOM_API_KEY || "xpl_be49b65b7090d23744a7d37f329db6274d598b9d";
+  const apiKey = process.env.MY_CUSTOM_API_KEY || "thk_live_K7Ydok5gzHGQ1WZTYG6fxgpyf5YAmiYcKGzfNAZlsXCU25z3u7BjHwliFS43j9q5";
   const upstreamController = new AbortController();
   const upstreamTimeout = setTimeout(() => upstreamController.abort(), 240_000);
   const isApiConfigured =

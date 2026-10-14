@@ -22,6 +22,10 @@ const MODEL_DISPLAY_NAMES: Record<string, string> = {
   "glm-5.2": "GLM 5.3",
   "grok-build-0.1": "Grok Build 0.1",
   "gemini-4-argon": "Gemini 4 Argon",
+  "claude-haiku-5.5:free": "Claude Haiku 5.5",
+  "claude-haiku-5.5": "Claude Haiku 5.5",
+  "mimo-v2.6-flash:free": "Mimo v2.6 Flash",
+  "mimo-v2.6-flash": "Mimo v2.6 Flash",
 };
 
 export function getSystemPrompt(modelId: string): string {
