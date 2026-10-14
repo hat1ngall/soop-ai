@@ -21,6 +21,7 @@ const MODEL_DISPLAY_NAMES: Record<string, string> = {
   "gpt-5.6-terra": "GPT 5.6 Terra",
   "glm-5.2": "GLM 5.3",
   "grok-build-0.1": "Grok Build 0.1",
+  "gemini-4-argon": "Gemini 4 Argon",
 };
 
 export function getSystemPrompt(modelId: string): string {

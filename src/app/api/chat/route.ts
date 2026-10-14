@@ -7,7 +7,7 @@ import { checkAndResetExpiredSubscription } from "@/lib/subscription";
 import { getSystemPrompt } from "@/lib/system-prompt";
 
 function mapModelName(): string {
-  return "claude-haiku-5.5:free";
+  return process.env.DEFAULT_AI_MODEL || "gemini-4-argon";
 }
 
 function getTodayStart(): Date {
@@ -45,7 +45,11 @@ function describeUpstreamError(status: number, body: string): string {
   } catch {}
   detail = String(detail || "").trim().slice(0, 300);
 
-  if (status === 402 || /check[- ]?in|insufficient|billing_error|payment|balance/i.test(detail)) {
+  if (
+    status === 402 ||
+    (status === 429 && /card[-_ ]?required|insufficient|credit|balance/i.test(detail)) ||
+    /check[- ]?in|insufficient|billing_error|payment|balance|card[-_ ]?required|credit/i.test(detail)
+  ) {
     const suffix = detail ? ` Провайдер: "${detail}"` : "";
     return `API-аккаунт: недостаточно средств или ошибка баланса у провайдера.${suffix}`;
   }
@@ -160,14 +164,17 @@ export async function POST(req: Request) {
     return { role: "user", content: contentForModel };
   });
 
-  const apiUrl = process.env.MY_CUSTOM_API_URL;
-  const apiKey = process.env.MY_CUSTOM_API_KEY;
+  const rawApiUrl = process.env.MY_CUSTOM_API_URL || "https://api.experientiallabs.ai/v1";
+  const apiUrl = rawApiUrl.endsWith("/chat/completions")
+    ? rawApiUrl
+    : `${rawApiUrl.replace(/\/+$/, "")}/chat/completions`;
+  const apiKey = process.env.MY_CUSTOM_API_KEY || "xpl_be49b65b7090d23744a7d37f329db6274d598b9d";
   const upstreamController = new AbortController();
   const upstreamTimeout = setTimeout(() => upstreamController.abort(), 240_000);
   const isApiConfigured =
-    apiUrl && apiKey &&
+    Boolean(apiUrl && apiKey &&
     !apiUrl.includes("your-api-endpoint") &&
-    !apiKey.includes("your-api-key");
+    !apiKey.includes("your-api-key"));
 
   // Стриминг
   const encoder = new TextEncoder();
