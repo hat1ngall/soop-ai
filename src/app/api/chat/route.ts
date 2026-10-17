@@ -34,7 +34,7 @@ function getDemoResponse(message: string, model: string): string {
 
 // Короткая постоянная пауза сохраняет печать по буквам без искусственных задержек.
 function charDelay(): number {
-  return 5;
+  return 2;
 }
 
 function describeUpstreamError(status: number, body: string): string {
@@ -79,7 +79,22 @@ export async function POST(req: Request) {
     return NextResponse.json({ error: "Отсутствуют обязательные поля" }, { status: 400 });
   }
 
-  const currentPlan = await checkAndResetExpiredSubscription(userId);
+  const todayStart = getTodayStart();
+
+  const [currentPlan, chat, usage, history] = await Promise.all([
+    checkAndResetExpiredSubscription(userId),
+    prisma.chatSession.findUnique({ where: { id: sessionId } }),
+    prisma.dailyUsage.findUnique({ where: { userId_date: { userId, date: todayStart } } }),
+    prisma.message.findMany({
+      where: { sessionId },
+      orderBy: { createdAt: "asc" },
+      take: 49,
+    }),
+  ]);
+
+  if (!chat || chat.userId !== userId) {
+    return NextResponse.json({ error: "Сессия не найдена" }, { status: 404 });
+  }
 
   const available = getAvailableModels(currentPlan);
   if (!available.includes(model)) {
@@ -90,22 +105,11 @@ export async function POST(req: Request) {
   }
 
   const dailyLimit = getDailyLimit(currentPlan);
-  if (dailyLimit !== -1) {
-    const todayStart = getTodayStart();
-    const usage = await prisma.dailyUsage.findUnique({
-      where: { userId_date: { userId, date: todayStart } },
-    });
-    if ((usage?.count || 0) >= dailyLimit) {
-      return NextResponse.json(
-        { error: "limit_exceeded", message: `Лимит исчерпан (${dailyLimit}/день)` },
-        { status: 429 }
-      );
-    }
-  }
-
-  const chat = await prisma.chatSession.findUnique({ where: { id: sessionId } });
-  if (!chat || chat.userId !== userId) {
-    return NextResponse.json({ error: "Сессия не найдена" }, { status: 404 });
+  if (dailyLimit !== -1 && (usage?.count || 0) >= dailyLimit) {
+    return NextResponse.json(
+      { error: "limit_exceeded", message: `Лимит исчерпан (${dailyLimit}/день)` },
+      { status: 429 }
+    );
   }
 
   const imageAttachments = Array.isArray(attachments)
@@ -125,44 +129,39 @@ export async function POST(req: Request) {
     fullUserContent = fullUserContent ? `${fullUserContent}\n\n${files}` : files;
   }
 
-  await prisma.message.create({
+  // Сохранение сообщения пользователя запускаем без блокировки запроса к модели
+  const saveUserMessagePromise = prisma.message.create({
     data: { role: "user", content: fullUserContent, sessionId },
   });
 
-  const history = await prisma.message.findMany({
-    where: { sessionId },
-    orderBy: { createdAt: "asc" },
-    take: 50,
-  });
-
-  const upstreamMessages = history.map((m, idx) => {
-    const isLatest = idx === history.length - 1;
+  const upstreamMessages: any[] = history.map((m) => {
     if (m.role === "assistant") {
       return { role: "assistant", content: m.content };
     }
-
-    if (isLatest && imageAttachments.length > 0) {
-      const promptText = (message ? String(message).trim() : "") || "Проанализируй прикреплённые изображения и файлы.";
-      let fullTextPart = promptText;
-      if (textAttachments.length > 0) {
-        fullTextPart += "\n\n" + textAttachments.map((a: any) => `--- Файл: ${a.name} ---\n${a.text}\n--- Конец файла ---`).join("\n\n");
-      }
-
-      const parts: any[] = [{ type: "text", text: fullTextPart }];
-      for (const img of imageAttachments) {
-        parts.push({
-          type: "image_url",
-          image_url: { url: img.dataUrl },
-        });
-      }
-      return { role: "user", content: parts };
-    }
-
-    let contentForModel = m.content
+    const contentForModel = m.content
       .replace(/<<<FILE:(.*?)>>>\n?([\s\S]*?)\n?<<<END_FILE>>>/g, "\n--- Файл: $1 ---\n$2\n--- Конец файла ---\n")
       .replace(/!\[(.*?)\]\(data:image\/[^)]+\)/g, "[Прикреплённое изображение: $1]");
     return { role: "user", content: contentForModel };
   });
+
+  if (imageAttachments.length > 0) {
+    const promptText = (message ? String(message).trim() : "") || "Проанализируй прикреплённые изображения и файлы.";
+    let fullTextPart = promptText;
+    if (textAttachments.length > 0) {
+      fullTextPart += "\n\n" + textAttachments.map((a: any) => `--- Файл: ${a.name} ---\n${a.text}\n--- Конец файла ---`).join("\n\n");
+    }
+
+    const parts: any[] = [{ type: "text", text: fullTextPart }];
+    for (const img of imageAttachments) {
+      parts.push({
+        type: "image_url",
+        image_url: { url: img.dataUrl },
+      });
+    }
+    upstreamMessages.push({ role: "user", content: parts });
+  } else {
+    upstreamMessages.push({ role: "user", content: fullUserContent });
+  }
 
   const rawApiUrl = process.env.MY_CUSTOM_API_URL || "https://tokenharbor.ai/v1/chat/completions";
   const apiUrl = rawApiUrl.endsWith("/chat/completions")
@@ -189,7 +188,7 @@ export async function POST(req: Request) {
       send({ thinking: true });
 
       if (!isApiConfigured) {
-        // ДЕМО — быстрый вывод по одному символу.
+        // ДЕМО — быстрый вывод
         const demoText = getDemoResponse(message || "Вложенные файлы", model);
         for (const char of demoText) {
           fullContent += char;
@@ -197,7 +196,7 @@ export async function POST(req: Request) {
           await new Promise((r) => setTimeout(r, charDelay()));
         }
       } else {
-        // Реальный API — сначала получаем полный ответ
+        // Реальный API — прямой стриминг с минимальной задержкой перед выдачей
         try {
           const apiRes = await fetch(apiUrl, {
             method: "POST",
@@ -212,6 +211,7 @@ export async function POST(req: Request) {
                 { role: "system", content: getSystemPrompt(model) },
                 ...upstreamMessages,
               ],
+              stream: true,
             }),
           });
 
@@ -225,18 +225,77 @@ export async function POST(req: Request) {
             return;
           }
 
-          const data = await apiRes.json();
-          const fullText =
-            data.choices?.[0]?.message?.content ||
-            data.response ||
-            data.content ||
-            "Пустой ответ от модели.";
+          if (apiRes.body) {
+            const reader = apiRes.body.getReader();
+            const decoder = new TextDecoder();
+            let sseBuffer = "";
 
-          // Выдаём ответ посимвольно.
-          for (const char of fullText) {
-            fullContent += char;
-            send({ chunk: char });
-            await new Promise((r) => setTimeout(r, charDelay()));
+            while (true) {
+              const { done, value } = await reader.read();
+              if (done) break;
+
+              sseBuffer += decoder.decode(value, { stream: true });
+              const lines = sseBuffer.split("\n");
+              sseBuffer = lines.pop() ?? "";
+
+              for (const line of lines) {
+                const trimmed = line.trim();
+                if (!trimmed || !trimmed.startsWith("data:")) continue;
+                const dataStr = trimmed.slice(5).trim();
+                if (dataStr === "[DONE]") continue;
+
+                try {
+                  const parsed = JSON.parse(dataStr);
+                  if (parsed.error) {
+                    const errMsg = typeof parsed.error === "string" ? parsed.error : parsed.error.message || "Ошибка API";
+                    send({ error: errMsg });
+                    send({ done: true });
+                    controller.close();
+                    return;
+                  }
+                  const chunk = parsed.choices?.[0]?.delta?.content;
+                  if (chunk) {
+                    fullContent += chunk;
+                    send({ chunk });
+                  }
+                } catch {
+                  // Игнорируем неполные JSON строки
+                }
+              }
+            }
+
+            if (sseBuffer.trim()) {
+              const trimmed = sseBuffer.trim();
+              if (trimmed.startsWith("data:")) {
+                const dataStr = trimmed.slice(5).trim();
+                if (dataStr !== "[DONE]") {
+                  try {
+                    const parsed = JSON.parse(dataStr);
+                    const chunk = parsed.choices?.[0]?.delta?.content;
+                    if (chunk) {
+                      fullContent += chunk;
+                      send({ chunk });
+                    }
+                  } catch {}
+                }
+              } else if (!fullContent) {
+                // Если ответ пришёл обычным JSON (не SSE)
+                try {
+                  const parsed = JSON.parse(trimmed);
+                  const text = parsed.choices?.[0]?.message?.content || parsed.response || parsed.content;
+                  if (text) {
+                    fullContent = text;
+                    send({ chunk: text });
+                  }
+                } catch {}
+              }
+            }
+          }
+
+          if (!fullContent) {
+            const fallback = "Пустой ответ от модели.";
+            fullContent = fallback;
+            send({ chunk: fallback });
           }
         } catch (error) {
           console.error("Chat API error:", error);
@@ -252,21 +311,23 @@ export async function POST(req: Request) {
         }
       }
 
-      // Сохраняем в БД
+      // Дожидаемся сохранения сообщения пользователя
+      await saveUserMessagePromise.catch((e) => console.error("Error saving user message:", e));
+
+      // Сохраняем в БД ответ ассистента
       if (fullContent) {
         await prisma.message.create({
           data: { role: "assistant", content: fullContent, sessionId },
         });
       }
 
-      const todayStart = getTodayStart();
       await prisma.dailyUsage.upsert({
         where: { userId_date: { userId, date: todayStart } },
         update: { count: { increment: 1 } },
         create: { userId, date: todayStart, count: 1 },
       });
 
-      if (history.length <= 1) {
+      if (history.length === 0) {
         const titleRaw = (message || imageAttachments[0]?.name || textAttachments[0]?.name || "Новый чат").trim();
         const shortTitle = titleRaw.slice(0, 50) + (titleRaw.length > 50 ? "..." : "");
         await prisma.chatSession.update({ where: { id: sessionId }, data: { title: shortTitle, model } });
@@ -278,6 +339,9 @@ export async function POST(req: Request) {
 
       send({ done: true, usage: { used: updatedUsage?.count || 0, limit: dailyLimit } });
       controller.close();
+    },
+    cancel() {
+      upstreamController.abort();
     },
   });
 

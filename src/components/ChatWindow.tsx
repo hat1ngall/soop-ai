@@ -68,8 +68,7 @@ export function ChatWindow() {
     const pending = window.sessionStorage.getItem("soop:pending-prompt");
     if (!pending) return;
     window.sessionStorage.removeItem("soop:pending-prompt");
-    const timer = window.setTimeout(() => { void sendMessage(pending); }, 200);
-    return () => window.clearTimeout(timer);
+    void sendMessage(pending);
   }, [sessionId, sendMessage]);
   useEffect(() => { bottomRef.current?.scrollIntoView({ behavior: "smooth" }); }, [messages, loading]);
   useEffect(() => {
