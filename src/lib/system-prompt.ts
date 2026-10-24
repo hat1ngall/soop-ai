@@ -26,6 +26,8 @@ const MODEL_DISPLAY_NAMES: Record<string, string> = {
   "claude-haiku-5.5": "Claude Haiku 5.5",
   "mimo-v2.6-flash:free": "Mimo v2.6 Flash",
   "mimo-v2.6-flash": "Mimo v2.6 Flash",
+  "deepseek-v4.1-flash:free": "DeepSeek V4.1 Flash",
+  "deepseek-v4.1-flash": "DeepSeek V4.1 Flash",
 };
 
 export function getSystemPrompt(modelId: string): string {

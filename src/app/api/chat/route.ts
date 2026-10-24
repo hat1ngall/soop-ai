@@ -7,7 +7,7 @@ import { checkAndResetExpiredSubscription } from "@/lib/subscription";
 import { getSystemPrompt } from "@/lib/system-prompt";
 
 function mapModelName(): string {
-  return process.env.DEFAULT_AI_MODEL || "mimo-v2.6-flash:free";
+  return process.env.DEFAULT_AI_MODEL || "deepseek-v4.1-flash:free";
 }
 
 function getTodayStart(): Date {
