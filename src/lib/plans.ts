@@ -2,7 +2,7 @@ export type PlanTier = "free" | "pro" | "boost" | "enterprise";
 
 // Free — слабые модели (rank 20+)
 export const FREE_MODELS = [
-  "gemini-flash-3.5", "minimax-2.5", "llama-4-scout",
+  "gpt-6-luna", "gemini-flash-3.5", "minimax-2.5", "llama-4-scout",
   "kimi-k2.6", "kimi-k2.7-code", "deepseek-v4-pro",
 ];
 

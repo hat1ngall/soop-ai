@@ -7,34 +7,12 @@ import { checkAndResetExpiredSubscription } from "@/lib/subscription";
 import { getSystemPrompt } from "@/lib/system-prompt";
 
 function mapModelName(): string {
-  return process.env.DEFAULT_AI_MODEL || "deepseek-v4.1-flash:free";
+  return "gpt-6-luna";
 }
 
 function getTodayStart(): Date {
   const now = new Date();
   return new Date(now.getFullYear(), now.getMonth(), now.getDate());
-}
-
-function getDemoResponse(message: string, model: string): string {
-  const lower = message.toLowerCase();
-  if (lower.includes("привет") || lower.includes("hello") || lower.includes("hi")) {
-    return `Привет! Я Soop AI, модель **${model}**. Чем могу помочь сегодня?`;
-  }
-  if (lower.includes("кто ты") || lower.includes("что ты") || lower.includes("who are you")) {
-    return `Я — **Soop AI**, AI-ассистент, созданный командой Soop AI.\n\nСейчас я работаю в демо-режиме, так как API-ключ ещё не настроен. Как только настроите \`MY_CUSTOM_API_URL\` и \`MY_CUSTOM_API_KEY\` в файле \`.env\`, я начну отвечать через реальную модель.\n\nПока можете тестировать интерфейс!`;
-  }
-  if (lower.includes("помощь") || lower.includes("help") || lower.includes("что умеешь")) {
-    return `Я могу помочь с:\n\n- **Кодом** — написание, отладка, рефакторинг\n- **Текстами** — генерация, редактирование, перевод\n- **Анализом** — данные, документы, задачи\n- **Вопросами** — знания, объяснения, рекомендации\n\nНапишите что-нибудь, и я отвечу!`;
-  }
-  if (lower.includes("код") || lower.includes("code") || lower.includes("пример")) {
-    return `Вот пример простой функции на Python:\n\n\`\`\`python\ndef fibonacci(n: int) -> list[int]:\n    if n <= 0:\n        return []\n    if n == 1:\n        return [0]\n    fib = [0, 1]\n    for _ in range(2, n):\n        fib.append(fib[-1] + fib[-2])\n    return fib\n\nprint(fibonacci(10))\n# [0, 1, 1, 2, 3, 5, 8, 13, 21, 34]\n\`\`\``;
-  }
-  return `Это демо-ответ от **Soop AI** (модель: ${model}).\n\nВаше сообщение: "${message}"\n\nНастройте \`MY_CUSTOM_API_URL\` и \`MY_CUSTOM_API_KEY\` в \`.env\` для реальных ответов.`;
-}
-
-// Короткая постоянная пауза сохраняет печать по буквам без искусственных задержек.
-function charDelay(): number {
-  return 2;
 }
 
 function describeUpstreamError(status: number, body: string): string {
@@ -73,9 +51,10 @@ export async function POST(req: Request) {
   }
 
   const userId = (session.user as any).id;
-  const { message, model, sessionId, attachments = [] } = await req.json();
+  const { message, sessionId, attachments = [] } = await req.json();
+  const model = mapModelName();
 
-  if ((!message && (!attachments || attachments.length === 0)) || !model || !sessionId) {
+  if ((!message && (!attachments || attachments.length === 0)) || !sessionId) {
     return NextResponse.json({ error: "Отсутствуют обязательные поля" }, { status: 400 });
   }
 
@@ -163,17 +142,16 @@ export async function POST(req: Request) {
     upstreamMessages.push({ role: "user", content: fullUserContent });
   }
 
-  const rawApiUrl = process.env.MY_CUSTOM_API_URL || "https://tokenharbor.ai/v1/chat/completions";
+  const rawApiUrl = process.env.MY_CUSTOM_API_URL || "https://api.a6api.com/v1";
   const apiUrl = rawApiUrl.endsWith("/chat/completions")
     ? rawApiUrl
     : `${rawApiUrl.replace(/\/+$/, "")}/chat/completions`;
-  const apiKey = process.env.MY_CUSTOM_API_KEY || "thk_live_K7Ydok5gzHGQ1WZTYG6fxgpyf5YAmiYcKGzfNAZlsXCU25z3u7BjHwliFS43j9q5";
+  const apiKey = process.env.MY_CUSTOM_API_KEY?.trim();
+  if (!apiKey) {
+    return NextResponse.json({ error: "API-ключ модели не настроен" }, { status: 503 });
+  }
   const upstreamController = new AbortController();
   const upstreamTimeout = setTimeout(() => upstreamController.abort(), 240_000);
-  const isApiConfigured =
-    Boolean(apiUrl && apiKey &&
-    !apiUrl.includes("your-api-endpoint") &&
-    !apiKey.includes("your-api-key"));
 
   // Стриминг
   const encoder = new TextEncoder();
@@ -187,17 +165,7 @@ export async function POST(req: Request) {
 
       send({ thinking: true });
 
-      if (!isApiConfigured) {
-        // ДЕМО — быстрый вывод
-        const demoText = getDemoResponse(message || "Вложенные файлы", model);
-        for (const char of demoText) {
-          fullContent += char;
-          send({ chunk: char });
-          await new Promise((r) => setTimeout(r, charDelay()));
-        }
-      } else {
-        // Реальный API — прямой стриминг с минимальной задержкой перед выдачей
-        try {
+      try {
           const apiRes = await fetch(apiUrl, {
             method: "POST",
             headers: {
@@ -309,7 +277,6 @@ export async function POST(req: Request) {
         } finally {
           clearTimeout(upstreamTimeout);
         }
-      }
 
       // Дожидаемся сохранения сообщения пользователя
       await saveUserMessagePromise.catch((e) => console.error("Error saving user message:", e));

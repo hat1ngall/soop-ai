@@ -27,13 +27,13 @@ export async function POST(req: Request) {
   }
 
   const userId = (session.user as any).id;
-  const { title, model } = await req.json();
+  const { title } = await req.json();
 
   const chat = await prisma.chatSession.create({
     data: {
       userId,
       title: title || "Новый чат",
-      model: model || "gemini-flash-3.5",
+      model: "gpt-6-luna",
     },
   });
 

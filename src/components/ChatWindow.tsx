@@ -259,7 +259,7 @@ export function ChatWindow() {
                 className="flex items-center gap-1.5 rounded-xl bg-[#f3effc] px-3 py-2 text-xs text-[#6750a4] transition-colors hover:bg-[#ece5fb]"
               >
                 <ModelIcon icon={selectedModel.icon} color={selectedModel.color} />
-                <span>{selectedModel.name}</span>
+                <span>{selectedModel.name}</span><span className="rounded-md bg-white/60 px-1.5 py-0.5 text-[9px] font-semibold text-[#6750a4]" title="Все ответы генерирует GPT-6 Luna">Luna</span>
                 <svg className="h-3 w-3 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
                 </svg>

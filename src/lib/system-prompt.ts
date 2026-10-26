@@ -1,4 +1,5 @@
 const MODEL_DISPLAY_NAMES: Record<string, string> = {
+  "gpt-6-luna": "GPT-6 Luna",
   "gemini-flash-3.5": "Gemini 3.8 Flash",
   "minimax-2.5": "Minimax 2.5",
   "llama-4-scout": "Llama 4 Scout",
