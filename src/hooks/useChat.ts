@@ -4,7 +4,8 @@ import { useState, useCallback, useRef } from "react";
 import { Message } from "@/types";
 import type { ChatAttachment } from "@/lib/attachments";
 
-const CHAT_REQUEST_TIMEOUT_MS = 180_000;
+// The server has a 240s budget including safe upstream retries.
+const CHAT_REQUEST_TIMEOUT_MS = 270_000;
 
 interface UseChatOptions {
   sessionId: string;
@@ -120,7 +121,7 @@ export function useChat({ sessionId, model }: UseChatOptions) {
             setThinking(false);
             setMessages((prev) =>
               prev.map((m) =>
-                m.id === assistantMsg.id ? { ...m, content: `⚠️ ${parsed.error}` } : m
+                m.id === assistantMsg.id && !fullContent ? { ...m, content: `⚠️ ${parsed.error}` } : m
               )
             );
             finished = true;
@@ -144,27 +145,37 @@ export function useChat({ sessionId, model }: UseChatOptions) {
         };
 
         if (reader) {
-          while (!finished) {
-            const { done, value } = await reader.read();
-            if (done) break;
+          try {
+            while (!finished) {
+              const { done, value } = await reader.read();
+              if (done) break;
 
-            buffer += decoder.decode(value, { stream: true });
-            const lines = buffer.split("\n");
-            buffer = lines.pop() ?? "";
+              buffer += decoder.decode(value, { stream: true });
+              const lines = buffer.split("\n");
+              buffer = lines.pop() ?? "";
 
-            for (const line of lines) {
-              handleLine(line);
-              if (finished) break;
+              for (const line of lines) {
+                handleLine(line);
+                if (finished) break;
+              }
             }
+            if (!finished && buffer) handleLine(buffer);
+          } finally {
+            if (finished) await reader.cancel().catch(() => {});
+            reader.releaseLock();
           }
-          if (!finished && buffer) handleLine(buffer);
         }
+        if (!finished) throw new Error("incomplete_response");
 
         setLoading(false);
         setThinking(false);
         return { upgradeRequired: false, limitExceeded: false, usage };
       } catch (error) {
-        const errMsg = error instanceof DOMException && error.name === "AbortError" ? "Запрос слишком долго не отвечал" : "Сервис недоступен";
+        const errMsg = error instanceof DOMException && error.name === "AbortError"
+          ? "Запрос слишком долго не отвечал. Попробуйте ещё раз."
+          : error instanceof Error && error.message === "incomplete_response"
+            ? "Ответ прервался. Попробуйте отправить запрос ещё раз."
+            : "Сервис недоступен. Попробуйте ещё раз.";
         setError(errMsg);
         if (assistantMsgId) {
           setMessages((prev) =>

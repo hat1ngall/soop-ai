@@ -6,6 +6,7 @@ import { getAvailableModels, getDailyLimit } from "@/lib/plans";
 import { checkAndResetExpiredSubscription } from "@/lib/subscription";
 import { getSystemPrompt } from "@/lib/system-prompt";
 import { parseGeneratedImage } from "@/lib/generated-images";
+import { ChatProviderError, streamChatCompletion } from "@/lib/chat-provider";
 
 function mapModelName(): string {
   return "gpt-6-luna";
@@ -14,35 +15,6 @@ function mapModelName(): string {
 function getTodayStart(): Date {
   const now = new Date();
   return new Date(now.getFullYear(), now.getMonth(), now.getDate());
-}
-
-function describeUpstreamError(status: number, body: string): string {
-  let detail = "";
-  try {
-    const parsed = JSON.parse(body);
-    detail = parsed?.error?.message || parsed?.message || "";
-  } catch {}
-  detail = String(detail || "").trim().slice(0, 300);
-
-  if (
-    status === 402 ||
-    (status === 429 && /card[-_ ]?required|insufficient|credit|balance/i.test(detail)) ||
-    /check[- ]?in|insufficient|billing_error|payment|balance|card[-_ ]?required|credit/i.test(detail)
-  ) {
-    const suffix = detail ? ` Провайдер: "${detail}"` : "";
-    return `API-аккаунт: недостаточно средств или ошибка баланса у провайдера.${suffix}`;
-  }
-  if (status === 401 || status === 403) {
-    return detail || "Провайдер отклонил API-ключ. Проверьте MY_CUSTOM_API_KEY.";
-  }
-  if (status === 404) {
-    return detail || "Модель не найдена на стороне провайдера.";
-  }
-  if (status === 429) {
-    return detail || "Превышен лимит запросов провайдера. Попробуйте позже.";
-  }
-  if (detail) return detail;
-  return `Провайдер вернул ошибку HTTP ${status}.`;
 }
 
 export async function POST(req: Request) {
@@ -109,11 +81,6 @@ export async function POST(req: Request) {
     fullUserContent = fullUserContent ? `${fullUserContent}\n\n${files}` : files;
   }
 
-  // Сохранение сообщения пользователя запускаем без блокировки запроса к модели
-  const saveUserMessagePromise = prisma.message.create({
-    data: { role: "user", content: fullUserContent, sessionId },
-  });
-
   const upstreamMessages: any[] = history.map((m) => {
     if (m.role === "assistant") {
       const image = parseGeneratedImage(m.content);
@@ -150,167 +117,83 @@ export async function POST(req: Request) {
     : `${rawApiUrl.replace(/\/+$/, "")}/chat/completions`;
   const apiKey = process.env.MY_CUSTOM_API_KEY?.trim();
   if (!apiKey) {
-    return NextResponse.json({ error: "API-ключ модели не настроен" }, { status: 503 });
+    return NextResponse.json({ error: "Сервис ответов временно недоступен. Попробуйте позже." }, { status: 503 });
   }
-  const upstreamController = new AbortController();
-  const upstreamTimeout = setTimeout(() => upstreamController.abort(), 240_000);
+  // Persist once for the whole request; upstream retries never create messages.
+  try {
+    await prisma.message.create({ data: { role: "user", content: fullUserContent, sessionId } });
+  } catch {
+    return NextResponse.json({ error: "Не удалось сохранить сообщение. Попробуйте ещё раз." }, { status: 500 });
+  }
 
-  // Стриминг
+  const upstreamController = new AbortController();
+  let cancelled = req.signal.aborted;
+  let responseCancelled = false;
+  let timedOut = false;
+  const cancel = () => { cancelled = true; upstreamController.abort(); };
+  req.signal.addEventListener("abort", cancel, { once: true });
+  if (cancelled) upstreamController.abort();
+  const upstreamTimeout = setTimeout(() => {
+    timedOut = true;
+    upstreamController.abort();
+  }, 240_000);
+
   const encoder = new TextEncoder();
   const stream = new ReadableStream({
     async start(controller) {
-      let fullContent = "";
-
       const send = (payload: unknown) => {
-        controller.enqueue(encoder.encode(`data: ${JSON.stringify(payload)}\n\n`));
+        if (!cancelled) controller.enqueue(encoder.encode(`data: ${JSON.stringify(payload)}\n\n`));
       };
-
-      send({ thinking: true });
-
       try {
-          const apiRes = await fetch(apiUrl, {
-            method: "POST",
-            headers: {
-              "Content-Type": "application/json",
-              Authorization: `Bearer ${apiKey}`,
-            },
-            signal: upstreamController.signal,
-            body: JSON.stringify({
-              model: mapModelName(),
-              messages: [
-                { role: "system", content: getSystemPrompt(model) },
-                ...upstreamMessages,
-              ],
-              stream: true,
-            }),
+        send({ thinking: true });
+        const fullContent = await streamChatCompletion({
+          url: apiUrl, apiKey, model,
+          messages: [{ role: "system", content: getSystemPrompt(model) }, ...upstreamMessages],
+          signal: upstreamController.signal,
+          onChunk: (chunk) => send({ chunk }),
+          onRetry: (attempt, error) => {
+            console.warn("Chat upstream retry", { attempt, code: error.code, status: error.status, requestId: error.requestId });
+            send({ thinking: true });
+          },
+        });
+        if (cancelled || upstreamController.signal.aborted) return;
+
+        // A provider failure, empty or truncated stream cannot save an answer or spend the daily quota.
+        const updatedUsage = await prisma.$transaction(async (tx) => {
+          await tx.message.create({ data: { role: "assistant", content: fullContent, sessionId } });
+          const updated = await tx.dailyUsage.upsert({
+            where: { userId_date: { userId, date: todayStart } },
+            update: { count: { increment: 1 } },
+            create: { userId, date: todayStart, count: 1 },
           });
-
-          if (!apiRes.ok) {
-            const err = await apiRes.text();
-            console.error("Upstream API error:", apiRes.status, err);
-            const detail = describeUpstreamError(apiRes.status, err);
-            send({ error: detail });
-            send({ done: true });
-            controller.close();
-            return;
+          if (history.length === 0) {
+            const titleRaw = (message || imageAttachments[0]?.name || textAttachments[0]?.name || "Новый чат").trim();
+            const shortTitle = titleRaw.slice(0, 50) + (titleRaw.length > 50 ? "..." : "");
+            await tx.chatSession.update({ where: { id: sessionId }, data: { title: shortTitle, model } });
           }
-
-          if (apiRes.body) {
-            const reader = apiRes.body.getReader();
-            const decoder = new TextDecoder();
-            let sseBuffer = "";
-
-            while (true) {
-              const { done, value } = await reader.read();
-              if (done) break;
-
-              sseBuffer += decoder.decode(value, { stream: true });
-              const lines = sseBuffer.split("\n");
-              sseBuffer = lines.pop() ?? "";
-
-              for (const line of lines) {
-                const trimmed = line.trim();
-                if (!trimmed || !trimmed.startsWith("data:")) continue;
-                const dataStr = trimmed.slice(5).trim();
-                if (dataStr === "[DONE]") continue;
-
-                try {
-                  const parsed = JSON.parse(dataStr);
-                  if (parsed.error) {
-                    const errMsg = typeof parsed.error === "string" ? parsed.error : parsed.error.message || "Ошибка API";
-                    send({ error: errMsg });
-                    send({ done: true });
-                    controller.close();
-                    return;
-                  }
-                  const chunk = parsed.choices?.[0]?.delta?.content;
-                  if (chunk) {
-                    fullContent += chunk;
-                    send({ chunk });
-                  }
-                } catch {
-                  // Игнорируем неполные JSON строки
-                }
-              }
-            }
-
-            if (sseBuffer.trim()) {
-              const trimmed = sseBuffer.trim();
-              if (trimmed.startsWith("data:")) {
-                const dataStr = trimmed.slice(5).trim();
-                if (dataStr !== "[DONE]") {
-                  try {
-                    const parsed = JSON.parse(dataStr);
-                    const chunk = parsed.choices?.[0]?.delta?.content;
-                    if (chunk) {
-                      fullContent += chunk;
-                      send({ chunk });
-                    }
-                  } catch {}
-                }
-              } else if (!fullContent) {
-                // Если ответ пришёл обычным JSON (не SSE)
-                try {
-                  const parsed = JSON.parse(trimmed);
-                  const text = parsed.choices?.[0]?.message?.content || parsed.response || parsed.content;
-                  if (text) {
-                    fullContent = text;
-                    send({ chunk: text });
-                  }
-                } catch {}
-              }
-            }
-          }
-
-          if (!fullContent) {
-            const fallback = "Пустой ответ от модели.";
-            fullContent = fallback;
-            send({ chunk: fallback });
-          }
-        } catch (error) {
-          console.error("Chat API error:", error);
-          const detail = upstreamController.signal.aborted
-            ? "Провайдер не ответил за 240 секунд. Попробуйте ещё раз."
-            : "Сервис недоступен: не удалось связаться с провайдером.";
+          return updated;
+        });
+        send({ done: true, usage: { used: updatedUsage.count, limit: dailyLimit } });
+      } catch (error) {
+        if (!cancelled) {
+          const providerError = error instanceof ChatProviderError ? error : null;
+          console.error("Chat request failed", { code: providerError?.code || "internal", status: providerError?.status, requestId: providerError?.requestId });
+          const detail = timedOut
+            ? "Не удалось дождаться ответа. Попробуйте ещё раз."
+            : providerError?.message || "Не удалось получить ответ. Попробуйте ещё раз.";
           send({ error: detail });
           send({ done: true });
-          controller.close();
-          return;
-        } finally {
-          clearTimeout(upstreamTimeout);
         }
-
-      // Дожидаемся сохранения сообщения пользователя
-      await saveUserMessagePromise.catch((e) => console.error("Error saving user message:", e));
-
-      // Сохраняем в БД ответ ассистента
-      if (fullContent) {
-        await prisma.message.create({
-          data: { role: "assistant", content: fullContent, sessionId },
-        });
+      } finally {
+        clearTimeout(upstreamTimeout);
+        req.signal.removeEventListener("abort", cancel);
+        upstreamController.abort();
+        if (!responseCancelled) controller.close();
       }
-
-      await prisma.dailyUsage.upsert({
-        where: { userId_date: { userId, date: todayStart } },
-        update: { count: { increment: 1 } },
-        create: { userId, date: todayStart, count: 1 },
-      });
-
-      if (history.length === 0) {
-        const titleRaw = (message || imageAttachments[0]?.name || textAttachments[0]?.name || "Новый чат").trim();
-        const shortTitle = titleRaw.slice(0, 50) + (titleRaw.length > 50 ? "..." : "");
-        await prisma.chatSession.update({ where: { id: sessionId }, data: { title: shortTitle, model } });
-      }
-
-      const updatedUsage = await prisma.dailyUsage.findUnique({
-        where: { userId_date: { userId, date: todayStart } },
-      });
-
-      send({ done: true, usage: { used: updatedUsage?.count || 0, limit: dailyLimit } });
-      controller.close();
     },
     cancel() {
-      upstreamController.abort();
+      responseCancelled = true;
+      cancel();
     },
   });
 
