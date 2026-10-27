@@ -46,6 +46,7 @@ model Message {
   createdAt DateTime @default(now())
 
   session ChatSession @relation(fields: [sessionId], references: [id], onDelete: Cascade)
+  image   GeneratedImage?
 
   @@index([sessionId])
   @@map("messages")
@@ -62,4 +63,16 @@ model DailyUsage {
   @@unique([userId, date])
   @@index([userId])
   @@map("daily_usage")
+}
+
+model GeneratedImage {
+  id        String   @id @default(cuid())
+  messageId String   @unique
+  data      Bytes
+  mimeType  String
+  createdAt DateTime @default(now())
+
+  message Message @relation(fields: [messageId], references: [id], onDelete: Cascade)
+
+  @@map("generated_images")
 }

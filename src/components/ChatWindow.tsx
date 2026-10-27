@@ -6,6 +6,10 @@ import { MessageBubble } from "./MessageBubble";
 import { useChat } from "@/hooks/useChat";
 import { UpgradeModal } from "./UpgradeModal";
 import { ChatAttachment, processFile } from "@/lib/attachments";
+import { useImageGeneration } from "@/hooks/useImageGeneration";
+import { ImageCreationControls, ImageCreationEmptyState, ImageIcon } from "./ImageCreationControls";
+import { ImageGenerationProgress } from "./GeneratedImageCard";
+import type { ImageSize } from "@/lib/generated-images";
 
 interface UsageInfo { plan: string; used: number; limit: number; remaining: number; }
 
@@ -51,6 +55,8 @@ export function ChatWindow() {
   const sessionId = params.id as string;
   const [model, setModel] = useState("claude-opus-5.5");
   const [input, setInput] = useState("");
+  const [imageMode, setImageMode] = useState(false);
+  const [imageSize, setImageSize] = useState<ImageSize>("1024x1024");
   const [attachments, setAttachments] = useState<ChatAttachment[]>([]);
   const [uploadingFiles, setUploadingFiles] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
@@ -61,15 +67,33 @@ export function ChatWindow() {
   const textareaRef = useRef<HTMLTextAreaElement>(null);
   const modelRef = useRef<HTMLDivElement>(null);
 
-  const { messages, loading, thinking, sendMessage, loadMessages } = useChat({ sessionId, model });
+  const { messages, setMessages, loading: chatLoading, thinking, error: chatError, setError: setChatError, sendMessage, loadMessages } = useChat({ sessionId, model });
+  const { generatingImage, imageError, setImageError, generateImage } = useImageGeneration({ sessionId, setMessages });
+  const loading = chatLoading || generatingImage;
+  const visibleError = imageError || (chatError && !["upgrade_required", "limit_exceeded"].includes(chatError) ? chatError : null);
 
-  useEffect(() => { loadMessages(); fetchUsage(); }, [sessionId]);
+  const sendMessageRef = useRef(sendMessage);
+  sendMessageRef.current = sendMessage;
+  useEffect(() => { setImageMode(false); setImageSize("1024x1024"); }, [sessionId]);
   useEffect(() => {
-    const pending = window.sessionStorage.getItem("soop:pending-prompt");
-    if (!pending) return;
-    window.sessionStorage.removeItem("soop:pending-prompt");
-    void sendMessage(pending);
-  }, [sessionId, sendMessage]);
+    let active = true;
+    void fetchUsage();
+    void loadMessages().then(() => {
+      if (!active) return;
+      const pendingMode = window.sessionStorage.getItem("soop:pending-mode");
+      window.sessionStorage.removeItem("soop:pending-mode");
+      if (pendingMode === "image") setImageMode(true);
+      const pending = window.sessionStorage.getItem("soop:pending-prompt");
+      if (!pending) return;
+      window.sessionStorage.removeItem("soop:pending-prompt");
+      if (pendingMode === "image") {
+        setInput(pending);
+        void generateImage(pending, "1024x1024").then((result) => { if (result.success && active) setInput(""); void fetchUsage(); });
+      }
+      else void sendMessageRef.current(pending);
+    });
+    return () => { active = false; };
+  }, [sessionId, loadMessages, generateImage]);
   useEffect(() => { bottomRef.current?.scrollIntoView({ behavior: "smooth" }); }, [messages, loading]);
   useEffect(() => {
     const h = (e: MouseEvent) => { if (modelRef.current && !modelRef.current.contains(e.target as Node)) setModelMenuOpen(false); };
@@ -82,7 +106,7 @@ export function ChatWindow() {
   };
 
   const addFiles = async (files: FileList | File[]) => {
-    if (!files || files.length === 0) return;
+    if (imageMode || !files || files.length === 0) return;
     setUploadingFiles(true);
     try {
       const newAttachments: ChatAttachment[] = [];
@@ -98,6 +122,7 @@ export function ChatWindow() {
   };
 
   const handlePaste = (e: React.ClipboardEvent) => {
+    if (imageMode) return;
     const items = e.clipboardData?.items;
     if (!items) return;
     const files: File[] = [];
@@ -115,6 +140,18 @@ export function ChatWindow() {
 
   const handleSend = async () => {
     if ((!input.trim() && attachments.length === 0) || loading || uploadingFiles) return;
+    setImageError(null);
+    setChatError(null);
+    if (imageMode) {
+      if (!input.trim()) return;
+      const result = await generateImage(input, imageSize);
+      if (result.success) {
+        setInput("");
+        if (textareaRef.current) textareaRef.current.style.height = "auto";
+      }
+      await fetchUsage();
+      return;
+    }
     const text = input;
     const currentAttachments = attachments;
     setInput("");
@@ -135,7 +172,7 @@ export function ChatWindow() {
       <div className="flex-1 overflow-y-auto">
         <div className="mx-auto max-w-4xl px-5 py-6 sm:px-8 sm:py-9">
           {messages.length === 0 && !loading ? (
-            <div className="flex flex-col items-center justify-center py-24 text-center sm:py-32">
+            imageMode ? <ImageCreationEmptyState onPrompt={(prompt) => { setInput(prompt); textareaRef.current?.focus(); }} /> : <div className="flex flex-col items-center justify-center py-24 text-center sm:py-32">
               <div className="mb-5 flex h-14 w-14 items-center justify-center rounded-2xl border border-[#e2e6ec] bg-white shadow-[0_10px_28px_rgba(35,48,70,.08)]">
                 <img src="/logo.svg" alt="Soop AI" className="h-10 w-10 rounded-xl" />
               </div>
@@ -161,6 +198,7 @@ export function ChatWindow() {
               {messages.map((msg) => (
                 <MessageBubble key={msg.id} message={msg} isLoading={loading && msg.role === "assistant" && msg.id === messages[messages.length - 1]?.id} isThinking={thinking && msg.role === "assistant" && msg.id === messages[messages.length - 1]?.id} model={model} />
               ))}
+              {generatingImage && <ImageGenerationProgress />}
             </div>
           )}
           <div ref={bottomRef} />
@@ -172,10 +210,13 @@ export function ChatWindow() {
         <div className="mx-auto max-w-4xl animate-slide-up">
           {usage && usage.limit !== -1 && (
             <div className="mb-2 flex items-center justify-between px-1">
-              <span className="text-[11px] text-slate-500">{usage.used}/{usage.limit} сообщений сегодня</span>
+              <span className="text-[11px] text-slate-500">{usage.used}/{usage.limit} запросов сегодня</span>
               {usage.remaining <= 5 && usage.remaining > 0 && <span className="text-[11px] text-amber-600">Осталось {usage.remaining}</span>}
             </div>
           )}
+
+          <ImageCreationControls imageMode={imageMode} onModeChange={(enabled) => { setImageMode(enabled); setModelMenuOpen(false); setImageError(null); setChatError(null); textareaRef.current?.focus(); }} size={imageSize} onSizeChange={setImageSize} disabled={loading} hasAttachments={attachments.length > 0} />
+          {visibleError && <div role="alert" className="mb-3 flex items-start justify-between gap-3 rounded-xl border border-red-200 bg-red-50 px-3 py-2.5 text-xs leading-5 text-red-700"><span>{visibleError}</span><button type="button" onClick={() => { setImageError(null); setChatError(null); }} aria-label="Закрыть сообщение об ошибке" className="shrink-0 px-1 text-base">×</button></div>}
 
           {/* Attachments preview list */}
           {attachments.length > 0 && (
@@ -223,7 +264,7 @@ export function ChatWindow() {
             <button
               type="button"
               onClick={() => fileInputRef.current?.click()}
-              disabled={loading || isLimitExceeded || uploadingFiles}
+              disabled={loading || isLimitExceeded || uploadingFiles || imageMode}
               className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl text-[#718198] transition-colors hover:bg-[#f1f4f8] hover:text-[#18212f] disabled:opacity-40"
               title="Прикрепить изображение или файл"
             >
@@ -245,15 +286,16 @@ export function ChatWindow() {
               onChange={(e) => { setInput(e.target.value); e.target.style.height = "auto"; e.target.style.height = `${Math.min(e.target.scrollHeight, 160)}px`; }}
               onKeyDown={handleKeyDown}
               onPaste={handlePaste}
-              placeholder={isLimitExceeded ? "Лимит исчерпан..." : "Напишите сообщение..."}
+              placeholder={isLimitExceeded ? "Лимит исчерпан..." : imageMode ? "Опишите изображение: сюжет, стиль, свет, детали..." : "Напишите сообщение..."}
+              maxLength={imageMode ? 4000 : undefined}
               rows={1}
               disabled={loading || isLimitExceeded}
-              className="max-h-40 flex-1 resize-none overflow-y-auto bg-transparent px-2 py-2 text-sm text-[#302b27] outline-none placeholder:text-[#aaa39c] disabled:opacity-50"
+              className="max-h-40 min-w-0 flex-1 resize-none overflow-y-auto bg-transparent px-2 py-2 text-sm text-[#302b27] outline-none placeholder:text-[#aaa39c] disabled:opacity-50"
               style={{ minHeight: "20px" }}
             />
 
             {/* Model selector pill */}
-            <div ref={modelRef} className="relative shrink-0">
+            <div ref={modelRef} className={`relative shrink-0 ${imageMode ? "hidden" : ""}`}>
               <button
                 onClick={() => setModelMenuOpen(!modelMenuOpen)}
                 className="flex items-center gap-1.5 rounded-xl bg-[#f3effc] px-3 py-2 text-xs text-[#6750a4] transition-colors hover:bg-[#ece5fb]"
@@ -303,6 +345,8 @@ export function ChatWindow() {
 
             {/* Send button */}
             <button
+              type="button"
+              aria-label={imageMode ? "Создать изображение" : "Отправить сообщение"}
               onClick={handleSend}
               disabled={(!input.trim() && attachments.length === 0) || loading || isLimitExceeded || uploadingFiles}
               className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-[#4662f0] text-white shadow-[0_6px_14px_rgba(70,98,240,.25)] transition-all duration-200 hover:-translate-y-0.5 hover:bg-[#3857e8] disabled:opacity-25"
@@ -312,7 +356,7 @@ export function ChatWindow() {
                   <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
                   <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z" />
                 </svg>
-              ) : (
+              ) : imageMode ? <ImageIcon className="h-4 w-4" /> : (
                 <svg className="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 12h14M12 5l7 7-7 7" />
                 </svg>

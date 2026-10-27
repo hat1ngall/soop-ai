@@ -5,6 +5,7 @@ import { prisma } from "@/lib/prisma";
 import { getAvailableModels, getDailyLimit } from "@/lib/plans";
 import { checkAndResetExpiredSubscription } from "@/lib/subscription";
 import { getSystemPrompt } from "@/lib/system-prompt";
+import { parseGeneratedImage } from "@/lib/generated-images";
 
 function mapModelName(): string {
   return "gpt-6-luna";
@@ -115,7 +116,8 @@ export async function POST(req: Request) {
 
   const upstreamMessages: any[] = history.map((m) => {
     if (m.role === "assistant") {
-      return { role: "assistant", content: m.content };
+      const image = parseGeneratedImage(m.content);
+      return { role: "assistant", content: image ? `[Создано изображение по описанию: ${image.prompt}]` : m.content };
     }
     const contentForModel = m.content
       .replace(/<<<FILE:(.*?)>>>\n?([\s\S]*?)\n?<<<END_FILE>>>/g, "\n--- Файл: $1 ---\n$2\n--- Конец файла ---\n")

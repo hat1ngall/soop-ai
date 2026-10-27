@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useCallback } from "react";
+import { useState, useCallback, useRef } from "react";
 import { Message } from "@/types";
 import type { ChatAttachment } from "@/lib/attachments";
 
@@ -13,17 +13,21 @@ interface UseChatOptions {
 
 export function useChat({ sessionId, model }: UseChatOptions) {
   const [messages, setMessages] = useState<Message[]>([]);
+  const currentSession = useRef(sessionId);
+  currentSession.current = sessionId;
+  const historyRequest = useRef(0);
   const [loading, setLoading] = useState(false);
   const [thinking, setThinking] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
   const loadMessages = useCallback(async () => {
     if (!sessionId) return;
+    const requestId = ++historyRequest.current;
     try {
       const res = await fetch(`/api/sessions/${sessionId}/messages`);
       if (res.ok) {
         const data = await res.json();
-        setMessages(data);
+        if (currentSession.current === sessionId && requestId === historyRequest.current) setMessages(data);
       }
     } catch {}
   }, [sessionId]);
