@@ -51,15 +51,17 @@ function ModelIcon({ icon, color }: { icon: string; color: string }) {
 }
 
 function canAccessModel(plan: string | undefined, modelTier: string): boolean {
-  if (!plan || plan === "free") return false;
+  if (!plan) return false;
   const tierOrder = ["free", "pro", "boost", "enterprise"];
-  return tierOrder.indexOf(plan) >= tierOrder.indexOf(modelTier);
+  const planIndex = tierOrder.indexOf(plan);
+  const modelIndex = tierOrder.indexOf(modelTier);
+  return planIndex >= 0 && modelIndex >= 0 && planIndex >= modelIndex;
 }
 
 export function ChatWindow() {
   const params = useParams();
   const sessionId = params.id as string;
-  const [model, setModel] = useState("claude-opus-5.5");
+  const [model, setModel] = useState("gemini-flash-3.5");
   const [input, setInput] = useState("");
   const [imageMode, setImageMode] = useState(false);
   const [imageSize, setImageSize] = useState<ImageSize>("1024x1024");
@@ -96,7 +98,7 @@ export function ChatWindow() {
         setInput(pending);
         void generateImage(pending, "1024x1024").then((result) => { if (result.success && active) setInput(""); if (result.upgradeRequired && active) setUpgradeOpen(true); void fetchUsage(); });
       }
-      else void sendMessageRef.current(pending);
+      else void sendMessageRef.current(pending).then((result) => { if (result?.limitExceeded && active) setUpgradeOpen(true); void fetchUsage(); });
     });
     return () => { active = false; };
   }, [sessionId, loadMessages, generateImage]);
@@ -165,6 +167,7 @@ export function ChatWindow() {
     setAttachments([]);
     const result = await sendMessage(text, currentAttachments);
     if (result?.upgradeRequired) setUpgradeOpen(true);
+    if (result?.limitExceeded) setUpgradeOpen(true);
     fetchUsage();
   };
 

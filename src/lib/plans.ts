@@ -33,9 +33,7 @@ export const DAILY_LIMITS: Record<PlanTier, number> = {
 
 export function getAvailableModels(plan: PlanTier): string[] {
   switch (plan) {
-    // Model access is a subscription feature. Free accounts may browse the
-    // catalog, but cannot use any model until a plan is activated.
-    case "free": return [];
+    case "free": return FREE_MODELS;
     case "pro": return [...FREE_MODELS, ...PRO_MODELS];
     case "boost": return [...FREE_MODELS, ...PRO_MODELS, ...BOOST_MODELS];
     case "enterprise": return [...FREE_MODELS, ...PRO_MODELS, ...BOOST_MODELS, ...ENTERPRISE_MODELS];

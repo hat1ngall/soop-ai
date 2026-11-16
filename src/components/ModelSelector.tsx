@@ -47,9 +47,10 @@ const MODELS: Model[] = [
 ];
 
 function canAccessModel(plan: string, modelTier: string): boolean {
-  if (plan === "free") return false;
   const tierOrder = ["free", "pro", "boost", "enterprise"];
-  return tierOrder.indexOf(plan) >= tierOrder.indexOf(modelTier);
+  const planIndex = tierOrder.indexOf(plan);
+  const modelIndex = tierOrder.indexOf(modelTier);
+  return planIndex >= 0 && modelIndex >= 0 && planIndex >= modelIndex;
 }
 
 export function ModelSelector({ selectedModel, onSelect, currentPlan, onUpgradeRequest }: ModelSelectorProps) {
