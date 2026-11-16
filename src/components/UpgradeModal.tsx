@@ -29,7 +29,7 @@ const PLANS: Plan[] = [
     gradient: "from-blue-500 to-blue-600",
     models: ["Claude Sonnet 4.6", "GPT 5.2", "GPT 5.4", "GPT 5.5", "Grok 4.5", "Grok 4.7"],
     features: [
-      "100 сообщений в день",
+      "Безлимитные запросы",
       "Все бесплатные модели",
       "Доступ к Pro моделям",
       "Приоритетная поддержка",
@@ -43,7 +43,7 @@ const PLANS: Plan[] = [
     gradient: "from-purple-500 to-purple-600",
     models: ["Fable 5.2", "Claude Opus 5.5"],
     features: [
-      "300 сообщений в день",
+      "Безлимитные запросы",
       "Все Pro модели",
       "Доступ к Boost моделям",
       "Приоритетная поддержка",

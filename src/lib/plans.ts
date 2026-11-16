@@ -26,8 +26,8 @@ export const ENTERPRISE_MODELS = [
 
 export const DAILY_LIMITS: Record<PlanTier, number> = {
   free: 20,
-  pro: 100,
-  boost: 300,
+  pro: -1,
+  boost: -1,
   enterprise: -1,
 };
 
