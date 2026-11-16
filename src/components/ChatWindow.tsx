@@ -50,6 +50,12 @@ function ModelIcon({ icon, color }: { icon: string; color: string }) {
   return <span className={color}>{icon}</span>;
 }
 
+function canAccessModel(plan: string | undefined, modelTier: string): boolean {
+  if (!plan || plan === "free") return false;
+  const tierOrder = ["free", "pro", "boost", "enterprise"];
+  return tierOrder.indexOf(plan) >= tierOrder.indexOf(modelTier);
+}
+
 export function ChatWindow() {
   const params = useParams();
   const sessionId = params.id as string;
@@ -88,7 +94,7 @@ export function ChatWindow() {
       window.sessionStorage.removeItem("soop:pending-prompt");
       if (pendingMode === "image") {
         setInput(pending);
-        void generateImage(pending, "1024x1024").then((result) => { if (result.success && active) setInput(""); void fetchUsage(); });
+        void generateImage(pending, "1024x1024").then((result) => { if (result.success && active) setInput(""); if (result.upgradeRequired && active) setUpgradeOpen(true); void fetchUsage(); });
       }
       else void sendMessageRef.current(pending);
     });
@@ -149,6 +155,7 @@ export function ChatWindow() {
         setInput("");
         if (textareaRef.current) textareaRef.current.style.height = "auto";
       }
+      if (result.upgradeRequired) setUpgradeOpen(true);
       await fetchUsage();
       return;
     }
@@ -312,29 +319,33 @@ export function ChatWindow() {
                   <div className="max-h-[50vh] overflow-y-auto p-1.5" style={{ scrollbarColor: "#b9c3d6 #eef2f8" }}>
                     <div className="px-2 py-1 text-[10px] font-semibold uppercase tracking-[0.18em] text-slate-400">Free</div>
                     {MODEL_LIST.filter(m => m.tier === "free").map((m) => (
-                        <button key={m.id} onClick={() => { setModel(m.id); setModelMenuOpen(false); }} className={`flex w-full items-center gap-2 rounded-xl px-3 py-2 text-left text-sm transition-all duration-200 ${model === m.id ? "bg-slate-950 text-white font-semibold shadow-sm" : "text-slate-600 hover:bg-slate-50"}`}>
+                        <button key={m.id} onClick={() => { if (!canAccessModel(usage?.plan, m.tier)) { setUpgradeOpen(true); } else { setModel(m.id); } setModelMenuOpen(false); }} className={`flex w-full items-center gap-2 rounded-xl px-3 py-2 text-left text-sm transition-all duration-200 ${model === m.id ? "bg-slate-950 text-white font-semibold shadow-sm" : "text-slate-600 hover:bg-slate-50"}`}>
                         <ModelIcon icon={m.icon} color={m.color} /><span>{m.name}</span>
+                        {!canAccessModel(usage?.plan, m.tier) && <span className="ml-auto rounded-full bg-amber-100 px-1.5 py-0.5 text-[8px] font-bold text-amber-700">Подписка</span>}
                         {model === m.id && <svg className="ml-auto h-3.5 w-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" /></svg>}
                       </button>
                     ))}
                     <div className="mt-2 flex items-center gap-2 px-2 py-1"><span className="text-[10px] font-semibold uppercase tracking-[0.18em] text-slate-400">Pro</span><span className="rounded-full bg-amber-100 px-1.5 py-0.5 text-[8px] font-bold text-amber-700">Pro</span></div>
                     {MODEL_LIST.filter(m => m.tier === "pro").map((m) => (
-                        <button key={m.id} onClick={() => { setModel(m.id); setModelMenuOpen(false); }} className={`flex w-full items-center gap-2 rounded-xl px-3 py-2 text-left text-sm transition-all duration-200 ${model === m.id ? "bg-slate-950 text-white font-semibold shadow-sm" : "text-slate-600 hover:bg-slate-50"}`}>
+                        <button key={m.id} onClick={() => { if (!canAccessModel(usage?.plan, m.tier)) { setUpgradeOpen(true); } else { setModel(m.id); } setModelMenuOpen(false); }} className={`flex w-full items-center gap-2 rounded-xl px-3 py-2 text-left text-sm transition-all duration-200 ${model === m.id ? "bg-slate-950 text-white font-semibold shadow-sm" : "text-slate-600 hover:bg-slate-50"}`}>
                         <ModelIcon icon={m.icon} color={m.color} /><span>{m.name}</span>
+                        {!canAccessModel(usage?.plan, m.tier) && <span className="ml-auto rounded-full bg-amber-100 px-1.5 py-0.5 text-[8px] font-bold text-amber-700">Подписка</span>}
                         {model === m.id && <svg className="ml-auto h-3.5 w-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" /></svg>}
                       </button>
                     ))}
                     <div className="mt-2 flex items-center gap-2 px-2 py-1"><span className="text-[10px] font-semibold uppercase tracking-[0.18em] text-slate-400">Boost</span><span className="rounded-full bg-violet-100 px-1.5 py-0.5 text-[8px] font-bold text-violet-700">Boost</span></div>
                     {MODEL_LIST.filter(m => m.tier === "boost").map((m) => (
-                        <button key={m.id} onClick={() => { setModel(m.id); setModelMenuOpen(false); }} className={`flex w-full items-center gap-2 rounded-xl px-3 py-2 text-left text-sm transition-all duration-200 ${model === m.id ? "bg-slate-950 text-white font-semibold shadow-sm" : "text-slate-600 hover:bg-slate-50"}`}>
+                        <button key={m.id} onClick={() => { if (!canAccessModel(usage?.plan, m.tier)) { setUpgradeOpen(true); } else { setModel(m.id); } setModelMenuOpen(false); }} className={`flex w-full items-center gap-2 rounded-xl px-3 py-2 text-left text-sm transition-all duration-200 ${model === m.id ? "bg-slate-950 text-white font-semibold shadow-sm" : "text-slate-600 hover:bg-slate-50"}`}>
                         <ModelIcon icon={m.icon} color={m.color} /><span>{m.name}</span>
+                        {!canAccessModel(usage?.plan, m.tier) && <span className="ml-auto rounded-full bg-amber-100 px-1.5 py-0.5 text-[8px] font-bold text-amber-700">Подписка</span>}
                         {model === m.id && <svg className="ml-auto h-3.5 w-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" /></svg>}
                       </button>
                     ))}
                     <div className="mt-2 flex items-center gap-2 px-2 py-1"><span className="text-[10px] font-semibold uppercase tracking-[0.18em] text-slate-400">Enterprise</span><span className="rounded-full bg-emerald-100 px-1.5 py-0.5 text-[8px] font-bold text-emerald-700">All</span></div>
                     {MODEL_LIST.filter(m => m.tier === "enterprise").map((m) => (
-                        <button key={m.id} onClick={() => { setModel(m.id); setModelMenuOpen(false); }} className={`flex w-full items-center gap-2 rounded-xl px-3 py-2 text-left text-sm transition-all duration-200 ${model === m.id ? "bg-slate-950 text-white font-semibold shadow-sm" : "text-slate-600 hover:bg-slate-50"}`}>
+                        <button key={m.id} onClick={() => { if (!canAccessModel(usage?.plan, m.tier)) { setUpgradeOpen(true); } else { setModel(m.id); } setModelMenuOpen(false); }} className={`flex w-full items-center gap-2 rounded-xl px-3 py-2 text-left text-sm transition-all duration-200 ${model === m.id ? "bg-slate-950 text-white font-semibold shadow-sm" : "text-slate-600 hover:bg-slate-50"}`}>
                         <ModelIcon icon={m.icon} color={m.color} /><span>{m.name}</span>
+                        {!canAccessModel(usage?.plan, m.tier) && <span className="ml-auto rounded-full bg-amber-100 px-1.5 py-0.5 text-[8px] font-bold text-amber-700">Подписка</span>}
                         {model === m.id && <svg className="ml-auto h-3.5 w-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" /></svg>}
                       </button>
                     ))}

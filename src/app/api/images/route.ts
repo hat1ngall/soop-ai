@@ -52,6 +52,12 @@ export async function POST(req: Request) {
     const chat = await prisma.chatSession.findFirst({ where: { id: sessionId, userId }, select: { id: true, title: true } });
     if (!chat) return NextResponse.json({ error: "Чат не найден" }, { status: 404 });
     const plan = await checkAndResetExpiredSubscription(userId);
+    if (plan === "free") {
+      return NextResponse.json(
+        { error: "upgrade_required", message: "Для работы с нейросетями нужна активная подписка." },
+        { status: 403 }
+      );
+    }
     const dailyLimit = getDailyLimit(plan) ?? getDailyLimit("free");
 
     // The conditional increment is atomic in Postgres. Multiple workers cannot

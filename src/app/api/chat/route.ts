@@ -8,10 +8,6 @@ import { getSystemPrompt } from "@/lib/system-prompt";
 import { parseGeneratedImage } from "@/lib/generated-images";
 import { ChatProviderError, streamChatCompletion } from "@/lib/chat-provider";
 
-function mapModelName(): string {
-  return "gpt-6-luna";
-}
-
 function getTodayStart(): Date {
   const now = new Date();
   return new Date(now.getFullYear(), now.getMonth(), now.getDate());
@@ -24,10 +20,10 @@ export async function POST(req: Request) {
   }
 
   const userId = (session.user as any).id;
-  const { message, sessionId, attachments = [] } = await req.json();
-  const model = mapModelName();
+  const { message, sessionId, attachments = [], model: requestedModel } = await req.json();
+  const model = typeof requestedModel === "string" ? requestedModel : "";
 
-  if ((!message && (!attachments || attachments.length === 0)) || !sessionId) {
+  if ((!message && (!attachments || attachments.length === 0)) || !sessionId || !model) {
     return NextResponse.json({ error: "Отсутствуют обязательные поля" }, { status: 400 });
   }
 

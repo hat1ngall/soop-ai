@@ -47,8 +47,10 @@ export function useImageGeneration({ sessionId, setMessages }: {
       if (activeRequest.current !== controller) return { success: false };
       if (!response.ok) {
         setMessages((previous) => previous.filter((message) => message.id !== optimisticId));
-        setImageError(data.message || (data.error === "limit_exceeded" ? "Лимит запросов на сегодня исчерпан." : data.error) || "Не удалось создать изображение. Попробуйте ещё раз.");
-        return { success: false, limitExceeded: data.error === "limit_exceeded" };
+        if (data.error !== "upgrade_required") {
+          setImageError(data.message || (data.error === "limit_exceeded" ? "Лимит запросов на сегодня исчерпан." : data.error) || "Не удалось создать изображение. Попробуйте ещё раз.");
+        }
+        return { success: false, limitExceeded: data.error === "limit_exceeded", upgradeRequired: data.error === "upgrade_required" };
       }
       if (!data.userMessage?.id || !data.assistantMessage?.id || !parseGeneratedImage(data.assistantMessage.content)) {
         throw new Error("Invalid image response");
