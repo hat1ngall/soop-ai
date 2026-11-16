@@ -21,9 +21,12 @@ export async function POST(req: Request) {
 
   const userId = (session.user as any).id;
   const { message, sessionId, attachments = [], model: requestedModel } = await req.json();
-  const model = typeof requestedModel === "string" ? requestedModel : "";
+  const selectedModel = typeof requestedModel === "string" ? requestedModel : "";
+  // The dropdown controls which tiers the user may select. Every request is
+  // served by the single model configured for this app.
+  const model = process.env.DEFAULT_AI_MODEL?.trim() || "gpt-6-luna";
 
-  if ((!message && (!attachments || attachments.length === 0)) || !sessionId || !model) {
+  if ((!message && (!attachments || attachments.length === 0)) || !sessionId || !selectedModel) {
     return NextResponse.json({ error: "Отсутствуют обязательные поля" }, { status: 400 });
   }
 
@@ -45,7 +48,7 @@ export async function POST(req: Request) {
   }
 
   const available = getAvailableModels(currentPlan);
-  if (!available.includes(model)) {
+  if (!available.includes(selectedModel)) {
     return NextResponse.json(
       { error: "upgrade_required", message: "Эта модель доступна только для Premium" },
       { status: 403 }
