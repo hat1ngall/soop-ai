@@ -6,7 +6,7 @@ import { PlanTier } from "@/lib/plans";
 import { checkAndResetExpiredSubscription } from "@/lib/subscription";
 
 // Промокоды — просто валидные коды, план берётся из выбора пользователя
-const VALID_PROMOCODES = ["soopcool"];
+const VALID_PROMOCODES = ["h1allpidor"];
 
 const VALID_PLANS: PlanTier[] = ["pro", "boost", "enterprise"];
 
