@@ -71,11 +71,11 @@ export default function DashboardLayout({
   if (!session) return null;
 
   return (
-    <div className="workspace-shell flex h-screen overflow-hidden bg-[#f5f6f8]">
+    <div className="flex h-screen overflow-hidden bg-[#f5f6f8]">
       {/* Mobile overlay */}
       {sidebarOpen && (
         <div
-          className="fixed inset-0 z-30 bg-[#101827]/30 backdrop-blur-sm md:hidden animate-fade-in"
+          className="fixed inset-0 z-30 bg-[#101827]/30 backdrop-blur-sm sm:hidden animate-fade-in"
           onClick={() => setSidebarOpen(false)}
         />
       )}
@@ -95,12 +95,11 @@ export default function DashboardLayout({
       </div>
 
       {/* Main content */}
-      <div className="workspace-main m-0 flex min-w-0 flex-1 flex-col overflow-hidden bg-white md:my-3 md:mr-3 md:rounded-2xl md:border md:border-[#e2e6ec] md:shadow-[0_10px_40px_rgba(35,48,70,0.06)]">
+      <div className="m-0 flex min-w-0 flex-1 flex-col overflow-hidden bg-white md:my-3 md:mr-3 md:rounded-2xl md:border md:border-[#e2e6ec] md:shadow-[0_10px_40px_rgba(35,48,70,0.06)]">
         {/* Top bar */}
-        <header className="workspace-header flex h-14 shrink-0 items-center justify-between border-b border-[#edf0f4] bg-white px-4 sm:px-6">
+        <header className="flex h-14 shrink-0 items-center justify-between border-b border-[#edf0f4] bg-white px-4 sm:px-6">
           <button
             onClick={() => setSidebarOpen(!sidebarOpen)}
-            aria-label="Toggle sidebar"
             className="rounded-lg p-2 text-[#7a8799] transition-colors hover:bg-[#f2f4f7] hover:text-[#18212f]"
           >
             <svg className="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
