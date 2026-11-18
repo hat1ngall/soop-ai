@@ -177,7 +177,7 @@ export function ChatWindow() {
   const selectedModel = MODEL_LIST.find(m => m.id === model) || MODEL_LIST[0];
 
   return (
-    <div className="flex h-full flex-col animate-fade-in">
+    <div className="chat-workspace flex h-full flex-col animate-fade-in">
       {/* Messages */}
       <div className="flex-1 overflow-y-auto">
         <div className="mx-auto max-w-4xl px-5 py-6 sm:px-8 sm:py-9">
@@ -216,7 +216,7 @@ export function ChatWindow() {
       </div>
 
       {/* Input area */}
-      <div className="border-t border-[#eeeae5] bg-[#fffefd] px-4 pb-4 pt-3 sm:px-8 sm:pb-6">
+      <div className="chat-input-area border-t border-[#eeeae5] bg-[#fffefd] px-4 pb-4 pt-3 sm:px-8 sm:pb-6">
         <div className="mx-auto max-w-4xl animate-slide-up">
           {usage && usage.limit !== -1 && (
             <div className="mb-2 flex items-center justify-between px-1">
@@ -269,7 +269,7 @@ export function ChatWindow() {
             }}
           />
 
-          <div className={`flex items-end gap-2 rounded-2xl border p-2.5 transition-all duration-200 shadow-[0_12px_34px_rgba(35,48,70,.08)] ${isLimitExceeded ? "border-red-300 bg-red-50/90" : "border-[#dfe4eb] bg-white focus-within:border-[#91a4f7] focus-within:shadow-[0_12px_34px_rgba(70,98,240,.14)]"}`}>
+          <div className={`chat-composer flex items-end gap-2 rounded-2xl border p-2.5 transition-all duration-200 shadow-[0_12px_34px_rgba(35,48,70,.08)] ${isLimitExceeded ? "border-red-300 bg-red-50/90" : "border-[#dfe4eb] bg-white focus-within:border-[#91a4f7] focus-within:shadow-[0_12px_34px_rgba(70,98,240,.14)]"}`}>
             {/* Attachment clip button */}
             <button
               type="button"
@@ -305,7 +305,7 @@ export function ChatWindow() {
             />
 
             {/* Model selector pill */}
-            <div ref={modelRef} className={`relative shrink-0 ${imageMode ? "hidden" : ""}`}>
+            <div ref={modelRef} className={`chat-model relative shrink-0 ${imageMode ? "hidden" : ""}`}>
               <button
                 onClick={() => setModelMenuOpen(!modelMenuOpen)}
                 className="flex items-center gap-1.5 rounded-xl bg-[#f3effc] px-3 py-2 text-xs text-[#6750a4] transition-colors hover:bg-[#ece5fb]"

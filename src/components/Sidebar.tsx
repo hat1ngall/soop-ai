@@ -16,7 +16,7 @@ export function Sidebar({ isOpen, onToggle, onOpenSettings, onOpenUpgrade, curre
   const deleteChat = async (id: string, event: React.MouseEvent) => { event.preventDefault(); event.stopPropagation(); await fetch(`/api/sessions/${id}`, { method: "DELETE" }); setChats((items) => items.filter((chat) => chat.id !== id)); if (pathname === `/chat/${id}`) router.push("/"); };
   if (!isOpen) return null;
   return (
-    <aside className="flex h-full w-full flex-col overflow-hidden bg-[#111b2d] text-[#d7dfec]">
+    <aside className="workspace-sidebar flex h-full w-full flex-col overflow-hidden bg-[#111b2d] text-[#d7dfec]">
       <div className="flex items-center justify-between px-5 pb-5 pt-6">
         <Link href="/" className="flex items-center gap-3">
           <span className="flex h-8 w-8 items-center justify-center rounded-xl bg-[#4662f0]">
