@@ -20,8 +20,18 @@ model User {
   sessions ChatSession[]
   usage    DailyUsage[]
   reminders Reminder[]
+  plugins  UserPlugin[]
 
   @@map("users")
+}
+
+model UserPlugin {
+  userId   String
+  pluginId String
+  user     User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@id([userId, pluginId])
+  @@map("user_plugins")
 }
 
 model Reminder {

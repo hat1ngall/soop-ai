@@ -63,6 +63,13 @@ export function Sidebar({ isOpen, onToggle, onOpenSettings, onOpenUpgrade, curre
         >
           ◷ <span>{t("Планирование")}</span>
         </Link>
+        <Link
+          href="/plugins"
+          onClick={() => { if (window.innerWidth < 768) onToggle(); }}
+          className={`flex items-center gap-3 rounded-lg px-3 py-2 text-[13px] ${pathname === "/plugins" ? "bg-white/10 font-medium text-white" : "text-[#91a0b6] hover:bg-white/5 hover:text-white"}`}
+        >
+          ✧ <span>{t("Плагины")}</span>
+        </Link>
       </nav>
 
       <div className="mt-7 flex items-center justify-between px-5 text-[10px] font-semibold uppercase tracking-[.14em] text-[#6d7d96]">
