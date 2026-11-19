@@ -370,6 +370,3 @@ html.dark .plugin-toggle.is-enabled { color:white; background:#7454e3; }
 @media(max-width:700px) { .plugins-heading h1 { font-size:29px; } .plugins-grid { grid-template-columns:1fr; } .plugins-count { min-width:74px; } }
 .plugin-icon-image { position:relative; overflow:hidden; }
 .plugin-icon-image img { position:absolute; inset:0; width:100%; height:100%; object-fit:contain; padding:6px; background:white; }
-.plugin-planned { border-radius:5px; background:#f1f1f5; padding:3px 5px; color:#85859a; font-size:8px; letter-spacing:.04em; }
-.plugin-card-planned { opacity:.8; }
-html.dark .plugin-planned { background:#30354d; color:#bbbdd0; }
