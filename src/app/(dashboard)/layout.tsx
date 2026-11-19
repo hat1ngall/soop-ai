@@ -1,5 +1,7 @@
 "use client";
 
+import { useLanguage } from "@/components/LanguageProvider";
+
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { useSession } from "next-auth/react";
@@ -13,6 +15,7 @@ export default function DashboardLayout({
   children: React.ReactNode;
 }) {
   const { data: session, status } = useSession();
+  const { t } = useLanguage();
   const router = useRouter();
   const [sidebarOpen, setSidebarOpen] = useState(true);
   const [settingsOpen, setSettingsOpen] = useState(false);
@@ -71,11 +74,11 @@ export default function DashboardLayout({
   if (!session) return null;
 
   return (
-    <div className="flex h-screen overflow-hidden bg-[#f5f6f8]">
+    <div className="reference-shell flex h-screen overflow-hidden bg-[#f5f6f8]">
       {/* Mobile overlay */}
       {sidebarOpen && (
         <div
-          className="fixed inset-0 z-30 bg-[#101827]/30 backdrop-blur-sm sm:hidden animate-fade-in"
+          className="fixed inset-0 z-30 bg-[#101827]/30 backdrop-blur-sm md:hidden animate-fade-in"
           onClick={() => setSidebarOpen(false)}
         />
       )}
@@ -95,18 +98,19 @@ export default function DashboardLayout({
       </div>
 
       {/* Main content */}
-      <div className="m-0 flex min-w-0 flex-1 flex-col overflow-hidden bg-white md:my-3 md:mr-3 md:rounded-2xl md:border md:border-[#e2e6ec] md:shadow-[0_10px_40px_rgba(35,48,70,0.06)]">
+      <div className="reference-main m-0 flex min-w-0 flex-1 flex-col overflow-hidden bg-white md:my-3 md:mr-3 md:rounded-2xl md:border md:border-[#e2e6ec] md:shadow-[0_10px_40px_rgba(35,48,70,0.06)]">
         {/* Top bar */}
-        <header className="flex h-14 shrink-0 items-center justify-between border-b border-[#edf0f4] bg-white px-4 sm:px-6">
+        <header className="reference-header flex h-14 shrink-0 items-center justify-between border-b border-[#edf0f4] bg-white px-4 sm:px-6">
           <button
             onClick={() => setSidebarOpen(!sidebarOpen)}
+            aria-label="Открыть или закрыть меню"
             className="rounded-lg p-2 text-[#7a8799] transition-colors hover:bg-[#f2f4f7] hover:text-[#18212f]"
           >
             <svg className="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
             </svg>
           </button>
-          <div className="flex items-center gap-2 text-xs font-medium text-[#7a8799]"><button onClick={toggleTheme} className="rounded-lg border border-[#dfe4eb] px-2 py-1 text-xs transition-colors hover:bg-[#f2f4f7] dark:border-slate-700 dark:hover:bg-slate-800" aria-label="Toggle theme" title={darkMode ? "Включить светлую тему" : "Включить тёмную тему"}>{darkMode ? "☀ Light" : "☾ Dark"}</button><span className="h-2 w-2 rounded-full bg-[#4dce91]" />Workspace</div>
+          <div className="flex items-center gap-2 text-xs font-medium text-[#7a8799]"><button onClick={toggleTheme} className="rounded-lg border border-[#dfe4eb] px-2 py-1 text-xs transition-colors hover:bg-[#f2f4f7] dark:border-slate-700 dark:hover:bg-slate-800" aria-label="Toggle theme" title={darkMode ? "Включить светлую тему" : "Включить тёмную тему"}>{t(darkMode ? "☀ Светлая" : "☾ Тёмная")}</button><span className="h-2 w-2 rounded-full bg-[#4dce91]" />{t("Рабочее пространство")}</div>
         </header>
 
         {/* Main content */}

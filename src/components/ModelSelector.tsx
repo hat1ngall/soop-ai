@@ -113,7 +113,7 @@ export function ModelSelector({ selectedModel, onSelect, currentPlan, onUpgradeR
             </div>
             <Section title="Pro" badge="Pro" models={MODELS.filter((m) => m.tier === "pro")} />
             <Section title="Boost" badge="Boost" models={MODELS.filter((m) => m.tier === "boost")} />
-            <Section title="Enterprise" badge="All" models={MODELS.filter((m) => m.tier === "enterprise")} />
+            <Section title="Enterprice" badge="All" models={MODELS.filter((m) => m.tier === "enterprise")} />
           </div>
         </div>
       )}

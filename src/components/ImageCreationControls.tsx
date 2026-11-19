@@ -1,5 +1,7 @@
 "use client";
 
+import { useLanguage } from "@/components/LanguageProvider";
+
 import { IMAGE_SIZES, type ImageSize } from "@/lib/generated-images";
 
 export function ImageIcon({ className = "h-4 w-4" }: { className?: string }) {
@@ -14,10 +16,11 @@ export function ImageCreationControls({ imageMode, onModeChange, size, onSizeCha
   disabled: boolean;
   hasAttachments: boolean;
 }) {
+  const { t } = useLanguage();
   return <div className="mb-3 flex flex-wrap items-center justify-between gap-2">
     <div className="inline-flex rounded-xl border border-[#e2e6ec] bg-[#f7f8fa] p-1" aria-label="Режим запроса">
-      <button type="button" aria-pressed={!imageMode} disabled={disabled} onClick={() => onModeChange(false)} className={`rounded-lg px-3 py-1.5 text-xs font-medium transition-all disabled:opacity-50 ${!imageMode ? "bg-white text-[#18212f] shadow-sm" : "text-[#8290a3] hover:text-[#18212f]"}`}>Чат</button>
-      <button type="button" aria-pressed={imageMode} disabled={disabled || hasAttachments} title={hasAttachments ? "Уберите вложения, чтобы создать изображение" : "Создать изображение по описанию"} onClick={() => onModeChange(true)} className={`flex items-center gap-1.5 rounded-lg px-3 py-1.5 text-xs font-medium transition-all disabled:opacity-50 ${imageMode ? "bg-[#4662f0] text-white shadow-sm" : "text-[#4662f0] hover:bg-[#eef1ff]"}`}><ImageIcon />Создать изображение</button>
+      <button type="button" aria-pressed={!imageMode} disabled={disabled} onClick={() => onModeChange(false)} className={`rounded-lg px-3 py-1.5 text-xs font-medium transition-all disabled:opacity-50 ${!imageMode ? "bg-white text-[#18212f] shadow-sm" : "text-[#8290a3] hover:text-[#18212f]"}`}>{t("Чат") }</button>
+      <button type="button" aria-pressed={imageMode} disabled={disabled || hasAttachments} title={hasAttachments ? "Уберите вложения, чтобы создать изображение" : "Создать изображение по описанию"} onClick={() => onModeChange(true)} className={`flex items-center gap-1.5 rounded-lg px-3 py-1.5 text-xs font-medium transition-all disabled:opacity-50 ${imageMode ? "bg-[#4662f0] text-white shadow-sm" : "text-[#4662f0] hover:bg-[#eef1ff]"}`}><ImageIcon />{t("Создать изображение") }</button>
     </div>
     {imageMode && <div className="flex items-center gap-1" aria-label="Формат изображения">{IMAGE_SIZES.map((item) => <button key={item.value} type="button" title={item.label} aria-label={`${item.label}, ${item.ratio}`} aria-pressed={size === item.value} disabled={disabled} onClick={() => onSizeChange(item.value)} className={`flex items-center gap-1.5 rounded-lg border px-2 py-1.5 text-[11px] transition-colors disabled:opacity-50 ${size === item.value ? "border-[#91a4f7] bg-[#eef1ff] text-[#4662f0]" : "border-transparent text-[#8290a3] hover:bg-[#f7f8fa]"}`}><span className={`inline-block rounded-[2px] border border-current ${item.ratio === "1:1" ? "h-3 w-3" : item.ratio === "3:2" ? "h-2.5 w-3.5" : "h-3.5 w-2.5"}`} />{item.ratio}</button>)}</div>}
   </div>;

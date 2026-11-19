@@ -1,5 +1,6 @@
 "use client";
 
+import { useLanguage } from "./LanguageProvider";
 import { useSession, signOut } from "next-auth/react";
 
 interface SettingsModalProps {
@@ -11,6 +12,8 @@ interface SettingsModalProps {
 
 export function SettingsModal({ isOpen, onClose, currentPlan, daysLeft }: SettingsModalProps) {
   const { data: session } = useSession();
+  const { language, setLanguage } = useLanguage();
+  const en = language === "en";
 
   if (!isOpen) return null;
 
@@ -27,11 +30,11 @@ export function SettingsModal({ isOpen, onClose, currentPlan, daysLeft }: Settin
           </svg>
         </button>
 
-        <h2 className="mb-5 text-lg font-semibold text-slate-950 sm:mb-6">Настройки</h2>
+        <h2 className="mb-5 text-lg font-semibold text-slate-950 sm:mb-6">{en ? "Settings" : "Настройки"}</h2>
 
         <div className="space-y-4">
           <div>
-            <label className="mb-1.5 block text-xs font-semibold uppercase tracking-[0.16em] text-slate-400">Имя</label>
+            <label className="mb-1.5 block text-xs font-semibold uppercase tracking-[0.16em] text-slate-400">{en ? "Name" : "Имя"}</label>
           <input
             type="text"
             defaultValue={session?.user?.name || ""}
@@ -49,18 +52,24 @@ export function SettingsModal({ isOpen, onClose, currentPlan, daysLeft }: Settin
             />
           </div>
 
+          <div>
+            <label htmlFor="site-language" className="mb-1.5 block text-xs font-semibold uppercase tracking-[0.16em] text-slate-400">{en ? "Language" : "Язык"}</label>
+            <select id="site-language" value={language} onChange={(event) => setLanguage(event.target.value as "ru" | "en")} className="w-full rounded-2xl border border-slate-200 bg-white px-4 py-3 text-sm text-slate-900">
+              <option value="ru">Русский</option><option value="en">English</option>
+            </select>
+          </div>
           <div className="rounded-2xl border border-slate-200 bg-slate-50/80 p-4">
             <div className="flex items-center justify-between">
-              <span className="text-sm text-slate-500">Текущий план</span>
+              <span className="text-sm text-slate-500">{en ? "Current plan" : "Текущий план"}</span>
               <span className={`rounded-full px-2.5 py-0.5 text-xs font-medium ${
                 currentPlan === "free" ? "bg-slate-200 text-slate-600" : "bg-emerald-100 text-emerald-700"
               }`}>
-                {currentPlan === "free" ? "Free" : currentPlan.toUpperCase()}
+                {currentPlan === "free" ? "Free" : (currentPlan === "enterprise" ? "ENTERPRICE" : currentPlan.toUpperCase())}
               </span>
             </div>
             {daysLeft !== null && (
               <div className="mt-3 flex items-center justify-between">
-                <span className="text-sm text-slate-500">Осталось дней</span>
+                <span className="text-sm text-slate-500">{en ? "Days remaining" : "Осталось дней"}</span>
                 <span className="text-sm font-semibold text-slate-900">{daysLeft}</span>
               </div>
             )}
@@ -73,7 +82,7 @@ export function SettingsModal({ isOpen, onClose, currentPlan, daysLeft }: Settin
             <svg className="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
             </svg>
-            Выйти из аккаунта
+            {en ? "Sign out" : "Выйти из аккаунта"}
           </button>
         </div>
       </div>

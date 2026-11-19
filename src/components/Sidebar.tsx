@@ -1,5 +1,7 @@
 "use client";
 
+import { useLanguage } from "@/components/LanguageProvider";
+
 import { useEffect, useState } from "react";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
@@ -9,6 +11,7 @@ import { ChatSession } from "@/types";
 interface SidebarProps { isOpen: boolean; onToggle: () => void; onOpenSettings: () => void; onOpenUpgrade: () => void; currentPlan: string; daysLeft: number | null; }
 
 export function Sidebar({ isOpen, onToggle, onOpenSettings, onOpenUpgrade, currentPlan, daysLeft }: SidebarProps) {
+  const { t } = useLanguage();
   const pathname = usePathname(); const router = useRouter(); const { data: session } = useSession();
   const [chats, setChats] = useState<ChatSession[]>([]); const [loadingChats, setLoadingChats] = useState(true);
   useEffect(() => { fetch("/api/sessions").then((response) => response.ok ? response.json() : []).then(setChats).finally(() => setLoadingChats(false)); }, []);
@@ -16,7 +19,7 @@ export function Sidebar({ isOpen, onToggle, onOpenSettings, onOpenUpgrade, curre
   const deleteChat = async (id: string, event: React.MouseEvent) => { event.preventDefault(); event.stopPropagation(); await fetch(`/api/sessions/${id}`, { method: "DELETE" }); setChats((items) => items.filter((chat) => chat.id !== id)); if (pathname === `/chat/${id}`) router.push("/"); };
   if (!isOpen) return null;
   return (
-    <aside className="flex h-full w-full flex-col overflow-hidden bg-[#111b2d] text-[#d7dfec]">
+    <aside className="reference-sidebar flex h-full w-full flex-col overflow-hidden bg-[#111b2d] text-[#d7dfec]">
       <div className="flex items-center justify-between px-5 pb-5 pt-6">
         <Link href="/" className="flex items-center gap-3">
           <span className="flex h-8 w-8 items-center justify-center rounded-xl bg-[#4662f0]">
@@ -38,7 +41,7 @@ export function Sidebar({ isOpen, onToggle, onOpenSettings, onOpenUpgrade, curre
           onClick={createNewChat}
           className="flex w-full items-center rounded-xl bg-[#4662f0] px-3.5 py-3 text-sm font-medium text-white shadow-[0_10px_24px_rgba(70,98,240,.24)] hover:bg-[#5670f5]"
         >
-          <span>＋ New chat</span>
+          <span>{t("＋ Новый чат") }</span>
         </button>
       </div>
 
@@ -51,12 +54,12 @@ export function Sidebar({ isOpen, onToggle, onOpenSettings, onOpenUpgrade, curre
               : "text-[#91a0b6] hover:bg-white/5 hover:text-white"
           }`}
         >
-          ⌂ <span>Home</span>
+          ⌂ <span>{t("Главная") }</span>
         </Link>
       </nav>
 
       <div className="mt-7 flex items-center justify-between px-5 text-[10px] font-semibold uppercase tracking-[.14em] text-[#6d7d96]">
-        <span>Recent chats</span>
+        <span>{t("Недавние чаты") }</span>
         <span>{chats.length}</span>
       </div>
 
@@ -64,7 +67,7 @@ export function Sidebar({ isOpen, onToggle, onOpenSettings, onOpenUpgrade, curre
         {loadingChats ? (
           <div className="px-3 py-2 text-xs text-[#718198]">Loading…</div>
         ) : chats.length === 0 ? (
-          <div className="px-3 py-2 text-xs text-[#718198]">Your conversations will appear here.</div>
+          <div className="px-3 py-2 text-xs text-[#718198]">{t("Здесь появятся ваши чаты.") }</div>
         ) : (
           chats.map((chat) => (
             <div key={chat.id} className="group relative">
@@ -97,10 +100,10 @@ export function Sidebar({ isOpen, onToggle, onOpenSettings, onOpenUpgrade, curre
             className="mb-4 w-full rounded-xl border border-[#38465f] bg-[#1b2941] p-3 text-left hover:border-[#596b8c]"
           >
             <div className="flex justify-between text-xs font-medium text-white">
-              <span>Unlock More Powers</span>
+              <span>{t("Открыть больше возможностей") }</span>
               <span>↗</span>
             </div>
-            <p className="mt-1 text-[11px] text-[#8291a8]">More models, more room to think.</p>
+            <p className="mt-1 text-[11px] text-[#8291a8]">{t("Больше моделей, больше места для идей.") }</p>
           </button>
         ) : (
           <div
@@ -121,7 +124,7 @@ export function Sidebar({ isOpen, onToggle, onOpenSettings, onOpenUpgrade, curre
                   : "text-violet-200"
               }`}
             >
-              <span>{currentPlan} plan</span>
+              <span>{currentPlan === "enterprise" ? "Enterprice" : currentPlan} plan</span>
               <span
                 className={`h-2 w-2 rounded-full ${
                   currentPlan === "pro"
@@ -160,7 +163,7 @@ export function Sidebar({ isOpen, onToggle, onOpenSettings, onOpenUpgrade, curre
                 {session?.user?.name || "Your account"}
               </span>
               <span className="block truncate text-[10px] text-[#718198]">
-                {currentPlan === "free" ? "Free plan" : currentPlan}
+                {currentPlan === "free" ? "Free plan" : currentPlan === "enterprise" ? "Enterprice" : currentPlan}
               </span>
             </span>
           </button>

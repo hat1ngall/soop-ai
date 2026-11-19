@@ -1,5 +1,7 @@
 "use client";
 
+import { useLanguage } from "@/components/LanguageProvider";
+
 import { useState, useRef, useEffect } from "react";
 import { useParams } from "next/navigation";
 import { MessageBubble } from "./MessageBubble";
@@ -59,6 +61,7 @@ function canAccessModel(plan: string | undefined, modelTier: string): boolean {
 }
 
 export function ChatWindow() {
+  const { t } = useLanguage();
   const params = useParams();
   const sessionId = params.id as string;
   const [model, setModel] = useState("gemini-flash-3.5");
@@ -119,9 +122,14 @@ export function ChatWindow() {
     try {
       const newAttachments: ChatAttachment[] = [];
       for (const file of Array.from(files)) {
-        if (file.size > 15 * 1024 * 1024) continue;
-        const processed = await processFile(file);
-        if (processed) newAttachments.push(processed);
+        if (file.size > 15 * 1024 * 1024) { setChatError(`Файл ${file.name} больше 15 МБ.`); continue; }
+        try {
+          const processed = await processFile(file);
+          if (processed) newAttachments.push(processed);
+          else setChatError(`Не удалось прочитать файл ${file.name}.`);
+        } catch (error) {
+          setChatError(error instanceof Error ? error.message : `Не удалось прочитать файл ${file.name}.`);
+        }
       }
       setAttachments((prev) => [...prev, ...newAttachments]);
     } finally {
@@ -177,7 +185,7 @@ export function ChatWindow() {
   const selectedModel = MODEL_LIST.find(m => m.id === model) || MODEL_LIST[0];
 
   return (
-    <div className="flex h-full flex-col animate-fade-in">
+    <div className="reference-chat flex h-full flex-col animate-fade-in">
       {/* Messages */}
       <div className="flex-1 overflow-y-auto">
         <div className="mx-auto max-w-4xl px-5 py-6 sm:px-8 sm:py-9">
@@ -186,20 +194,20 @@ export function ChatWindow() {
               <div className="mb-5 flex h-14 w-14 items-center justify-center rounded-2xl border border-[#e2e6ec] bg-white shadow-[0_10px_28px_rgba(35,48,70,.08)]">
                 <img src="/logo.svg" alt="Soop AI" className="h-10 w-10 rounded-xl" />
               </div>
-              <h2 className="mb-3 text-2xl font-semibold tracking-tight text-slate-900 sm:text-3xl">Чем могу помочь?</h2>
-              <p className="max-w-xl text-sm leading-6 text-slate-500 sm:text-base">Я могу отвечать на вопросы, писать код, анализировать данные и многое другое.</p>
+              <h2 className="mb-3 text-2xl font-semibold tracking-tight text-slate-900 sm:text-3xl">{t("Чем могу")} <span className="reference-accent">{t("помочь?") }</span></h2>
+              <p className="max-w-xl text-sm leading-6 text-slate-500 sm:text-base">{t("Я могу отвечать на вопросы, писать код, анализировать данные и многое другое.") }</p>
               <div className="mt-8 grid w-full max-w-2xl grid-cols-1 gap-3 sm:grid-cols-3">
                 <div className="rounded-2xl border border-[#e2e6ec] bg-white px-4 py-4 text-left shadow-[0_8px_22px_rgba(35,48,70,.05)] transition-all hover:-translate-y-0.5 hover:border-[#b6c1f7]">
                   <div className="text-xs font-semibold uppercase tracking-[0.18em] text-amber-600">Code</div>
-                  <div className="mt-2 text-sm text-slate-700">Напиши код на Python</div>
+                  <div className="mt-2 text-sm text-slate-700">{t("Напиши код на Python")}</div>
                 </div>
                 <div className="rounded-3xl border border-white/80 bg-white/70 px-4 py-4 text-left shadow-[0_14px_40px_rgba(80,93,120,0.12)]">
                   <div className="text-xs font-semibold uppercase tracking-[0.18em] text-sky-600">Explain</div>
-                  <div className="mt-2 text-sm text-slate-700">Объясни квантовую физику</div>
+                  <div className="mt-2 text-sm text-slate-700">{t("Объясни квантовую физику")}</div>
                 </div>
                 <div className="rounded-3xl border border-white/80 bg-white/70 px-4 py-4 text-left shadow-[0_14px_40px_rgba(80,93,120,0.12)]">
                   <div className="text-xs font-semibold uppercase tracking-[0.18em] text-violet-600">Design</div>
-                  <div className="mt-2 text-sm text-slate-700">Помоги с дизайном</div>
+                  <div className="mt-2 text-sm text-slate-700">{t("Помоги с дизайном")}</div>
                 </div>
               </div>
             </div>
@@ -216,12 +224,12 @@ export function ChatWindow() {
       </div>
 
       {/* Input area */}
-      <div className="border-t border-[#eeeae5] bg-[#fffefd] px-4 pb-4 pt-3 sm:px-8 sm:pb-6">
+      <div className="reference-chat-input border-t border-[#eeeae5] bg-[#fffefd] px-4 pb-4 pt-3 sm:px-8 sm:pb-6">
         <div className="mx-auto max-w-4xl animate-slide-up">
           {usage && usage.limit !== -1 && (
             <div className="mb-2 flex items-center justify-between px-1">
-              <span className="text-[11px] text-slate-500">{usage.used}/{usage.limit} запросов сегодня</span>
-              {usage.remaining <= 5 && usage.remaining > 0 && <span className="text-[11px] text-amber-600">Осталось {usage.remaining}</span>}
+              <span className="text-[11px] text-slate-500">{usage.used}/{usage.limit} {t("запросов сегодня")}</span>
+              {usage.remaining <= 5 && usage.remaining > 0 && <span className="text-[11px] text-amber-600">{t("Осталось")} {usage.remaining}</span>}
             </div>
           )}
 
@@ -261,7 +269,7 @@ export function ChatWindow() {
             ref={fileInputRef}
             type="file"
             multiple
-            accept="image/*,.txt,.md,.json,.csv,.js,.jsx,.ts,.tsx,.py,.html,.css,.sql,.xml,.yaml,.yml,.log"
+            accept="image/*,.zip,application/zip,application/x-zip-compressed,.txt,.md,.json,.csv,.js,.jsx,.ts,.tsx,.py,.html,.css,.sql,.xml,.yaml,.yml,.log"
             className="hidden"
             onChange={(e) => {
               if (e.target.files) void addFiles(e.target.files);
@@ -269,14 +277,14 @@ export function ChatWindow() {
             }}
           />
 
-          <div className={`flex items-end gap-2 rounded-2xl border p-2.5 transition-all duration-200 shadow-[0_12px_34px_rgba(35,48,70,.08)] ${isLimitExceeded ? "border-red-300 bg-red-50/90" : "border-[#dfe4eb] bg-white focus-within:border-[#91a4f7] focus-within:shadow-[0_12px_34px_rgba(70,98,240,.14)]"}`}>
+          <div className={`reference-chat-composer flex items-end gap-2 rounded-2xl border p-2.5 transition-all duration-200 shadow-[0_12px_34px_rgba(35,48,70,.08)] ${isLimitExceeded ? "border-red-300 bg-red-50/90" : "border-[#dfe4eb] bg-white focus-within:border-[#91a4f7] focus-within:shadow-[0_12px_34px_rgba(70,98,240,.14)]"}`}>
             {/* Attachment clip button */}
             <button
               type="button"
               onClick={() => fileInputRef.current?.click()}
               disabled={loading || isLimitExceeded || uploadingFiles || imageMode}
               className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl text-[#718198] transition-colors hover:bg-[#f1f4f8] hover:text-[#18212f] disabled:opacity-40"
-              title="Прикрепить изображение или файл"
+              title={t("Прикрепить изображение или файл")}
             >
               {uploadingFiles ? (
                 <svg className="h-4 w-4 animate-spin text-[#4662f0]" fill="none" viewBox="0 0 24 24">
@@ -296,7 +304,7 @@ export function ChatWindow() {
               onChange={(e) => { setInput(e.target.value); e.target.style.height = "auto"; e.target.style.height = `${Math.min(e.target.scrollHeight, 160)}px`; }}
               onKeyDown={handleKeyDown}
               onPaste={handlePaste}
-              placeholder={isLimitExceeded ? "Лимит исчерпан..." : imageMode ? "Опишите изображение: сюжет, стиль, свет, детали..." : "Напишите сообщение..."}
+              placeholder={isLimitExceeded ? t("Лимит исчерпан...") : imageMode ? t("Опишите изображение: сюжет, стиль, свет, детали...") : t("Напишите сообщение...")}
               maxLength={imageMode ? 4000 : undefined}
               rows={1}
               disabled={loading || isLimitExceeded}
@@ -305,7 +313,7 @@ export function ChatWindow() {
             />
 
             {/* Model selector pill */}
-            <div ref={modelRef} className={`relative shrink-0 ${imageMode ? "hidden" : ""}`}>
+            <div ref={modelRef} className={`reference-model relative shrink-0 ${imageMode ? "hidden" : ""}`}>
               <button
                 onClick={() => setModelMenuOpen(!modelMenuOpen)}
                 className="flex items-center gap-1.5 rounded-xl bg-[#f3effc] px-3 py-2 text-xs text-[#6750a4] transition-colors hover:bg-[#ece5fb]"
@@ -324,7 +332,7 @@ export function ChatWindow() {
                     {MODEL_LIST.filter(m => m.tier === "free").map((m) => (
                         <button key={m.id} onClick={() => { if (!canAccessModel(usage?.plan, m.tier)) { setUpgradeOpen(true); } else { setModel(m.id); } setModelMenuOpen(false); }} className={`flex w-full items-center gap-2 rounded-xl px-3 py-2 text-left text-sm transition-all duration-200 ${model === m.id ? "bg-slate-950 text-white font-semibold shadow-sm" : "text-slate-600 hover:bg-slate-50"}`}>
                         <ModelIcon icon={m.icon} color={m.color} /><span>{m.name}</span>
-                        {!canAccessModel(usage?.plan, m.tier) && <span className="ml-auto rounded-full bg-amber-100 px-1.5 py-0.5 text-[8px] font-bold text-amber-700">Подписка</span>}
+                        {!canAccessModel(usage?.plan, m.tier) && <span className="ml-auto rounded-full bg-amber-100 px-1.5 py-0.5 text-[8px] font-bold text-amber-700">{t("Подписка") }</span>}
                         {model === m.id && <svg className="ml-auto h-3.5 w-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" /></svg>}
                       </button>
                     ))}
@@ -332,7 +340,7 @@ export function ChatWindow() {
                     {MODEL_LIST.filter(m => m.tier === "pro").map((m) => (
                         <button key={m.id} onClick={() => { if (!canAccessModel(usage?.plan, m.tier)) { setUpgradeOpen(true); } else { setModel(m.id); } setModelMenuOpen(false); }} className={`flex w-full items-center gap-2 rounded-xl px-3 py-2 text-left text-sm transition-all duration-200 ${model === m.id ? "bg-slate-950 text-white font-semibold shadow-sm" : "text-slate-600 hover:bg-slate-50"}`}>
                         <ModelIcon icon={m.icon} color={m.color} /><span>{m.name}</span>
-                        {!canAccessModel(usage?.plan, m.tier) && <span className="ml-auto rounded-full bg-amber-100 px-1.5 py-0.5 text-[8px] font-bold text-amber-700">Подписка</span>}
+                        {!canAccessModel(usage?.plan, m.tier) && <span className="ml-auto rounded-full bg-amber-100 px-1.5 py-0.5 text-[8px] font-bold text-amber-700">{t("Подписка") }</span>}
                         {model === m.id && <svg className="ml-auto h-3.5 w-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" /></svg>}
                       </button>
                     ))}
@@ -340,15 +348,15 @@ export function ChatWindow() {
                     {MODEL_LIST.filter(m => m.tier === "boost").map((m) => (
                         <button key={m.id} onClick={() => { if (!canAccessModel(usage?.plan, m.tier)) { setUpgradeOpen(true); } else { setModel(m.id); } setModelMenuOpen(false); }} className={`flex w-full items-center gap-2 rounded-xl px-3 py-2 text-left text-sm transition-all duration-200 ${model === m.id ? "bg-slate-950 text-white font-semibold shadow-sm" : "text-slate-600 hover:bg-slate-50"}`}>
                         <ModelIcon icon={m.icon} color={m.color} /><span>{m.name}</span>
-                        {!canAccessModel(usage?.plan, m.tier) && <span className="ml-auto rounded-full bg-amber-100 px-1.5 py-0.5 text-[8px] font-bold text-amber-700">Подписка</span>}
+                        {!canAccessModel(usage?.plan, m.tier) && <span className="ml-auto rounded-full bg-amber-100 px-1.5 py-0.5 text-[8px] font-bold text-amber-700">{t("Подписка") }</span>}
                         {model === m.id && <svg className="ml-auto h-3.5 w-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" /></svg>}
                       </button>
                     ))}
-                    <div className="mt-2 flex items-center gap-2 px-2 py-1"><span className="text-[10px] font-semibold uppercase tracking-[0.18em] text-slate-400">Enterprise</span><span className="rounded-full bg-emerald-100 px-1.5 py-0.5 text-[8px] font-bold text-emerald-700">All</span></div>
+                    <div className="mt-2 flex items-center gap-2 px-2 py-1"><span className="text-[10px] font-semibold uppercase tracking-[0.18em] text-slate-400">Enterprice</span><span className="rounded-full bg-emerald-100 px-1.5 py-0.5 text-[8px] font-bold text-emerald-700">All</span></div>
                     {MODEL_LIST.filter(m => m.tier === "enterprise").map((m) => (
                         <button key={m.id} onClick={() => { if (!canAccessModel(usage?.plan, m.tier)) { setUpgradeOpen(true); } else { setModel(m.id); } setModelMenuOpen(false); }} className={`flex w-full items-center gap-2 rounded-xl px-3 py-2 text-left text-sm transition-all duration-200 ${model === m.id ? "bg-slate-950 text-white font-semibold shadow-sm" : "text-slate-600 hover:bg-slate-50"}`}>
                         <ModelIcon icon={m.icon} color={m.color} /><span>{m.name}</span>
-                        {!canAccessModel(usage?.plan, m.tier) && <span className="ml-auto rounded-full bg-amber-100 px-1.5 py-0.5 text-[8px] font-bold text-amber-700">Подписка</span>}
+                        {!canAccessModel(usage?.plan, m.tier) && <span className="ml-auto rounded-full bg-amber-100 px-1.5 py-0.5 text-[8px] font-bold text-amber-700">{t("Подписка") }</span>}
                         {model === m.id && <svg className="ml-auto h-3.5 w-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" /></svg>}
                       </button>
                     ))}
@@ -380,7 +388,7 @@ export function ChatWindow() {
 
           {isLimitExceeded && (
             <div className="mt-2 text-center">
-              <button onClick={() => setUpgradeOpen(true)} className="text-xs font-semibold text-slate-700 hover:text-slate-950 hover:underline">Обновить план</button>
+              <button onClick={() => setUpgradeOpen(true)} className="text-xs font-semibold text-slate-700 hover:text-slate-950 hover:underline">{t("Обновить план") }</button>
             </div>
           )}
         </div>

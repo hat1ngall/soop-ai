@@ -161,3 +161,60 @@
     box-shadow: 0 14px 40px rgba(0, 0, 0, .45) !important;
   }
 }
+
+/* Lavender workspace */
+.reference-shell { background: #f0f0ff; }
+.reference-main { margin: 0; border: 0; border-radius: 0; background: #f0f0ff; box-shadow: none; }
+.reference-header { position: relative; z-index: 2; height: 60px; border: 0; background: #f1f1ff; }
+.reference-header > div > button { border-radius: 999px; border-color: #e1e0f5; background: #eaeafa; padding: 7px 12px; color: #393754; }
+.reference-sidebar { position: relative; background: radial-gradient(ellipse at 20% 68%, #251a57 0, transparent 37%), #101329; }
+.reference-sidebar > div:first-child a span:first-child { background: linear-gradient(135deg,#a6a8ff,#6541ed); box-shadow: 0 4px 14px #6d53ef77; }
+.reference-sidebar > div:nth-child(2) button { background: linear-gradient(100deg,#8b7cff,#6039dc); box-shadow: 0 7px 20px #5230cd55; transition: filter .2s, transform .2s; }
+.reference-sidebar > div:nth-child(2) button:hover { filter: brightness(1.1); transform: translateY(-1px); }
+.reference-sidebar nav a { border-radius: 10px; }
+.reference-sidebar .group a { padding-right: 32px; }
+.reference-sidebar .group button { display: block; opacity: 0; transition: opacity .2s; }
+.reference-sidebar .group:hover button, .reference-sidebar .group:focus-within button { opacity: 1; }
+.reference-sidebar > div:last-child > button { background: linear-gradient(135deg,#222843,#302359); border-color: #44436b; }
+.reference-home { position: relative; display: flex; height: 100%; overflow: auto; align-items: center; justify-content: center; padding: 48px 24px 65px; background: radial-gradient(ellipse at 10% 16%,#d7d3ff 0, transparent 33%),radial-gradient(ellipse at 90% 95%,#dcd8ff 0,transparent 30%),linear-gradient(140deg,#f2f1ff,#eef1ff 70%,#f6f4ff); }
+.reference-home::before { position: absolute; top: -150px; left: -100px; width: 520px; height: 270px; border-radius: 50%; background: linear-gradient(145deg,rgba(133,121,255,.23),rgba(255,255,255,.1)); transform: rotate(-22deg); filter: blur(1px); content: ''; pointer-events: none; }
+.reference-home-content { position: relative; z-index: 1; width: 100%; max-width: 760px; text-align: center; }
+.reference-logo { display: grid; width: 62px; height: 62px; margin: 0 auto 20px; place-items: center; border: 1px solid #ffffffc9; border-radius: 20px; background: linear-gradient(145deg,#fff,#e6e5fb); box-shadow: 0 12px 24px #7975cc32; }
+.reference-logo img { width: 42px; height: 42px; border-radius: 12px; }
+.reference-home h1 { color: #171b3a; font-size: clamp(30px,4vw,43px); font-weight: 750; letter-spacing: -.05em; line-height: 1.15; }
+.reference-home h1 span, .reference-accent { color: #7440ed; }
+.reference-intro { margin-top: 12px; color: #707598; font-size: 14px; line-height: 1.6; }
+.reference-starters { display: grid; grid-template-columns: repeat(3,minmax(0,1fr)); gap: 16px; margin: 34px 0 44px; }
+.reference-card { position: relative; min-height: 135px; padding: 20px; border: 1px solid #ffffffc7; border-radius: 20px; background: rgba(255,255,255,.56); box-shadow: 0 15px 30px #6665bb20; text-align: left; transition: transform .2s, box-shadow .2s; }
+.reference-card:hover { transform: translateY(-3px); box-shadow: 0 20px 35px #6665bb32; }
+.reference-card-icon { display: block; font-size: 24px; line-height: 1; }
+.reference-card-label { display: block; margin-top: 12px; font-size: 10px; font-weight: 800; letter-spacing: .13em; }
+.reference-card-text { display: block; max-width: 85%; margin-top: 6px; color: #292b4a; font-size: 13px; line-height: 1.35; }
+.reference-card-arrow { position: absolute; right: 15px; bottom: 20px; display: grid; width: 27px; height: 27px; place-items: center; border-radius: 50%; color: #555677; background: #eaeafa; }
+.reference-card.code .reference-card-label, .reference-card.code .reference-card-icon { color: #ff790a; }
+.reference-card.explain .reference-card-label, .reference-card.explain .reference-card-icon { color: #1878ff; }
+.reference-card.design .reference-card-label, .reference-card.design .reference-card-icon { color: #944cff; }
+.reference-composer { overflow: hidden; border: 1px solid #dcdcff; border-radius: 18px; background: rgba(255,255,255,.64); box-shadow: 0 14px 30px #6d69c629; text-align: left; transition: box-shadow .2s,border-color .2s; }
+.reference-composer:focus-within { border-color: #ad9afb; box-shadow: 0 14px 34px #6e54d844; }
+.reference-composer textarea { display: block; width: 100%; min-height: 68px; resize: vertical; outline: none; background: transparent; padding: 18px 20px 6px; color: #252644; font-size: 14px; }
+.reference-composer textarea::placeholder { color: #9a9ab5; }
+.reference-composer-actions { display: flex; justify-content: space-between; align-items: center; padding: 0 12px 12px; }
+.reference-image-button { border-radius: 12px; background: #e9e7ff; padding: 9px 12px; color: #6743e6; font-size: 12px; font-weight: 600; }
+.reference-image-button:hover { background: #ded9ff; }
+.reference-send { width: 39px; height: 39px; border-radius: 12px; background: linear-gradient(135deg,#9379ff,#5e36db); box-shadow: 0 7px 14px #6d50e755; color: white; font-size: 20px; }
+.reference-send:disabled,.reference-image-button:disabled { opacity: .5; }
+.reference-helper { margin-top: 10px; text-align: right; color: #9295b1; font-size: 10px; }
+.reference-chat { background: radial-gradient(ellipse at 15% 15%,#dedaff 0, transparent 35%),linear-gradient(140deg,#f1f1ff,#eef1ff); }
+.reference-chat-input { border-color: #e3e1fa; background: rgba(244,244,255,.94); }
+.reference-chat-composer { border-color: #dcdcff; border-radius: 18px; box-shadow: 0 14px 30px #6d69c629; }
+.reference-chat-composer > button:last-child { background: linear-gradient(135deg,#9379ff,#5e36db); }
+html.dark .reference-main,html.dark .reference-header,html.dark .reference-home,html.dark .reference-chat,html.dark .reference-chat-input { background: #11172a !important; }
+html.dark .reference-home h1 { color: #f0efff; }
+html.dark .reference-intro,html.dark .reference-helper { color: #a6a7c9; }
+html.dark .reference-card,html.dark .reference-composer { background: #1d2440; border-color: #39405f; }
+html.dark .reference-card-text,html.dark .reference-composer textarea { color: #eeeefe; }
+html.dark .reference-logo { background: #e7e7fa; }
+html.dark .reference-image-button,html.dark .reference-card-arrow { background: #302b56; color: #c6b8ff; }
+@media (max-width:767px) { .reference-home { align-items: flex-start; padding: 45px 18px 36px; } .reference-starters { gap: 8px; margin: 26px 0 28px; } .reference-card { min-height: 125px; padding: 12px; border-radius: 15px; } .reference-card-text { max-width: 100%; font-size: 11px; } .reference-card-arrow { display: none; } .reference-sidebar .group button { opacity: 1; } .reference-model > button { max-width: 122px; } .reference-model > button span { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; } }
+@media (max-width:380px) { .reference-starters { grid-template-columns: 1fr; } .reference-card { min-height: 0; } .reference-card-label { margin-top: 6px; } }
+@media (prefers-reduced-motion:reduce) { .reference-card,.reference-sidebar button { transition: none; } }

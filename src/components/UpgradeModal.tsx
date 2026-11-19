@@ -1,5 +1,7 @@
 "use client";
 
+import { useLanguage } from "@/components/LanguageProvider";
+
 import { useState } from "react";
 
 interface UpgradeModalProps {
@@ -24,7 +26,7 @@ const PLANS: Plan[] = [
   {
     id: "pro",
     name: "Pro",
-    price: "$9.99",
+    price: "$2",
     color: "blue",
     gradient: "from-blue-500 to-blue-600",
     models: ["Claude Sonnet 4.6", "GPT 5.2", "GPT 5.4", "GPT 5.5", "Grok 4.5", "Grok 4.7"],
@@ -38,7 +40,7 @@ const PLANS: Plan[] = [
   {
     id: "boost",
     name: "Boost",
-    price: "$19.99",
+    price: "$8",
     color: "purple",
     gradient: "from-purple-500 to-purple-600",
     models: ["Fable 5.2", "Claude Opus 5.5"],
@@ -51,8 +53,8 @@ const PLANS: Plan[] = [
   },
   {
     id: "enterprise",
-    name: "Enterprise",
-    price: "$49.99",
+    name: "Enterprice",
+    price: "$12",
     color: "amber",
     gradient: "from-amber-500 to-orange-600",
     models: ["Все модели"],
@@ -66,6 +68,7 @@ const PLANS: Plan[] = [
 ];
 
 export function UpgradeModal({ isOpen, onClose, onActivated }: UpgradeModalProps) {
+  const { t } = useLanguage();
   const [step, setStep] = useState<"select" | "activate">("select");
   const [selectedPlan, setSelectedPlan] = useState<string>("pro");
   const [code, setCode] = useState("");
@@ -149,15 +152,15 @@ export function UpgradeModal({ isOpen, onClose, onActivated }: UpgradeModalProps
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
               </svg>
             </div>
-            <h3 className="text-2xl font-bold text-slate-950">Подписка активирована!</h3>
-            <p className="mt-3 text-slate-500">Перезагрузка страницы...</p>
+            <h3 className="text-2xl font-bold text-slate-950">{t("Подписка активирована!") }</h3>
+            <p className="mt-3 text-slate-500">{t("Перезагрузка страницы...") }</p>
           </div>
         ) : step === "select" ? (
           <div className="p-6 sm:p-8">
             <div className="mb-8 text-center">
-              <h2 className="text-3xl font-bold tracking-tight text-slate-950">Выберите план</h2>
+              <h2 className="text-3xl font-bold tracking-tight text-slate-950">{t("Выберите план") }</h2>
               <p className="mt-3 text-slate-500">
-                Получите доступ к продвинутым моделям AI
+                {t("Получите доступ к продвинутым моделям AI")}
               </p>
             </div>
 
@@ -182,16 +185,16 @@ export function UpgradeModal({ isOpen, onClose, onActivated }: UpgradeModalProps
 
                   <div className="mb-6">
                     <span className={`text-4xl font-bold ${selectedPlan === plan.id ? "text-white" : "text-slate-950"}`}>{plan.price}</span>
-                    <span className={selectedPlan === plan.id ? "text-white/50" : "text-slate-400"}>/мес</span>
+                    <span className={selectedPlan === plan.id ? "text-white/50" : "text-slate-400"}>{t("/мес")}</span>
                   </div>
 
                   {/* Доступные модели */}
                   <div className={`mb-4 rounded-2xl p-3 ${selectedPlan === plan.id ? "bg-white/10" : "bg-slate-50"}`}>
-                    <div className={`mb-2 text-xs font-medium ${selectedPlan === plan.id ? "text-white/45" : "text-slate-400"}`}>Модели:</div>
+                    <div className={`mb-2 text-xs font-medium ${selectedPlan === plan.id ? "text-white/45" : "text-slate-400"}`}>{t("Модели:") }</div>
                     <div className="flex flex-wrap gap-1.5">
                       {plan.models.map((model, i) => (
                         <span key={i} className={`rounded-full px-2.5 py-1 text-xs ${selectedPlan === plan.id ? "bg-white/10 text-white/80" : "bg-white text-slate-600"}`}>
-                          {model}
+                          {t(model)}
                         </span>
                       ))}
                     </div>
@@ -203,7 +206,7 @@ export function UpgradeModal({ isOpen, onClose, onActivated }: UpgradeModalProps
                         <svg className={`mt-0.5 h-5 w-5 shrink-0 ${selectedPlan === plan.id ? "text-emerald-300" : "text-emerald-500"}`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
                           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
                         </svg>
-                        {feature}
+                        {t(feature)}
                       </li>
                     ))}
                   </ul>
@@ -220,11 +223,11 @@ export function UpgradeModal({ isOpen, onClose, onActivated }: UpgradeModalProps
                 onClick={() => setStep("activate")}
                 className="w-full max-w-md rounded-2xl bg-slate-950 py-4 text-base font-semibold text-white shadow-[0_16px_35px_rgba(15,23,42,0.18)] transition-all duration-200 hover:-translate-y-0.5 hover:bg-slate-800 active:scale-[0.98]"
               >
-                Продолжить с планом {currentPlan.name}
+                {t("Продолжить с планом")} {currentPlan.name}
               </button>
 
               <p className="text-center text-sm text-slate-500">
-                Для получения кода свяжитесь с нами в Telegram:{" "}
+                {t("Для получения кода свяжитесь с нами в Telegram:")}{" "}
                 <a href="https://t.me/mqqwk1" target="_blank" rel="noopener" className="font-semibold text-slate-950 hover:underline">
                   @mqqwk1
                 </a>
@@ -244,34 +247,34 @@ export function UpgradeModal({ isOpen, onClose, onActivated }: UpgradeModalProps
             </button>
 
             <div className="mb-8 text-center">
-              <h2 className="text-3xl font-bold tracking-tight text-slate-950">Активация подписки</h2>
+              <h2 className="text-3xl font-bold tracking-tight text-slate-950">{t("Активация подписки") }</h2>
               <p className="mt-3 text-slate-500">
-                Введите промокод для активации плана{" "}
+                {t("Введите промокод для активации плана")}{" "}
                 <span className="font-semibold text-slate-950">{currentPlan.name}</span>
               </p>
             </div>
 
             <div className="mx-auto mb-8 max-w-md rounded-[28px] border border-slate-200 bg-slate-50/80 p-6">
               <div className="flex items-center justify-between">
-                <span className="text-slate-500">Выбранный план</span>
+                <span className="text-slate-500">{t("Выбранный план") }</span>
                 <span className="rounded-full bg-slate-950 px-4 py-1 text-sm font-bold text-white">
                   {currentPlan.name}
                 </span>
               </div>
               <div className="mt-4 flex items-center justify-between">
-                <span className="text-slate-500">Стоимость</span>
-                <span className="text-2xl font-bold text-slate-950">{currentPlan.price}<span className="text-slate-400">/мес</span></span>
+                <span className="text-slate-500">{t("Стоимость") }</span>
+                <span className="text-2xl font-bold text-slate-950">{currentPlan.price}<span className="text-slate-400">{t("/мес")}</span></span>
               </div>
               <div className="mt-4 border-t border-slate-200 pt-4">
-                <div className="text-xs text-slate-400">Лимит:</div>
+                <div className="text-xs text-slate-400">{t("Лимит:") }</div>
                 <div className="text-sm font-medium text-slate-950">
-                  {currentPlan.id === "enterprise" ? "Безлимит" : currentPlan.features[0]}
+                  {currentPlan.id === "enterprise" ? t("Безлимит") : t(currentPlan.features[0])}
                 </div>
               </div>
             </div>
 
             <div className="mx-auto max-w-md">
-              <label className="mb-3 block text-sm font-medium text-slate-500">Код активации</label>
+              <label className="mb-3 block text-sm font-medium text-slate-500">{t("Код активации") }</label>
                 <input
                 type="text"
                 value={code}
@@ -279,7 +282,7 @@ export function UpgradeModal({ isOpen, onClose, onActivated }: UpgradeModalProps
                 onKeyDown={(e) => {
                   if (e.key === "Enter" && code.trim()) handleActivate();
                 }}
-                placeholder="Введите промокод"
+                placeholder={t("Введите промокод")}
                 className="w-full rounded-2xl border border-slate-200 bg-white px-6 py-4 text-center font-mono text-xl tracking-widest text-slate-950 outline-none transition-all duration-200 focus:border-slate-300 focus:shadow-[0_0_0_4px_rgba(251,191,36,0.12)]"
                 autoFocus
               />
@@ -304,12 +307,12 @@ export function UpgradeModal({ isOpen, onClose, onActivated }: UpgradeModalProps
                     Проверка...
                   </span>
                 ) : (
-                  "Активировать"
+                  t("Активировать")
                 )}
               </button>
 
               <p className="mt-6 text-center text-sm text-slate-500">
-                Нет кода? Свяжитесь с нами:{" "}
+                {t("Нет кода? Свяжитесь с нами:")}{" "}
                 <a href="https://t.me/mqqwk1" target="_blank" rel="noopener" className="font-semibold text-slate-950 hover:underline">
                   @mqqwk1
                 </a>

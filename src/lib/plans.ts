@@ -50,7 +50,7 @@ export function isPremiumPlan(plan: PlanTier): boolean {
 }
 
 export function getPlanLabel(plan: PlanTier): string {
-  return { free: "Free", pro: "Pro", boost: "Boost", enterprise: "Enterprise" }[plan];
+  return { free: "Free", pro: "Pro", boost: "Boost", enterprise: "Enterprice" }[plan];
 }
 
 export function getDailyLimit(plan: PlanTier): number {
