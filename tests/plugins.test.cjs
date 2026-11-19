@@ -26,6 +26,13 @@ test('Wikipedia, Crossref and Open Library results contain source links', async 
   const books = await search.exports.searchPlugin('openlibrary', 'book', async () => json({ docs: [{ title: 'Book', key: '/works/OL123W', author_name: ['Author'] }] }));
   assert.equal(books[0].url, 'https://openlibrary.org/works/OL123W');
 });
+test('Hugging Face uses the public model catalog and returns model links', async () => {
+  let called = '';
+  const results = await search.exports.searchPlugin('huggingface', 'bert', async (url) => { called = url; return json([{ id: 'google/bert', pipeline_tag: 'fill-mask', downloads: 10 }]); });
+  assert.equal(new URL(called).hostname, 'huggingface.co');
+  assert.equal(new URL(called).searchParams.get('search'), 'bert');
+  assert.equal(results[0].url, 'https://huggingface.co/google/bert');
+});
 test('failed or oversized provider responses fail cleanly', async () => {
   await assert.rejects(search.exports.searchPlugin('github', 'test', async () => json({}, 429)));
   await assert.rejects(search.exports.searchPlugin('github', 'test', async () => new Response('x'.repeat(1_000_001))));

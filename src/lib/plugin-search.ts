@@ -10,6 +10,7 @@ export async function searchPlugin(id: PluginId, query: string, fetcher: typeof 
   if (id === "github") { url = new URL("https://api.github.com/search/repositories"); url.searchParams.set("q", q); url.searchParams.set("per_page", "3"); }
   else if (id === "wikipedia") { url = new URL(`https://${/[а-яё]/i.test(q) ? "ru" : "en"}.wikipedia.org/w/api.php`); url.search = new URLSearchParams({ action: "query", list: "search", srsearch: q, srlimit: "3", format: "json", utf8: "1" }).toString(); }
   else if (id === "crossref") { url = new URL("https://api.crossref.org/works"); url.search = new URLSearchParams({ query: q, rows: "3", select: "title,author,DOI,published" }).toString(); }
+  else if (id === "huggingface") { url = new URL("https://huggingface.co/api/models"); url.search = new URLSearchParams({ search: q, limit: "3", full: "false" }).toString(); }
   else { url = new URL("https://openlibrary.org/search.json"); url.search = new URLSearchParams({ q, limit: "3", fields: "key,title,author_name,first_publish_year" }).toString(); }
   const response = await fetcher(url.toString(), { headers: { Accept: "application/json", "User-Agent": "SoopAI/1.0" }, signal: AbortSignal.timeout(6000), redirect: "error" });
   if (!response.ok) throw new Error(`Сервис вернул ${response.status}`);
@@ -34,6 +35,7 @@ export async function searchPlugin(id: PluginId, query: string, fetcher: typeof 
   if (id === "github") return (Array.isArray(data.items) ? data.items : []).slice(0, 3).map((item: any) => ({ name: clean(item.full_name, 160), text: clean(item.description), url: /^https:\/\/github\.com\//.test(item.html_url) ? item.html_url : "" }));
   if (id === "wikipedia") return (Array.isArray(data.query?.search) ? data.query.search : []).slice(0, 3).map((item: any) => ({ name: clean(item.title, 160), text: clean(item.snippet), url: `https://${url.hostname}/wiki/${encodeURIComponent(String(item.title).replace(/ /g, "_"))}` }));
   if (id === "crossref") return (Array.isArray(data.message?.items) ? data.message.items : []).slice(0, 3).map((item: any) => ({ name: clean(item.title?.[0], 160), text: clean((item.author || []).slice(0, 4).map((author: any) => `${author.given || ""} ${author.family || ""}`.trim()).join(", ")), url: item.DOI ? `https://doi.org/${encodeURIComponent(String(item.DOI))}` : "" }));
+  if (id === "huggingface") return (Array.isArray(data) ? data : []).slice(0, 3).map((item: any) => ({ name: clean(item.id, 160), text: clean(`Задача: ${item.pipeline_tag || "не указана"}; загрузок: ${item.downloads ?? "—"}`), url: /^[A-Za-z0-9_.-]+\/[A-Za-z0-9_.-]+$/.test(item.id) ? `https://huggingface.co/${item.id}` : "" }));
   return (Array.isArray(data.docs) ? data.docs : []).slice(0, 3).map((item: any) => ({ name: clean(item.title, 160), text: clean(`${(item.author_name || []).slice(0, 3).join(", ")} ${item.first_publish_year || ""}`), url: /^\/works\/OL\d+W$/.test(item.key) ? `https://openlibrary.org${item.key}` : "" }));
 }
 
