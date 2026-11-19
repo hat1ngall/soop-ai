@@ -5,6 +5,7 @@ import { useCallback, useEffect, useState } from "react";
 type Reminder = { id: string; subject: string; remindAt: string; deliveredAt: string | null; message: string | null };
 
 export default function PlanningPage() {
+  const [view, setView] = useState<"today" | "upcoming" | "all" | "delivered">("today");
   const [subject, setSubject] = useState("");
   const [when, setWhen] = useState("");
   const [items, setItems] = useState<Reminder[]>([]);
@@ -46,19 +47,37 @@ export default function PlanningPage() {
     try { const response = await fetch(`/api/reminders/${id}`, { method: "DELETE" }); if (!response.ok) throw new Error(); setItems((previous) => previous.filter((item) => item.id !== id)); }
     catch { setError("Не удалось удалить напоминание."); }
   };
-  return <div className="planning-page h-full overflow-y-auto px-4 py-8 sm:px-8 sm:py-12"><div className="mx-auto max-w-3xl">
-    <p className="text-xs font-semibold uppercase tracking-[.18em] text-violet-500">SOOP AI</p>
-    <h1 className="mt-2 text-3xl font-bold tracking-tight text-slate-950 dark:text-white">Планирование</h1>
-    <p className="mt-2 text-sm leading-6 text-slate-500 dark:text-slate-300">Выберите дату и время, а нейросеть подготовит короткое напоминание.</p>
-    <div className="mt-6 rounded-2xl border border-violet-200 bg-violet-50 p-4 text-sm leading-6 text-violet-900 dark:border-violet-800 dark:bg-slate-800 dark:text-violet-100">Для уведомления и звука сайт должен оставаться открытым. Если время прошло, напомним при следующем открытии. Время указано по часовому поясу вашего устройства.<br /><button type="button" onClick={() => void enable()} className="mt-2 rounded-xl bg-violet-600 px-4 py-2 font-semibold text-white hover:bg-violet-700">{permission === "granted" ? "Включить звук" : "Включить уведомления и звук"}</button></div>
-    <form onSubmit={submit} className="mt-6 space-y-4 rounded-3xl border border-[#dedcf7] bg-white p-5 shadow-[0_14px_40px_rgba(92,80,180,.09)] dark:border-slate-700 dark:bg-slate-800 sm:p-6">
-      <div><label htmlFor="reminder-subject" className="mb-2 block text-sm font-semibold text-slate-800 dark:text-slate-100">О чём напомнить?</label><textarea id="reminder-subject" value={subject} onChange={(event) => setSubject(event.target.value)} maxLength={500} required rows={3} placeholder="Например: позвонить врачу" className="w-full resize-y rounded-xl border border-slate-200 bg-slate-50 p-3 text-sm text-slate-900 outline-none focus:border-violet-400 dark:border-slate-600 dark:bg-slate-900 dark:text-white" /></div>
-      <div><label htmlFor="reminder-time" className="mb-2 block text-sm font-semibold text-slate-800 dark:text-slate-100">Дата и время</label><input id="reminder-time" type="datetime-local" required value={when} onChange={(event) => setWhen(event.target.value)} className="w-full rounded-xl border border-slate-200 bg-slate-50 p-3 text-sm text-slate-900 outline-none focus:border-violet-400 dark:border-slate-600 dark:bg-slate-900 dark:text-white" /></div>
-      <p className="text-xs text-slate-500">Создание использует один запрос из дневного лимита бесплатного тарифа.</p>
-      {error && <p role="alert" className="text-sm text-red-600">{error}</p>}{notice && <p role="status" className="text-sm text-violet-700 dark:text-violet-200">{notice}</p>}
-      <button disabled={loading} className="rounded-xl bg-gradient-to-r from-violet-500 to-indigo-600 px-5 py-3 text-sm font-semibold text-white shadow-lg shadow-violet-200 transition hover:brightness-110 disabled:opacity-50">{loading ? "Создаём напоминание…" : "Запланировать"}</button>
-    </form>
-    <h2 className="mb-3 mt-9 text-lg font-semibold text-slate-900 dark:text-white">Ваши напоминания</h2>
-    {items.length === 0 ? <p className="text-sm text-slate-500">Пока нет напоминаний.</p> : <div className="space-y-3">{items.map((item) => <div key={item.id} className="flex items-start justify-between gap-4 rounded-2xl border border-[#dedcf7] bg-white p-4 dark:border-slate-700 dark:bg-slate-800"><div className="min-w-0"><p className="break-words font-medium text-slate-900 dark:text-white">{item.subject}</p><p className="mt-1 text-xs text-slate-500">{new Date(item.remindAt).toLocaleString()} · {item.deliveredAt ? "Напомнили" : "Ожидает"}</p>{item.deliveredAt && item.message && <p className="mt-2 text-sm text-slate-600 dark:text-slate-300">{item.message}</p>}</div><button type="button" onClick={() => void remove(item.id)} aria-label="Удалить напоминание" className="rounded-lg px-2 py-1 text-slate-400 hover:bg-red-50 hover:text-red-600">✕</button></div>)}</div>}
-  </div></div>;
+  const today = new Date();
+  const endOfToday = new Date(today.getFullYear(), today.getMonth(), today.getDate() + 1).getTime();
+  const isTodayOrOverdue = (value: string) => new Date(value).getTime() < endOfToday;
+  const visible = items.filter((item) => view === "today" ? !item.deliveredAt && isTodayOrOverdue(item.remindAt) : view === "upcoming" ? !item.deliveredAt && !isTodayOrOverdue(item.remindAt) : view === "delivered" ? !!item.deliveredAt : true);
+  const views = [
+    { id: "today" as const, icon: "☼", label: "Сегодня", count: items.filter((item) => !item.deliveredAt && isTodayOrOverdue(item.remindAt)).length },
+    { id: "upcoming" as const, icon: "▦", label: "Предстоящие", count: items.filter((item) => !item.deliveredAt && !isTodayOrOverdue(item.remindAt)).length },
+    { id: "all" as const, icon: "☷", label: "Все напоминания", count: items.length },
+    { id: "delivered" as const, icon: "✓", label: "Уже напомнили", count: items.filter((item) => !!item.deliveredAt).length },
+  ];
+  const current = views.find((item) => item.id === view)!;
+  const empty = { today: "На сегодня напоминаний нет", upcoming: "Предстоящих напоминаний нет", all: "Пока нет напоминаний", delivered: "Пока не было уведомлений" };
+  return (
+    <div className="planner-layout">
+      <aside className="planner-nav" aria-label="Разделы планирования">
+        <div className="planner-nav-heading"><span className="planner-nav-icon">✦</span><span><strong>Планирование</strong><small>Ваши напоминания</small></span></div>
+        <nav className="planner-nav-list">{views.map((item) => <button key={item.id} type="button" onClick={() => setView(item.id)} aria-current={view === item.id ? "page" : undefined} className={`planner-nav-item ${view === item.id ? "is-active" : ""}`}><span className="planner-nav-symbol">{item.icon}</span><span>{item.label}</span><span className="planner-count">{item.count}</span></button>)}</nav>
+        <div className="planner-nav-note"><span>✧</span><p>Идеи под контролем.<br /><strong>Главное — вовремя.</strong></p></div>
+      </aside>
+      <main className="planner-surface">
+        <div className="planner-content">
+          <div className="planner-heading"><div><p className="planner-eyebrow">SOOP AI / ПЛАНИРОВАНИЕ</p><h1>{current.label}</h1><p className="planner-date">{today.toLocaleDateString("ru-RU", { weekday: "long", day: "numeric", month: "long" })}</p></div><button type="button" onClick={() => void enable()} className="planner-notification" title="Разрешить уведомления и включить звук"><span>♧</span> {permission === "granted" ? "Включить звук" : "Включить уведомления"}</button></div>
+          <form onSubmit={submit} className="planner-form">
+            <div className="planner-form-main"><span className="planner-plus" aria-hidden="true">＋</span><label htmlFor="reminder-subject" className="sr-only">О чём напомнить?</label><input id="reminder-subject" value={subject} onChange={(event) => setSubject(event.target.value)} maxLength={500} required placeholder="Добавить напоминание — например, позвонить врачу" /><button type="submit" disabled={loading} className="planner-submit">{loading ? "Создаём…" : "Добавить"}</button></div>
+            <div className="planner-form-footer"><label htmlFor="reminder-time">◷ <span>Дата и время</span></label><input id="reminder-time" type="datetime-local" required value={when} onChange={(event) => setWhen(event.target.value)} /><span className="planner-form-hint">1 запрос бесплатного тарифа</span></div>
+          </form>
+          {(error || notice) && <p role={error ? "alert" : "status"} className={error ? "planner-feedback is-error" : "planner-feedback"}>{error || notice}</p>}
+          {visible.length === 0 ? <div className="planner-empty"><div className="planner-empty-icon">{current.icon}</div><h2>{empty[view]}</h2><p>{view === "delivered" ? "Здесь появятся напоминания после уведомления." : "Добавьте напоминание выше — мы сохраним его для вас."}</p></div> : <div className="planner-items"><div className="planner-items-caption">{current.label} <span>{visible.length}</span></div>{visible.map((item) => <article key={item.id} className="planner-item"><span className={`planner-item-indicator ${item.deliveredAt ? "is-delivered" : ""}`}>{item.deliveredAt ? "✓" : ""}</span><div className="planner-item-body"><h2>{item.subject}</h2><p>◷ {new Date(item.remindAt).toLocaleString()} <span>· {item.deliveredAt ? "Напомнили" : "Ожидает"}</span></p>{item.deliveredAt && item.message && <p className="planner-item-message">{item.message}</p>}</div><button type="button" onClick={() => void remove(item.id)} aria-label="Удалить напоминание" title="Удалить напоминание" className="planner-delete">×</button></article>)}</div>}
+        </div>
+        <div className="planner-bottom"><div className="planner-bottom-icon">✧</div><div><strong>Напоминания с Soop AI</strong><p>Сайт должен оставаться открытым. Если время прошло, напомним при следующем открытии. Время указано по часовому поясу вашего устройства.</p></div></div>
+      </main>
+    </div>
+  );
 }
