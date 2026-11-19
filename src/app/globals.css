@@ -236,3 +236,15 @@ html.dark .plans-modal .plan-card:hover { border-color: #8e7bea !important; }
 html.dark .plans-modal .plan-card-selected { background: linear-gradient(155deg,#725de5,#4934a9) !important; border-color: #a999ff !important; }
 html.dark .plans-modal .plan-card-selected .text-white,html.dark .plans-modal .plan-card-selected .text-white\/75,html.dark .plans-modal .plan-card-selected .text-white\/80 { color: #fff !important; }
 html.dark .plans-modal .plans-primary { background: linear-gradient(105deg,#8d78fa,#6240de) !important; color: #fff !important; }
+
+/* Dark accents on the plan cards */
+.plans-modal .plan-card, .plans-modal .plan-card:hover,
+.plans-modal .plan-card-selected, .plans-modal .plan-card-selected:hover { border-color: #10101a; }
+.plans-modal .plan-card-selected .plan-models { background: rgba(12, 10, 28, .32); }
+.plans-modal .plans-primary { background: #10101a; box-shadow: 0 12px 26px rgba(16, 16, 26, .23); }
+.plans-modal .plans-primary:hover { background: #29213e; }
+html.dark .plans-modal .plan-card, html.dark .plans-modal .plan-card:hover,
+html.dark .plans-modal .plan-card-selected, html.dark .plans-modal .plan-card-selected:hover { border-color: #05050a !important; box-shadow: 0 0 0 1px #5b5771, 0 10px 25px rgba(0,0,0,.2); }
+html.dark .plans-modal .plan-card-selected .plan-models { background: rgba(8, 7, 19, .42) !important; }
+html.dark .plans-modal .plans-primary { background: #080810 !important; }
+html.dark .plans-modal .plans-primary:hover { background: #27213b !important; }

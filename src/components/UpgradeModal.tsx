@@ -191,7 +191,7 @@ export function UpgradeModal({ isOpen, onClose, onActivated }: UpgradeModalProps
                   </div>
 
                   {/* Доступные модели */}
-                  <div className={`mb-4 rounded-2xl p-3 ${selectedPlan === plan.id ? "bg-white/10" : "bg-slate-50"}`}>
+                  <div className={`plan-models mb-4 rounded-2xl p-3 ${selectedPlan === plan.id ? "bg-white/10" : "bg-slate-50"}`}>
                     <div className={`mb-2 text-xs font-medium ${selectedPlan === plan.id ? "text-white/45" : "text-slate-400"}`}>{t("Модели:") }</div>
                     <div className="flex flex-wrap gap-1.5">
                       {plan.models.map((model, i) => (
