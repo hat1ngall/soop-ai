@@ -194,20 +194,20 @@ export function ChatWindow() {
               <div className="mb-5 flex h-14 w-14 items-center justify-center rounded-2xl border border-[#e2e6ec] bg-white shadow-[0_10px_28px_rgba(35,48,70,.08)]">
                 <img src="/logo.svg" alt="Soop AI" className="h-10 w-10 rounded-xl" />
               </div>
-              <h2 className="mb-3 text-2xl font-semibold tracking-tight text-slate-900 sm:text-3xl">{t("Чем могу")} <span className="reference-accent">{t("помочь?") }</span></h2>
-              <p className="max-w-xl text-sm leading-6 text-slate-500 sm:text-base">{t("Я могу отвечать на вопросы, писать код, анализировать данные и многое другое.") }</p>
+              <h2 className="mb-3 text-2xl font-bold tracking-tight text-slate-900 sm:text-3xl">{t("Чем могу")} <span className="reference-accent">{t("помочь?") }</span></h2>
+              <p className="max-w-xl text-sm font-semibold leading-6 text-slate-500 sm:text-base">{t("Я могу отвечать на вопросы, писать код, анализировать данные и многое другое.") }</p>
               <div className="mt-8 grid w-full max-w-2xl grid-cols-1 gap-3 sm:grid-cols-3">
                 <div className="rounded-2xl border border-[#e2e6ec] bg-white px-4 py-4 text-left shadow-[0_8px_22px_rgba(35,48,70,.05)] transition-all hover:-translate-y-0.5 hover:border-[#b6c1f7]">
-                  <div className="text-xs font-semibold uppercase tracking-[0.18em] text-amber-600">Code</div>
-                  <div className="mt-2 text-sm text-slate-700">{t("Напиши код на Python")}</div>
+                  <div className="text-xs font-bold uppercase tracking-[0.18em] text-amber-600">Code</div>
+                  <div className="mt-2 text-sm font-semibold text-slate-700">{t("Напиши код на Python")}</div>
                 </div>
                 <div className="rounded-3xl border border-white/80 bg-white/70 px-4 py-4 text-left shadow-[0_14px_40px_rgba(80,93,120,0.12)]">
-                  <div className="text-xs font-semibold uppercase tracking-[0.18em] text-sky-600">Explain</div>
-                  <div className="mt-2 text-sm text-slate-700">{t("Объясни квантовую физику")}</div>
+                  <div className="text-xs font-bold uppercase tracking-[0.18em] text-sky-600">Explain</div>
+                  <div className="mt-2 text-sm font-semibold text-slate-700">{t("Объясни квантовую физику")}</div>
                 </div>
                 <div className="rounded-3xl border border-white/80 bg-white/70 px-4 py-4 text-left shadow-[0_14px_40px_rgba(80,93,120,0.12)]">
-                  <div className="text-xs font-semibold uppercase tracking-[0.18em] text-violet-600">Design</div>
-                  <div className="mt-2 text-sm text-slate-700">{t("Помоги с дизайном")}</div>
+                  <div className="text-xs font-bold uppercase tracking-[0.18em] text-violet-600">Design</div>
+                  <div className="mt-2 text-sm font-semibold text-slate-700">{t("Помоги с дизайном")}</div>
                 </div>
               </div>
             </div>

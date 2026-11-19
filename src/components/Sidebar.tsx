@@ -156,7 +156,7 @@ export function Sidebar({ isOpen, onToggle, onOpenSettings, onOpenUpgrade, curre
           </div>
         )}
 
-        <div className="flex items-center gap-2">
+        <div className="flex min-h-[54px] items-center gap-1.5">
           <button
             onClick={onOpenSettings}
             className="flex min-w-0 flex-1 items-center gap-2 rounded-lg p-1 text-left transition-colors hover:bg-white/5"
@@ -173,6 +173,15 @@ export function Sidebar({ isOpen, onToggle, onOpenSettings, onOpenUpgrade, curre
                 {currentPlan === "free" ? "Free plan" : currentPlan === "enterprise" ? "Enterprice" : currentPlan}
               </span>
             </span>
+          </button>
+          <button
+            type="button"
+            onClick={onOpenSettings}
+            className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl text-[#a7afc8] transition-colors hover:bg-white/10 hover:text-white"
+            title="Настройки аккаунта"
+            aria-label="Настройки аккаунта"
+          >
+            <svg className="h-[18px] w-[18px]" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="3" strokeWidth="1.7" /><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.7" d="M19.4 13.5a7.8 7.8 0 0 0 0-3l1.6-1.2-1.5-2.6-1.9.6a7.4 7.4 0 0 0-2.6-1.5L14.7 4h-3.4l-.3 1.8a7.4 7.4 0 0 0-2.6 1.5l-1.9-.6L5 9.3l1.6 1.2a7.8 7.8 0 0 0 0 3L5 14.7l1.5 2.6 1.9-.6a7.4 7.4 0 0 0 2.6 1.5l.3 1.8h3.4l.3-1.8a7.4 7.4 0 0 0 2.6-1.5l1.9.6 1.5-2.6-1.6-1.2Z" /></svg>
           </button>
           <button
             onClick={() => void signOut({ callbackUrl: "/login" })}

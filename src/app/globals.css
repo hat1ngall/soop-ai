@@ -218,3 +218,21 @@ html.dark .reference-image-button,html.dark .reference-card-arrow { background: 
 @media (max-width:767px) { .reference-home { align-items: flex-start; padding: 45px 18px 36px; } .reference-starters { gap: 8px; margin: 26px 0 28px; } .reference-card { min-height: 125px; padding: 12px; border-radius: 15px; } .reference-card-text { max-width: 100%; font-size: 11px; } .reference-card-arrow { display: none; } .reference-sidebar .group button { opacity: 1; } .reference-model > button { max-width: 122px; } .reference-model > button span { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; } }
 @media (max-width:380px) { .reference-starters { grid-template-columns: 1fr; } .reference-card { min-height: 0; } .reference-card-label { margin-top: 6px; } }
 @media (prefers-reduced-motion:reduce) { .reference-card,.reference-sidebar button { transition: none; } }
+
+/* Workspace refinements */
+.reference-composer textarea { min-height: 54px; padding-top: 15px; }
+html.dark .reference-home::before { display: none; }
+.plans-modal { background: linear-gradient(145deg, #fbfaff 0%, #f0efff 100%); border-color: #fff; }
+.plans-modal .plan-card { border-color: #e2dff9; background: rgba(255,255,255,.7); box-shadow: 0 10px 25px rgba(89,75,170,.06); }
+.plans-modal .plan-card:hover { border-color: #b7a8f4; }
+.plans-modal .plan-card-selected { border-color: #8871ef; background: linear-gradient(155deg,#765ef0 0%,#4d36b8 100%); box-shadow: 0 16px 35px rgba(97,68,213,.28); }
+.plans-modal .plan-card-selected:hover { border-color: #a897ff; }
+.plans-modal .plan-card-selected > div:last-child { --tw-ring-color: rgba(139,114,255,.22); }
+.plans-modal .plans-primary { background: linear-gradient(105deg,#8d78fa,#6240de); box-shadow: 0 12px 26px rgba(103,74,226,.25); }
+.plans-modal .plans-primary:hover { background: linear-gradient(105deg,#9b88ff,#704bea); }
+html.dark .plans-modal { background: linear-gradient(145deg,#1b2039,#151a2f) !important; border-color: #3a4162 !important; }
+html.dark .plans-modal .plan-card { background: #222843 !important; border-color: #41466b !important; }
+html.dark .plans-modal .plan-card:hover { border-color: #8e7bea !important; }
+html.dark .plans-modal .plan-card-selected { background: linear-gradient(155deg,#725de5,#4934a9) !important; border-color: #a999ff !important; }
+html.dark .plans-modal .plan-card-selected .text-white,html.dark .plans-modal .plan-card-selected .text-white\/75,html.dark .plans-modal .plan-card-selected .text-white\/80 { color: #fff !important; }
+html.dark .plans-modal .plans-primary { background: linear-gradient(105deg,#8d78fa,#6240de) !important; color: #fff !important; }

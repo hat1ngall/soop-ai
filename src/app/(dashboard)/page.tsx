@@ -28,7 +28,7 @@ export default function DashboardPage() {
         <div className="reference-starters">{starters.map((starter) => <button type="button" key={starter.title} onClick={() => setPrompt(t(starter.text))} className={`reference-card ${starter.tone}`}><span className="reference-card-icon">{starter.icon}</span><span className="reference-card-label">{starter.title}</span><span className="reference-card-text">{t(starter.text)}</span><span className="reference-card-arrow" aria-hidden="true">→</span></button>)}</div>
         <div className="reference-composer">
           <label htmlFor="home-prompt" className="sr-only">Напишите сообщение</label>
-          <textarea id="home-prompt" value={prompt} onChange={(event) => setPrompt(event.target.value)} onKeyDown={(event) => { if (event.key === "Enter" && !event.shiftKey) { event.preventDefault(); void startChat(); } }} placeholder={t("Напишите сообщение...")} rows={3} />
+          <textarea id="home-prompt" value={prompt} onChange={(event) => setPrompt(event.target.value)} onKeyDown={(event) => { if (event.key === "Enter" && !event.shiftKey) { event.preventDefault(); void startChat(); } }} placeholder={t("Напишите сообщение...")} rows={2} />
           <div className="reference-composer-actions"><button type="button" onClick={() => void startChat(prompt, true)} disabled={creating} className="reference-image-button">✧ <span>{t("Создать изображение") }</span></button><button type="button" onClick={() => void startChat()} disabled={creating} aria-label={t("Начать чат")} className="reference-send">→</button></div>
         </div>
         <p className="reference-helper">{t("Enter — отправить · Shift + Enter — новая строка") }</p>
