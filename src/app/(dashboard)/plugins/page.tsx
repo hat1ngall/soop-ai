@@ -2,12 +2,15 @@
 
 import { useEffect, useState } from "react";
 import { PLUGINS } from "@/lib/plugins";
+import { useLanguage } from "@/components/LanguageProvider";
 
 function PluginIcon({ name, domain, fallback, color = "#6554b5" }: { name: string; domain: string; fallback: string; color?: string }) {
-  return <div className="plugin-icon plugin-icon-image" style={{ background: color }}><span aria-hidden="true">{fallback}</span><img src={`https://www.google.com/s2/favicons?domain=${encodeURIComponent(domain)}&sz=128`} alt={`Логотип ${name}`} loading="lazy" referrerPolicy="no-referrer" onError={(event) => { event.currentTarget.style.display = "none"; }} /></div>;
+  const { t } = useLanguage();
+  return <div className="plugin-icon plugin-icon-image" style={{ background: color }}><span aria-hidden="true">{fallback}</span><img src={`https://www.google.com/s2/favicons?domain=${encodeURIComponent(domain)}&sz=128`} alt={`${t("Логотип")} ${t(name)}`} loading="lazy" referrerPolicy="no-referrer" onError={(event) => { event.currentTarget.style.display = "none"; }} /></div>;
 }
 
 export default function PluginsPage() {
+  const { t } = useLanguage();
   const [enabled, setEnabled] = useState<string[]>([]);
   const [query, setQuery] = useState("");
   const [loading, setLoading] = useState(true);
@@ -28,17 +31,17 @@ export default function PluginsPage() {
     } catch { setError("Не удалось изменить настройки плагина. Попробуйте ещё раз."); }
     finally { setSaving(null); }
   };
-  const matches = (plugin: { name: string; category: string; description: string }) => `${plugin.name} ${plugin.category} ${plugin.description}`.toLowerCase().includes(query.trim().toLowerCase());
+  const matches = (plugin: { name: string; category: string; description: string }) => `${plugin.name} ${t(plugin.name)} ${plugin.category} ${t(plugin.category)} ${plugin.description} ${t(plugin.description)}`.toLowerCase().includes(query.trim().toLowerCase());
   const filtered = PLUGINS.filter(matches);
   const categories = Array.from(new Set(filtered.map((plugin) => plugin.category)));
   return <div className="plugins-page"><div className="plugins-inner">
-    <div className="plugins-heading"><div><p className="plugins-eyebrow">SOOP AI / ИНСТРУМЕНТЫ</p><h1>Плагины</h1><p>Выберите сервисы для работы с нейросетью.</p></div><div className="plugins-count"><strong>{enabled.length}</strong><span>подключено</span></div></div>
-    <div className="plugins-info"><span>✧</span><p>Открытые источники можно подключить без ключей. При их включении до 180 символов текущего сообщения отправляются выбранным сервисам для поиска; история чата и вложения не передаются.</p></div>
-    <label className="plugins-search"><span aria-hidden="true">⌕</span><span className="sr-only">Искать плагины</span><input value={query} onChange={(event) => setQuery(event.target.value)} placeholder="Искать плагины" /></label>
-    {error && <p role="alert" className="plugins-error">{error}</p>}
-    {loading ? <p className="plugins-empty">Загрузка…</p> : categories.length === 0 ? <p className="plugins-empty">Плагины не найдены.</p> : categories.map((category) => <section key={category} className="plugins-section"><h2>{category}</h2><div className="plugins-grid">{filtered.filter((plugin) => plugin.category === category).map((plugin) => {
+    <div className="plugins-heading"><div><p className="plugins-eyebrow">{t("SOOP AI / ИНСТРУМЕНТЫ")}</p><h1>{t("Плагины")}</h1><p>{t("Выберите сервисы для работы с нейросетью.")}</p></div><div className="plugins-count"><strong>{enabled.length}</strong><span>{t("подключено")}</span></div></div>
+    <div className="plugins-info"><span>✧</span><p>{t("Открытые источники можно подключить без ключей. При их включении до 180 символов текущего сообщения отправляются выбранным сервисам для поиска; история чата и вложения не передаются.")}</p></div>
+    <label className="plugins-search"><span aria-hidden="true">⌕</span><span className="sr-only">{t("Искать плагины")}</span><input value={query} onChange={(event) => setQuery(event.target.value)} placeholder={t("Искать плагины")} /></label>
+    {error && <p role="alert" className="plugins-error">{t(error)}</p>}
+    {loading ? <p className="plugins-empty">{t("Загрузка…")}</p> : categories.length === 0 ? <p className="plugins-empty">{t("Плагины не найдены.")}</p> : categories.map((category) => <section key={category} className="plugins-section"><h2>{t(category)}</h2><div className="plugins-grid">{filtered.filter((plugin) => plugin.category === category).map((plugin) => {
       const active = enabled.includes(plugin.id);
-      return <article key={plugin.id} className="plugin-card"><PluginIcon name={plugin.name} domain={plugin.domain} fallback={plugin.icon} color={plugin.color} /><div className="plugin-details"><div className="plugin-name">{plugin.name}<span className="plugin-free">БЕСПЛАТНО</span></div><p>{plugin.description}</p><small>{plugin.detail}</small></div><button type="button" onClick={() => void toggle(plugin.id)} disabled={saving !== null} aria-pressed={active} aria-label={`${active ? "Отключить" : "Подключить"} ${plugin.name}`} className={`plugin-toggle ${active ? "is-enabled" : ""}`}>{saving === plugin.id ? "…" : active ? "✓" : "+"}</button></article>;
+      return <article key={plugin.id} className="plugin-card"><PluginIcon name={plugin.name} domain={plugin.domain} fallback={plugin.icon} color={plugin.color} /><div className="plugin-details"><div className="plugin-name">{t(plugin.name)}<span className="plugin-free">{t("БЕСПЛАТНО")}</span></div><p>{t(plugin.description)}</p><small>{t(plugin.detail)}</small></div><button type="button" onClick={() => void toggle(plugin.id)} disabled={saving !== null} aria-pressed={active} aria-label={`${t(active ? "Отключить" : "Подключить")} ${t(plugin.name)}`} className={`plugin-toggle ${active ? "is-enabled" : ""}`}>{saving === plugin.id ? "…" : active ? "✓" : "+"}</button></article>;
     })}</div></section>)}
   </div></div>;
 }
