@@ -33,6 +33,22 @@ test('Hugging Face uses the public model catalog and returns model links', async
   assert.equal(new URL(called).searchParams.get('search'), 'bert');
   assert.equal(results[0].url, 'https://huggingface.co/google/bert');
 });
+test('Context7 returns ranked snippets and only https source links', async () => {
+  let called = '';
+  const data = { codeSnippets: [{ codeTitle: 'useEffect', codeDescription: 'React effect', codeId: 'https://react.dev/reference/react/useEffect', codeList: [{ code: 'useEffect(fn)' }], rank: 2 }], infoSnippets: [{ breadcrumb: 'React', content: 'Hooks', pageId: 'javascript:alert(1)', rank: 1 }] };
+  const results = await search.exports.searchPlugin('context7', 'react hooks', async (url) => { called = url; return json(data); });
+  assert.equal(new URL(called).hostname, 'context7.com');
+  assert.equal(results[0].url, '');
+  assert.match(results[1].url, /^https:\/\/react\.dev\//);
+});
+test('Blockscout searches Ethereum and links only valid addresses', async () => {
+  let called = '';
+  const address = '0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48';
+  const results = await search.exports.searchPlugin('blockscout', 'USDC', async (url) => { called = url; return json({ items: [{ name: 'USDC', type: 'token', address_hash: address }, { name: 'bad', address_hash: 'javascript:x' }] }); });
+  assert.equal(new URL(called).hostname, 'eth.blockscout.com');
+  assert.equal(results[0].url, `https://eth.blockscout.com/address/${address}`);
+  assert.equal(results[1].url, '');
+});
 test('failed or oversized provider responses fail cleanly', async () => {
   await assert.rejects(search.exports.searchPlugin('github', 'test', async () => json({}, 429)));
   await assert.rejects(search.exports.searchPlugin('github', 'test', async () => new Response('x'.repeat(1_000_001))));

@@ -11,8 +11,10 @@ export async function searchPlugin(id: PluginId, query: string, fetcher: typeof 
   else if (id === "wikipedia") { url = new URL(`https://${/[а-яё]/i.test(q) ? "ru" : "en"}.wikipedia.org/w/api.php`); url.search = new URLSearchParams({ action: "query", list: "search", srsearch: q, srlimit: "3", format: "json", utf8: "1" }).toString(); }
   else if (id === "crossref") { url = new URL("https://api.crossref.org/works"); url.search = new URLSearchParams({ query: q, rows: "3", select: "title,author,DOI,published" }).toString(); }
   else if (id === "huggingface") { url = new URL("https://huggingface.co/api/models"); url.search = new URLSearchParams({ search: q, limit: "3", full: "false" }).toString(); }
+  else if (id === "context7") { url = new URL("https://context7.com/api/v3/search"); url.search = new URLSearchParams({ query: q, type: "json" }).toString(); }
+  else if (id === "blockscout") { url = new URL("https://eth.blockscout.com/api/v2/search"); url.search = new URLSearchParams({ q }).toString(); }
   else { url = new URL("https://openlibrary.org/search.json"); url.search = new URLSearchParams({ q, limit: "3", fields: "key,title,author_name,first_publish_year" }).toString(); }
-  const response = await fetcher(url.toString(), { headers: { Accept: "application/json", "User-Agent": "SoopAI/1.0" }, signal: AbortSignal.timeout(6000), redirect: "error" });
+  const response = await fetcher(url.toString(), { headers: { Accept: "application/json", "User-Agent": "SoopAI/1.0" }, signal: AbortSignal.timeout(id === "context7" ? 12000 : 6000), redirect: "error" });
   if (!response.ok) throw new Error(`Сервис вернул ${response.status}`);
   const contentLength = Number(response.headers.get("content-length"));
   if (contentLength > 1_000_000) throw new Error("Слишком большой ответ сервиса");
@@ -36,6 +38,15 @@ export async function searchPlugin(id: PluginId, query: string, fetcher: typeof 
   if (id === "wikipedia") return (Array.isArray(data.query?.search) ? data.query.search : []).slice(0, 3).map((item: any) => ({ name: clean(item.title, 160), text: clean(item.snippet), url: `https://${url.hostname}/wiki/${encodeURIComponent(String(item.title).replace(/ /g, "_"))}` }));
   if (id === "crossref") return (Array.isArray(data.message?.items) ? data.message.items : []).slice(0, 3).map((item: any) => ({ name: clean(item.title?.[0], 160), text: clean((item.author || []).slice(0, 4).map((author: any) => `${author.given || ""} ${author.family || ""}`.trim()).join(", ")), url: item.DOI ? `https://doi.org/${encodeURIComponent(String(item.DOI))}` : "" }));
   if (id === "huggingface") return (Array.isArray(data) ? data : []).slice(0, 3).map((item: any) => ({ name: clean(item.id, 160), text: clean(`Задача: ${item.pipeline_tag || "не указана"}; загрузок: ${item.downloads ?? "—"}`), url: /^[A-Za-z0-9_.-]+\/[A-Za-z0-9_.-]+$/.test(item.id) ? `https://huggingface.co/${item.id}` : "" }));
+  if (id === "context7") {
+    const code = (Array.isArray(data.codeSnippets) ? data.codeSnippets : []).map((item: any) => ({ name: clean(item.codeTitle || item.pageTitle, 160), text: clean(`${item.codeDescription || ""} ${item.codeList?.[0]?.code || ""}`), url: clean(item.codeId, 500), rank: Number(item.rank) || 100 }));
+    const info = (Array.isArray(data.infoSnippets) ? data.infoSnippets : []).map((item: any) => ({ name: clean(item.breadcrumb || "Документация", 160), text: clean(item.content), url: clean(item.pageId, 500), rank: Number(item.rank) || 100 }));
+    return [...code, ...info].sort((a, b) => a.rank - b.rank).slice(0, 3).map(({ rank, ...item }) => ({ ...item, url: /^https:\/\/[^\s<>]+$/i.test(item.url) ? item.url : "" }));
+  }
+  if (id === "blockscout") return (Array.isArray(data.items) ? data.items : []).slice(0, 3).map((item: any) => {
+    const address = typeof item.address_hash === "string" && /^0x[a-f\d]{40}$/i.test(item.address_hash) ? item.address_hash : "";
+    return { name: clean(item.name || item.symbol || item.type || "Ethereum", 160), text: clean(`Тип: ${item.type || "не указан"}; адрес: ${address || "не указан"}`), url: address ? `https://eth.blockscout.com/address/${address}` : "" };
+  });
   return (Array.isArray(data.docs) ? data.docs : []).slice(0, 3).map((item: any) => ({ name: clean(item.title, 160), text: clean(`${(item.author_name || []).slice(0, 3).join(", ")} ${item.first_publish_year || ""}`), url: /^\/works\/OL\d+W$/.test(item.key) ? `https://openlibrary.org${item.key}` : "" }));
 }
 
