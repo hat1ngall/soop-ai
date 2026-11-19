@@ -88,6 +88,7 @@ interface CompletionOptions {
   fetcher?: typeof fetch;
   sleep?: (ms: number, signal: AbortSignal) => Promise<void>;
   maxAttempts?: number;
+  maxTokens?: number;
 }
 
 // Retries are limited to attempts that have not delivered any answer text.
@@ -96,7 +97,7 @@ export async function streamChatCompletion(options: CompletionOptions): Promise<
   const fetcher = options.fetcher || fetch;
   const sleep = options.sleep || delay;
   const attempts = Math.min(3, Math.max(1, options.maxAttempts ?? 3));
-  const requestBody = JSON.stringify({ model: options.model, messages: options.messages, stream: true });
+  const requestBody = JSON.stringify({ model: options.model, messages: options.messages, stream: true, ...(options.maxTokens ? { max_tokens: options.maxTokens } : {}) });
   let content = "";
 
   const emit = (chunk: unknown) => {

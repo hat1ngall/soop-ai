@@ -8,6 +8,7 @@ import { useSession } from "next-auth/react";
 import { Sidebar } from "@/components/Sidebar";
 import { SettingsModal } from "@/components/SettingsModal";
 import { UpgradeModal } from "@/components/UpgradeModal";
+import { ReminderNotifier } from "@/components/ReminderNotifier";
 
 export default function DashboardLayout({
   children,
@@ -75,6 +76,7 @@ export default function DashboardLayout({
 
   return (
     <div className="reference-shell flex h-screen overflow-hidden bg-[#f5f6f8]">
+      <ReminderNotifier />
       {/* Mobile overlay */}
       {sidebarOpen && (
         <div
