@@ -41,6 +41,7 @@ function harness(sequence, options = {}) {
   const calls = { provider: [], transactions: 0, quotaWrites: 0, titleWrites: 0, sleeps: [], logs: [] };
   const history = options.history || [];
   const db = {
+    userPlugin: { findMany: async () => [] },
     chatSession: {
       findUnique: async () => options.missingChat ? null : { id: 'chat-1', userId: options.foreignChat ? 'other' : 'user-1' },
     },
@@ -97,12 +98,13 @@ function harness(sequence, options = {}) {
     '@/lib/auth': { authOptions: {} },
     '@/lib/prisma': { prisma: db },
     '@/lib/plans': {
-      getAvailableModels: () => ['gpt-6-luna'],
+      getAvailableModels: () => ['gpt-6-luna', 'claude-opus-5.5'],
       getDailyLimit: () => options.limit ?? 20,
     },
     '@/lib/subscription': { checkAndResetExpiredSubscription: async () => 'free' },
     '@/lib/system-prompt': { getSystemPrompt: () => 'Synthetic system prompt' },
     '@/lib/generated-images': { parseGeneratedImage: () => null },
+    '@/lib/plugin-search': { gatherPluginContext: async () => '' },
     '@/lib/chat-provider': {
       ChatProviderError: helper.ChatProviderError,
       streamChatCompletion: (args) => helper.streamChatCompletion({

@@ -27,7 +27,7 @@ const MODELS: Model[] = [
   { id: "deepseek-v4-pro", name: "DeepSeek V4.1 Pro", tier: "free", icon: "≋", iconColor: "text-blue-400" },
   // Pro — средние модели
   { id: "claude-sonnet-4.6", name: "Sonnet 4.6", tier: "pro", icon: "✳", iconColor: "text-orange-500" },
-  { id: "gpt-5.2", name: "GPT 5.2", tier: "pro", icon: "◎", iconColor: "text-gray-400" },
+  { id: "gpt-5.2", name: "Luna 6", tier: "pro", icon: "◎", iconColor: "text-gray-400" },
   { id: "gpt-5.4", name: "GPT 5.4", tier: "pro", icon: "◎", iconColor: "text-gray-400" },
   { id: "gpt-5.5", name: "GPT 5.5", tier: "pro", icon: "◎", iconColor: "text-gray-400" },
   { id: "grok-4.3", name: "Grok 4.5", tier: "pro", icon: "⊗", iconColor: "text-gray-400" },
@@ -39,7 +39,7 @@ const MODELS: Model[] = [
   { id: "claude-opus-5.5", name: "Opus 5.5", tier: "boost", icon: "✳", iconColor: "text-orange-500" },
   { id: "claude-fable-5", name: "Fable 5.2", tier: "boost", icon: "✳", iconColor: "text-orange-400" },
   { id: "gemini-3.1-pro", name: "Gemini Carbon", tier: "boost", icon: "✦", iconColor: "text-blue-500" },
-  { id: "gpt-5.6-sol", name: "GPT 6 Astra", tier: "boost", icon: "◎", iconColor: "text-gray-400" },
+  { id: "gpt-5.6-sol", name: "Astra 6.2", tier: "boost", icon: "◎", iconColor: "text-gray-400" },
   { id: "gpt-5.6-terra", name: "GPT 6.1 Terra", tier: "boost", icon: "◎", iconColor: "text-gray-400" },
   { id: "glm-5.2", name: "GLM 5.3", tier: "boost", icon: "✦", iconColor: "text-green-400" },
   // Enterprise — всё + эксклюзив
