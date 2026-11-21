@@ -3,6 +3,7 @@
 import { useLanguage } from "@/components/LanguageProvider";
 
 import { useState } from "react";
+import styles from "./UpgradeModal.module.css";
 
 interface UpgradeModalProps {
   isOpen: boolean;
@@ -29,7 +30,7 @@ const PLANS: Plan[] = [
     price: "$2",
     color: "blue",
     gradient: "from-blue-500 to-blue-600",
-    models: ["Claude Sonnet 4.6", "GPT 5.2", "GPT 5.4", "GPT 5.5", "Grok 4.5", "Grok 4.7"],
+    models: ["Claude Sonnet 4.6", "Luna 6", "GPT 5.4", "GPT 5.5", "Grok 4.5", "Grok 4.7"],
     features: [
       "Безлимитные запросы",
       "Все бесплатные модели",
@@ -157,55 +158,44 @@ export function UpgradeModal({ isOpen, onClose, onActivated }: UpgradeModalProps
             <p className="mt-3 text-slate-500">{t("Перезагрузка страницы...") }</p>
           </div>
         ) : step === "select" ? (
-          <div className="p-6 sm:p-8">
-            <div className="mb-8 text-center">
+          <div className={styles.selection}>
+            <div className={styles.heading}>
               <h2 className="text-3xl font-bold tracking-tight text-slate-950">{t("Выберите план") }</h2>
               <p className="mt-3 text-slate-500">
                 {t("Получите доступ к продвинутым моделям AI")}
               </p>
             </div>
 
-            <div className="grid grid-cols-1 gap-4 sm:grid-cols-3 sm:gap-5">
+            <div className={styles.grid}>
               {PLANS.map((plan) => (
                 <button
                   key={plan.id}
                   onClick={() => setSelectedPlan(plan.id)}
                   aria-pressed={selectedPlan === plan.id}
-                  className={`plan-card relative rounded-[28px] border-2 p-6 text-left transition-all duration-200 hover:-translate-y-1 hover:shadow-[0_18px_45px_rgba(80,93,120,0.16)] ${
-                    selectedPlan === plan.id
-                      ? "plan-card-selected border-slate-950 bg-slate-950 text-white"
-                      : "border-slate-200 bg-white/70 hover:border-slate-300"
-                  }`}
+                  className={`${styles.card} ${selectedPlan === plan.id ? styles.selected : ""}`}
                 >
-                  {plan.id === "boost" && (
-                    <div className="absolute -top-3 left-1/2 -translate-x-1/2 rounded-full bg-violet-500 px-4 py-1 text-xs font-bold text-white shadow-lg">
-                      {t("ПОПУЛЯРНЫЙ")}
-                    </div>
-                  )}
-
-                  <div className={`mb-4 text-xl font-bold ${selectedPlan === plan.id ? "text-white" : "text-slate-950"}`}>{plan.name}</div>
-
-                  <div className="mb-6">
-                    <span className={`text-4xl font-bold ${selectedPlan === plan.id ? "text-white" : "text-slate-950"}`}>{plan.price}</span>
-                    <span className={selectedPlan === plan.id ? "text-white/50" : "text-slate-400"}>{t("/мес")}</span>
+                  <div className={styles.cardTop}>
+                    <div className={styles.planName}>{plan.name}{plan.id === "boost" && <span className={styles.popular}>{t("ПОПУЛЯРНЫЙ")}</span>}</div>
+                    <span className={styles.radio} aria-hidden="true"><span /></span>
                   </div>
-
-                  {/* Доступные модели */}
-                  <div className={`plan-models mb-4 rounded-2xl p-3 ${selectedPlan === plan.id ? "bg-white/10" : "bg-slate-50"}`}>
-                    <div className={`mb-2 text-xs font-medium ${selectedPlan === plan.id ? "text-white/45" : "text-slate-400"}`}>{t("Модели:") }</div>
-                    <div className="flex flex-wrap gap-1.5">
+                  <div className={styles.price}>
+                    <span>{plan.price}</span><small>{t("/мес")}</small>
+                  </div>
+                  <div className={styles.models}>
+                    <div className={styles.label}>{t("Модели:")}</div>
+                    <div className={styles.chips}>
                       {plan.models.map((model, i) => (
-                        <span key={i} className={`rounded-full px-2.5 py-1 text-xs ${selectedPlan === plan.id ? "bg-white/10 text-white/80" : "bg-white text-slate-600"}`}>
+                        <span key={i}>
                           {t(model)}
                         </span>
                       ))}
                     </div>
                   </div>
 
-                  <ul className="space-y-3">
+                  <ul className={styles.features}>
                     {plan.features.map((feature, i) => (
-                      <li key={i} className={`flex items-start gap-3 text-sm ${selectedPlan === plan.id ? "text-white/75" : "text-slate-600"}`}>
-                        <svg className={`mt-0.5 h-5 w-5 shrink-0 ${selectedPlan === plan.id ? "text-emerald-300" : "text-emerald-500"}`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <li key={i}>
+                        <svg className={styles.check} fill="none" stroke="currentColor" viewBox="0 0 24 24">
                           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
                         </svg>
                         {t(feature)}
@@ -213,17 +203,14 @@ export function UpgradeModal({ isOpen, onClose, onActivated }: UpgradeModalProps
                     ))}
                   </ul>
 
-                  {selectedPlan === plan.id && (
-                    <div className="pointer-events-none absolute inset-0 rounded-[28px] ring-4 ring-slate-950/10" />
-                  )}
                 </button>
               ))}
             </div>
 
-            <div className="mt-8 flex flex-col items-center gap-4">
+            <div className={styles.footer}>
               <button
                 onClick={() => setStep("activate")}
-                className="plans-primary w-full max-w-md rounded-2xl bg-slate-950 py-4 text-base font-semibold text-white shadow-[0_16px_35px_rgba(15,23,42,0.18)] transition-all duration-200 hover:-translate-y-0.5 hover:bg-slate-800 active:scale-[0.98]"
+                className={styles.continueButton}
               >
                 {t("Продолжить с планом")} {currentPlan.name}
               </button>
